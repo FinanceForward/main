@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Forward</title>
+    <link rel="stylesheet" href="./add-receipt.css">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Scripts -->
+    <script src="./ocr.js"></script>
+    <script src="./fauna.js"></script>
+    <script src="./parse.js"></script>
+</head>
+<body>
+    <header>
+        <img class="logo" src="./src/fflogo.jpg" alt="ff logo">
+        <div class="title">Finance Forward</div>
+        <img class="user-icon" src="./src/account.png" alt="User Icon">
+    </header>
+
+    <nav class="sidebar">
+        <h1>Finance Forward</h1>
+        <ul>
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#add-receipt">Add Receipt</a></li>
+            <li><a href="#view-report">View Report</a></li>
+            <li><a href="#about">About Us</a></li>
+        </ul>
+        <button class="sign-in">Sign In</button>
+        <div class="footer-links">
+            <a href="#privacy">Privacy Policy</a>
+            <a href="#terms">Terms of Service</a>
+        </div>
+    </nav>
+
+           <main class="forum">
+    <div class="form-container">
+        <form enctype="multipart/form-data">
+            <label for="img" class="custom-file-upload">
+                <input type="file" id="img" style="display: none;"/>
+                <span class="file-button">Choose File</span>
+                <br><br>
+                <span class="file-name">No file selected</span>
+            </label>
+            <br><br>
+            <input type="month" id="mot" name="mot"/>
+            <br><br>
+            <select id="cat" name="cat">
+                <option value="zero">Category_One</option>
+                <option value="one">Category_Two</option>
+                <option value="one">Category_Three</option>
+            </select>
+            <br><br>
+            <button id="go">Submit Receipt</button>
+        </form>
+    </div>
+</main>
+</body>
+</html>
+<script src="./add-receipt.js"></script>

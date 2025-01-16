@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Forward</title>
+    <link rel="stylesheet" href="./report.css">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Scripts -->
+    <script src="../fauna.js"></script>
+    <!-- IMPORTANT -->
+    <script type="module">
+        import{Client,fql}from'https://cdn.jsdelivr.net/npm/fauna@latest/dist/browser/index.js';
+        window.Client = Client;
+        window.fql = fql;
+        console.log(fql&&Client ? 'MODULE LOADED' : 'FAILED TO LOAD MODULE')
+    </script>
+    <!-- IMPORTANT -->
+</head>
+<body>
+    <header>
+        <img class="logo" src="../src/fflogo.jpg" alt="ff logo">
+        <div class="title">Finance Forward</div>
+        <img class="user-icon" src="../src/account.png" alt="User Icon">
+    </header>
+
+    <nav class="sidebar">
+        <h1>Finance Forward</h1>
+        <ul>
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#add-receipt">Add Receipt</a></li>
+            <li><a href="#view-report">View Report</a></li>
+            <li><a href="#about">About Us</a></li>
+        </ul>
+        <button class="sign-in">Sign In</button>
+        <div class="footer-links">
+            <a href="#privacy">Privacy Policy</a>
+            <a href="#terms">Terms of Service</a>
+        </div>
+    </nav>
+
+    <main class="forum">
+        <div class="report-container">
+            <macro>Food</macro><total>$20.01</total><br>
+            <micro>FoodOut</micro><total>$12.99</total><br>
+        </div>
+    </main>
+</main>
+</body>
+</html>
+<style>
+    macro {
+        color: #FF9B07;
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    micro {
+        color: #FF9B07;
+        font-size: 20px;
+        font-weight: 400;
+    }
+
+    total {
+        color: whitesmoke;
+        padding-left: 50%;
+    }
+</style>
