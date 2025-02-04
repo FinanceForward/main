@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finance Forward</title>
-    <link rel="stylesheet" href="./manual-total.css">
+    <link rel="stylesheet" href="./sign-in.css">
     <link rel="icon" type="image/x-icon" href="/src/fflogo.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
     <!-- Scripts -->
@@ -41,34 +41,31 @@
     </nav>
 
     <main class="forum">
-        <div class="form-container">
-            <div>
-                <input type="number" id="amt" name="amt"/>
-                <br><br>
-                <input type="month" id="mot" name="mot"/>
-                <br><br>
-                <select id="cat" name="cat">
-                    <option disabled>Select Category</option>
-                    <option value="a">Groceries 🛒</option>
-                    <option value="b">Food Out 🍴</option>
-                    <option value="c">Snacks 🍿</option>
-                    <option value="d">Kitchenware 🔪</option>
-                    <option value="e">Bathroomware 🧻</option>
-                    <option value="f">Livingware 💡</option>
-                    <option value="g">Appliances 🛋</option>
-                    <option value="h">Gardenware 🪴</option>
-                    <option value="i">Bills/Subcriptions 💵</option>
-                    <option value="j">Pets 🐈</option>
-                    <option value="k">Health ❤️</option>
-                    <option value="l">Books 📖</option>
-                    <option value="other">OTHER</option>
-                    <option disabled>Custom Category (COMING SOON!)</option>
-                </select>
-                <br><br>
-                <button id="go">Submit Manual Receipt</button>
-            </div>
+        <div id = "sign-in" class="form-container">
+            <h1>Welcome Back! <br> Sign In</h1>
+            <br><br>
+            <input type="email" id="email" name="email" placeholder="Enter Email"/>
+            <br><br>
+            <input type="password" id="pass" name="password" placeholder="Enter Password"/>
+            <br><br>
+            <button class="go" id="signin-btn">Sign In!</button>
+            <p id="si-errs"></p>
+            <br><br><br><br>
+            <a onclick="document.getElementById('sign-in').hidden = true; document.getElementById('sign-up').hidden = false">SIGN UP INSTEAD</a>
+        </div>
+        <div id = "sign-up" class="form-container" hidden>
+            <h1>Welcome! <br> Sign Up</h1>
+            <br><br>
+            <input type="email" id="email_up" name="email" placeholder="Enter Email"/>
+            <br><br>
+            <input type="password" id="pass_up" name="password" placeholder="Enter Password"/>
+            <br><br>
+            <button class="go" id="signup-btn">Sign Up!</button>
+            <p id="su-errs"></p>
+            <br><br><br><br>
+            <a onclick="document.getElementById('sign-in').hidden = false; document.getElementById('sign-up').hidden = true">SIGN IN INSTEAD</a>
         </div>
     </main>
 </body>
 </html>
-<script src="./manual-total.js" defer></script>
+<script src="./sign-in.js" defer></script>

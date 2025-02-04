@@ -1,3 +1,11 @@
+/**
+ * Asynchronously performs Optical Character Recognition (OCR) on an image input.
+ *
+ * @param {HTMLInputElement} imageInput - The input element containing the image file.
+ * @returns {Promise<string|Error>} - A promise that resolves to the parsed text from the image, or an error if the operation fails.
+ *
+ * @throws {Error} If no file is selected or if the file size exceeds 10MB.
+ */
 async function OCR(imageInput) {
   function toBase64(file) {
     return new Promise((resolve, reject) => {
@@ -15,9 +23,11 @@ async function OCR(imageInput) {
       return new Error('File too large');
     }
     try {
+      // Convert the file to a base64 string
       const base64Image = await toBase64(file);
       b64 = base64Image;
     } catch (error) {
+      // Return the error if the conversion fails
       return error;
     }
   } else {

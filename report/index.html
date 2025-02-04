@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finance Forward</title>
     <link rel="stylesheet" href="./report.css">
+    <link rel="icon" type="image/x-icon" href="/src/fflogo.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
     <!-- Scripts -->
     <script src="../fauna.js"></script>
@@ -19,18 +20,18 @@
 </head>
 <body>
     <header>
-        <img class="logo" src="../src/fflogo.jpg" alt="ff logo">
+        <img class="logo" src="../src/menu.png" alt="menu logo" id="menu_icon">
         <div class="title">Finance Forward</div>
-        <img class="user-icon" src="../src/account.png" alt="User Icon">
+        <img class="logo" src="../src/fflogo.jpg" alt="ff logo">
     </header>
 
     <nav class="sidebar">
         <h1>Finance Forward</h1>
         <ul>
-            <li><a href="#dashboard">Dashboard</a></li>
-            <li><a href="#add-receipt">Add Receipt</a></li>
-            <li><a href="#view-report">View Report</a></li>
-            <li><a href="#about">About Us</a></li>
+            <li><a href="../dashboard">Dashboard</a></li>
+            <li><a href="../add-receipt">Add Receipt</a></li>
+            <li><a href="../report">View Report</a></li>
+            <li><a href="../">About Us</a></li>
         </ul>
         <button class="sign-in">Sign In</button>
         <div class="footer-links">
@@ -39,30 +40,128 @@
         </div>
     </nav>
 
-    <main class="forum">
+    <main class="report">
         <div class="report-container">
-            <macro>Food</macro><total>$20.01</total><br>
-            <micro>FoodOut</micro><total>$12.99</total><br>
+            <macro>Monthly Report</macro>
+            <micro>Here is your monthly report</micro>
+            <br>
+            <div id="monthselect">
+                <label for="month">Select Month:</label>
+                <input type="month" id="month" name="month">
+            </div>
+            <br>
+            <macro>Groceries</macro><total id="a"></total><br>
+            <macro>Food Out</macro><total id="b"></total><br>
+            <macro>Snacks</macro><total id="c"></total><br>
+            <macro>Kitchenware</macro><total id="d"></total><br>
+            <macro>Bathroomware</macro><total id="e"></total><br>
+            <macro>Livingware</macro><total id="f"></total><br>
+            <macro>Appliances</macro><total id="g"></total><br>
+            <macro>Gardenware</macro><total id="h"></total><br>
+            <macro>Bills/Subscriptions</macro><total id="i"></total><br>
+            <macro>Pets</macro><total id="j"></total><br>
+            <macro>Health</macro><total id="k"></total><br>
+            <macro>Books</macro><total id="l"></total><br>
+            <macro>OTHER</macro><total id="other"></total><br><br><br>
+            <macro>TOTAL</macro><total id="total"></total><br>
         </div>
     </main>
 </main>
 </body>
 </html>
 <style>
+    .report-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
     macro {
         color: #FF9B07;
         font-size: 30px;
         font-weight: 800;
-    }
-
-    micro {
-        color: #FF9B07;
-        font-size: 20px;
-        font-weight: 400;
+        text-align: left;
     }
 
     total {
         color: whitesmoke;
-        padding-left: 50%;
+        text-align: right;
+        font-size: 20px;
     }
 </style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let monthOBJ = document.getElementById('month');
+        document.querySelectorAll('macro').forEach(function(macro) {
+            macro.style.display = 'none';
+        });
+        monthOBJ.addEventListener('change', function() {
+            let month = this.value;
+            document.getElementById('monthselect').innerHTML = '<h1>PLEASE WAIT</h1>';
+            function getCookie(name) {
+            let cookie = {};
+            document.cookie.split(';').forEach(function(el) {
+                let [k,v] = el.split('=');
+                cookie[k.trim()] = v;
+            })
+            return cookie[name];
+            }
+            DB.u.get(getCookie('email')).then(user => {
+                document.querySelectorAll('macro').forEach(function(macro) {
+                    macro.style.display = 'block';
+                });
+                let totals = user.totals;
+                try {
+                    totals['a']
+                    console.log(totals)
+                    document.getElementById('a').innerHTML = '$' + ((totals['a'] && totals['a'][month]) || 0).toFixed(2);
+                    document.getElementById('b').innerHTML = '$' + ((totals['b'] && totals['b'][month]) || 0).toFixed(2);
+                    document.getElementById('c').innerHTML = '$' + ((totals['c'] && totals['c'][month]) || 0).toFixed(2);
+                    document.getElementById('d').innerHTML = '$' + ((totals['d'] && totals['d'][month]) || 0).toFixed(2);
+                    document.getElementById('e').innerHTML = '$' + ((totals['e'] && totals['e'][month]) || 0).toFixed(2);
+                    document.getElementById('f').innerHTML = '$' + ((totals['f'] && totals['f'][month]) || 0).toFixed(2);
+                    document.getElementById('g').innerHTML = '$' + ((totals['g'] && totals['g'][month]) || 0).toFixed(2);
+                    document.getElementById('h').innerHTML = '$' + ((totals['h'] && totals['h'][month]) || 0).toFixed(2);
+                    document.getElementById('i').innerHTML = '$' + ((totals['i'] && totals['i'][month]) || 0).toFixed(2);
+                    document.getElementById('j').innerHTML = '$' + ((totals['j'] && totals['j'][month]) || 0).toFixed(2);
+                    document.getElementById('k').innerHTML = '$' + ((totals['k'] && totals['k'][month]) || 0).toFixed(2);
+                    document.getElementById('l').innerHTML = '$' + ((totals['l'] && totals['l'][month]) || 0).toFixed(2);
+                    document.getElementById('other').innerHTML = '$' + ((totals['other'] && totals['other'][month]) || 0).toFixed(2);
+                    document.getElementById('total').innerHTML = '$' + (
+                        ((totals['a'] && totals['a'][month]) || 0) +
+                        ((totals['b'] && totals['b'][month]) || 0) +
+                        ((totals['c'] && totals['c'][month]) || 0) +
+                        ((totals['d'] && totals['d'][month]) || 0) +
+                        ((totals['e'] && totals['e'][month]) || 0) +
+                        ((totals['f'] && totals['f'][month]) || 0) +
+                        ((totals['g'] && totals['g'][month]) || 0) +
+                        ((totals['h'] && totals['h'][month]) || 0) +
+                        ((totals['i'] && totals['i'][month]) || 0) +
+                        ((totals['j'] && totals['j'][month]) || 0) +
+                        ((totals['k'] && totals['k'][month]) || 0) +
+                        ((totals['l'] && totals['l'][month]) || 0) +
+                        ((totals['other'] && totals['other'][month]) || 0)
+                    ).toFixed(2)
+                } catch {
+                    document.getElementById('a').innerHTML = '$0.00';
+                    document.getElementById('b').innerHTML = '$0.00';
+                    document.getElementById('c').innerHTML = '$0.00';
+                    document.getElementById('d').innerHTML = '$0.00';
+                    document.getElementById('e').innerHTML = '$0.00';
+                    document.getElementById('f').innerHTML = '$0.00';
+                    document.getElementById('g').innerHTML = '$0.00';
+                    document.getElementById('h').innerHTML = '$0.00';
+                    document.getElementById('i').innerHTML = '$0.00';
+                    document.getElementById('j').innerHTML = '$0.00';
+                    document.getElementById('k').innerHTML = '$0.00';
+                    document.getElementById('l').innerHTML = '$0.00';
+                    document.getElementById('other').innerHTML = '$0.00';
+                    document.getElementById('total').innerHTML = '$0.00';
+                }
+                document.getElementById('monthselect').style.display = 'none';
+            });
+        });
+    });
+</script>
+<script src="report.js" defer></script>

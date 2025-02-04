@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Forward</title>
+    <link rel="stylesheet" href="./index.css">
+    <link rel="icon" type="image/x-icon" href="/src/fflogo.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Scripts -->
+    <script src="./fauna.js"></script>
+    <!-- IMPORTANT -->
+    <script type="module">
+        import{Client,fql}from'https://cdn.jsdelivr.net/npm/fauna@latest/dist/browser/index.js';
+        window.Client = Client;
+        window.fql = fql;
+        console.log(fql&&Client ? 'MODULE LOADED' : 'FAILED TO LOAD MODULE')
+    </script>
+    <!-- IMPORTANT -->
+</head>
+<body>
+    <header>
+        <img class="logo" src="../src/menu.png" alt="menu logo" id="menu_icon">
+        <div class="title">Finance Forward</div>
+        <img class="logo" src="../src/fflogo.jpg" alt="ff logo">
+    </header>
+
+    <nav class="sidebar">
+        <h1>Finance Forward</h1>
+        <ul>
+            <li><a href="./dashboard">Dashboard</a></li>
+            <li><a href="./add-receipt">Add Receipt</a></li>
+            <li><a href="./report">View Report</a></li>
+            <li><a href="./">About Us</a></li>
+        </ul>
+        <button class="sign-in" style="display: block;">Sign In</button>
+        <div class="footer-links">
+            <a href="#privacy">Privacy Policy</a>
+            <a href="#terms">Terms of Service</a>
+        </div>
+    </nav>
+
+    <main class="forum">
+        <section class="landing-page"></section>
+            <h2>Landing Page Coming Soon</h2>
+            <p>We are working hard to bring you the best experience. Stay tuned!</p>
+        </section>
+    </main>
+</body>
+</html>
+<script src="./index.js" defer></script>

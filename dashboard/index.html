@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finance Forward</title>
-    <link rel="stylesheet" href="./manual-total.css">
+    <link rel="stylesheet" href="./index.css">
     <link rel="icon" type="image/x-icon" href="/src/fflogo.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
     <!-- Scripts -->
@@ -41,34 +41,29 @@
     </nav>
 
     <main class="forum">
-        <div class="form-container">
-            <div>
-                <input type="number" id="amt" name="amt"/>
-                <br><br>
-                <input type="month" id="mot" name="mot"/>
-                <br><br>
-                <select id="cat" name="cat">
-                    <option disabled>Select Category</option>
-                    <option value="a">Groceries 🛒</option>
-                    <option value="b">Food Out 🍴</option>
-                    <option value="c">Snacks 🍿</option>
-                    <option value="d">Kitchenware 🔪</option>
-                    <option value="e">Bathroomware 🧻</option>
-                    <option value="f">Livingware 💡</option>
-                    <option value="g">Appliances 🛋</option>
-                    <option value="h">Gardenware 🪴</option>
-                    <option value="i">Bills/Subcriptions 💵</option>
-                    <option value="j">Pets 🐈</option>
-                    <option value="k">Health ❤️</option>
-                    <option value="l">Books 📖</option>
-                    <option value="other">OTHER</option>
-                    <option disabled>Custom Category (COMING SOON!)</option>
-                </select>
-                <br><br>
-                <button id="go">Submit Manual Receipt</button>
+        <section class="dashboard">
+            <div class="total-spent centered-div">
+                <div>
+                    <h2>Total Amount Spent This Month</h2>
+                    <p id="total">%0.00</p>
+                </div>
             </div>
-        </div>
+            <div class="top-categories centered-div">
+                <div>
+                    <h2>Top 3 Most Spent Categories</h2>
+                    <ol>
+                        <li><span id="top-cat">Category 1</span>: $<span id="top-cat-amt">0.00</span></li>
+                        <li><span id="top-cat">Category 2</span>: $<span id="top-cat-amt">0.00</span></li>
+                        <li><span id="top-cat">Category 3</span>: $<span id="top-cat-amt">0.00</span></li>
+                    </ol>
+                </div>
+            </div>
+            <div class="actions centered-div">
+                <button onclick="window.location.href='../report'">View Report</button>
+                <button onclick="window.location.href='../add-receipt'">Add Receipt</button>
+            </div>
+        </section>
     </main>
 </body>
 </html>
-<script src="./manual-total.js" defer></script>
+<script src="./index.js" defer></script>
