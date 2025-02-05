@@ -120,13 +120,14 @@ button {
     color: #FF9B07;
 }
 
+
 .forum {
     background-color: #000000;
-    margin-top: 60px; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin-top: 60px;
+    text-align: center;
     height: calc(100vh - 60px); 
+    width: calc(100vw - 250px);
+    margin-left: 250px;
 }
 
 .forum .form-container {
@@ -137,10 +138,10 @@ button {
     text-align: center; 
 }
 
-.forum input[type="email"],
-.forum input[type="password"],
+.forum input[type="number"],
+.forum input[type="month"],
 .forum select,
-.go {
+#go {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
@@ -150,13 +151,13 @@ button {
     background-color: #3E3A34;
 }
 
-.go {
+#go {
     background-color: #FF9B07;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.go {
+#go {
     background-color: #e68a00;
 }
 
@@ -190,13 +191,8 @@ button {
         width: 95%; 
     }
 
-    .go {
+    #go {
         width: 100%; 
-    }
-
-    .footer-links {
-        position: absolute;
-        bottom: 5px;
     }
 
     #menu_icon {
@@ -206,8 +202,4 @@ button {
 
 #menu_icon {
     display: none;
-}
-
-.swt:hover {
-    cursor: pointer;
 }

@@ -46,3 +46,8 @@ for(let i = 0; i <ca.length; i++) {
     }
     }
 }
+
+window.addEventListener('scroll', function() {
+    document.getElementById('fadeDiv').style.opacity = '0';
+    document.getElementById('fadeDiv').style.transition = 'opacity 1s';
+});

@@ -19,34 +19,11 @@
     <!-- IMPORTANT -->
 </head>
 <body>
-    <header>
-        <img class="logo" src="../src/menu.png" alt="menu logo" id="menu_icon">
-        <div class="title">Finance Forward</div>
-        <img class="logo" src="../src/fflogo.jpg" alt="ff logo">
-    </header>
-
-    <nav class="sidebar">
-        <h1>Finance Forward</h1>
-        <ul>
-            <li><a href="../dashboard">Dashboard</a></li>
-            <li><a href="../add-receipt">Add Receipt</a></li>
-            <li><a href="../report">View Report</a></li>
-            <li><a href="../">About Us</a></li>
-        </ul>
-        <button class="sign-in">Sign In</button>
-        <div class="footer-links">
-            <a href="../settings/">Settings</a>
-            <a href="../privacy/">Privacy Policy</a>
-            <a href="../terms/">Terms of Service</a>
-        </div>
-    </nav>
-
     <main class="report">
         <div class="report-container">
             <macro>Monthly Report</macro>
-            <micro>Here is your monthly report</micro>
-            <br>
             <div id="monthselect">
+                <micro>Select the month of the report you would like to print</micro><br><br>
                 <label for="month">Select Month:</label>
                 <input type="month" id="month" name="month">
             </div>
@@ -65,7 +42,6 @@
             <macro>Books<total id="l"></total></macro>
             <macro>OTHER<total id="other"></total></macro><br>
             <macro>TOTAL<total id="total"></total></macro>
-            <p onclick="location.href='../printout'" style="cursor: pointer; background-color: #FF9B07; color: white; padding: 10px 20px; border-radius: 5px; text-align: center; display: inline-block;">Print Report</p>
         </div>
     </main>
 </main>
@@ -161,6 +137,8 @@
                     document.getElementById('total').innerHTML = '$0.00';
                 }
                 document.getElementById('monthselect').style.display = 'none';
+                print()
+                location.href="../report"
             });
         });
     });

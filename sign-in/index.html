@@ -35,8 +35,9 @@
         </ul>
         <button class="sign-in">Sign In</button>
         <div class="footer-links">
-            <a href="#privacy">Privacy Policy</a>
-            <a href="#terms">Terms of Service</a>
+            <a href="../settings/">Settings</a>
+            <a href="../privacy/">Privacy Policy</a>
+            <a href="../terms/">Terms of Service</a>
         </div>
     </nav>
 
@@ -51,7 +52,7 @@
             <button class="go" id="signin-btn">Sign In!</button>
             <p id="si-errs"></p>
             <br><br><br><br>
-            <a onclick="document.getElementById('sign-in').hidden = true; document.getElementById('sign-up').hidden = false">SIGN UP INSTEAD</a>
+            <a onclick="document.getElementById('sign-in').hidden = true; document.getElementById('sign-up').hidden = false" class="swt">SIGN UP INSTEAD</a>
         </div>
         <div id = "sign-up" class="form-container" hidden>
             <h1>Welcome! <br> Sign Up</h1>
@@ -63,7 +64,7 @@
             <button class="go" id="signup-btn">Sign Up!</button>
             <p id="su-errs"></p>
             <br><br><br><br>
-            <a onclick="document.getElementById('sign-in').hidden = false; document.getElementById('sign-up').hidden = true">SIGN IN INSTEAD</a>
+            <a onclick="document.getElementById('sign-in').hidden = false; document.getElementById('sign-up').hidden = true" class="swt">SIGN IN INSTEAD</a>
         </div>
     </main>
 </body>

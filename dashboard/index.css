@@ -99,7 +99,7 @@ button {
 
 .footer-links {
     position: absolute;
-    bottom: 5px;
+    bottom: 80px;
     width: 200px;
 }
 
@@ -249,7 +249,7 @@ button {
 
 .dashboard p,
 .dashboard ol {
-    font-size: 16px;
+    font-size: 50px;
 }
 .dashboard ol {
     list-style-type: none;
@@ -269,6 +269,7 @@ button {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-size: 50px;
 }
 
 .dashboard .actions button:hover {

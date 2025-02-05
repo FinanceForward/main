@@ -51,10 +51,6 @@ let totalOBJ = document.querySelector('#total');
 let topCatOBJ = document.querySelectorAll('#top-cat');
 let topCatAmtOBJ = document.querySelectorAll('#top-cat-amt');
 
-console.log(totalOBJ);
-console.log(topCatOBJ);
-console.log(topCatAmtOBJ);
-
 DB.u.get(getCookie('email')).then((user) => {
     console.log(user);
     let totals = user.totals;
@@ -76,14 +72,37 @@ DB.u.get(getCookie('email')).then((user) => {
       ((totals['other'] && totals['other'][month]) || 0)
     );
     totalOBJ.innerHTML = "$" + total.toFixed(2).toString();
+
+    let mo = new Date().toISOString().slice(0, 7);
+
+    let top3AMT = Object.values(totals).map(t => t[mo] || 0).sort((a, b) => b - a).slice(0, 3)
+    let top3CAT = Object.keys(totals)
+        .map(key => ({ key, value: totals[key][mo] || 0 }))
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 3)
+        .map(item => item.key);
+
+    let CATdict = {
+      "a": "Groceries",
+      "b": "Food Out",
+      "c": "Snacks",
+      "d": "Kitchenware",
+      "e": "Bathroomware",
+      "f": "Livingware",
+      "g": "Appliances",
+      "h": "Gardenware",
+      "i": "Bills/Subcriptions",
+      "j": "Pets",
+      "k": "Health",
+      "l": "Books",
+      "other": "OTHER"
+    }
+    top3CAT = top3CAT.map(v => CATdict[v]);
+
+    topCatOBJ.forEach((topCatOBJ, i) => {
+        topCatOBJ.innerHTML = top3CAT[i] || "N/A";
+    })
+    topCatAmtOBJ.forEach((topCatAmtOBJ, i) => {
+        topCatAmtOBJ.innerHTML = top3AMT[i].toFixed(2).toString();
+    })
 });
-
-let topCats = ['Food', 'Transport', 'Entertainment'];
-let topCatAmts = [10, 5, 5];
-
-topCatOBJ.forEach((topCatOBJ, i) => {
-    topCatOBJ.innerHTML = topCats[i];
-})
-topCatAmtOBJ.forEach((topCatAmtOBJ, i) => {
-    topCatAmtOBJ.innerHTML = topCatAmts[i].toFixed(2).toString();
-})
