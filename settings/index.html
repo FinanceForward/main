@@ -1,0 +1,26 @@
+<script type="module">
+    import{Client,fql}from'https://cdn.jsdelivr.net/npm/fauna@latest/dist/browser/index.js';
+    window.Client = Client;
+    window.fql = fql;
+    console.log(fql&&Client ? 'MODULE LOADED' : 'FAILED TO LOAD MODULE')
+</script>
+<script src="../fauna.js"></script>
+<script>
+function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i <ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+</script>
+<button onclick="DB.u.delete(getCookie('hash')); document.cookie = 'hash=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'; alert('Account deleted');">Delete Account</button>
+<button onclick="DB.u.delete(getCookie('hash')); DB.u.create(getCookie('hash'))">Delete All Data</button>

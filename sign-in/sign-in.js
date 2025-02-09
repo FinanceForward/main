@@ -102,7 +102,7 @@ async function signin() {
     console.log('cookie set:', document.cookie);
 
     // redirect
-    // location.href = '../dashboard';
+    location.href = '../dashboard';
   });
 }
 
@@ -148,7 +148,7 @@ async function signup() {
     console.log('cookie set:', document.cookie);
 
     // redirect
-    // location.href = '../dashboard';
+    location.href = '../dashboard';
   });
 }
 
