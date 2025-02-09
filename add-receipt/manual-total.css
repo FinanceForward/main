@@ -161,7 +161,7 @@ button {
     background-color: #e68a00;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 815px) {
     .sidebar {
         transform: translateX(-100%);
         position: fixed;

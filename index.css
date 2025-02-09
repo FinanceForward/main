@@ -213,6 +213,11 @@ button {
     #menu_icon {
         display: unset !important;
     }
+
+    main {
+        margin-left: 0 !important;
+        width: 100vw !important;
+    }
 }
 
 #menu_icon {

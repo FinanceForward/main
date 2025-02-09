@@ -108,7 +108,7 @@
             })
             return cookie[name];
             }
-            DB.u.get(getCookie('email')).then(user => {
+            DB.u.get(getCookie('hash')).then(user => {
                 document.querySelectorAll('macro').forEach(function(macro) {
                     macro.style.display = 'block';
                 });

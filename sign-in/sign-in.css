@@ -160,7 +160,7 @@ button {
     background-color: #e68a00;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 815px) {
     .sidebar {
         transform: translateX(-100%);
         position: fixed;
@@ -206,6 +206,17 @@ button {
 
 #menu_icon {
     display: none;
+}
+
+.swt {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #FF9B07;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    transition: background-color 0.3s ease;
 }
 
 .swt:hover {

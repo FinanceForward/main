@@ -16,6 +16,25 @@ function getCookie(cname) {
 }
 // end cookie script
 
+// sha256 hash function
+async function sha256(message) {
+  // encode as UTF-8
+  const msgBuffer = new TextEncoder().encode(message);                    
+
+  // hash the message
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+
+  // convert ArrayBuffer to Array
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+  // convert bytes to hex string                  
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
+}
+// end sha256 hash function
+
+let createUserHash = async (email, pass) => sha256(email+pass);
+
 document.addEventListener('DOMContentLoaded', function() {
   // elements
   const sidebar = document.querySelector('.sidebar');
@@ -43,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-function signin() {
+async function signin() {
   // elements
   let emailOBJ = document.getElementById('email');
   let passOBJ = document.getElementById('pass');
@@ -62,34 +81,32 @@ function signin() {
     return console.error('user error: email or password input not found');
   }
 
-  // values
-  let email = emailOBJ.value;
-  let pass = passOBJ.value;
-
-  // errors
-  if (email == '') return errormsg('EMAIL REQUIRED');
-  if (pass == '') return errormsg('PASSWORD REQUIRED');
-  DB.u.exists(email).then(exists => {
-    !exists ? errormsg('ACCOUNT DOES NOT EXIST') : null
-
-    DB.u.get(email).then(user => {
-      if (user.pass != pass) {
-        errormsg('INCORRECT PASSWORD');
+  createUserHash(emailOBJ.value, passOBJ.value).then(hash => {
+    // errors
+    if (emailOBJ.value == '') return errormsg('EMAIL REQUIRED');
+    if (passOBJ.value == '') return errormsg('PASSWORD REQUIRED');
+    DB.u.exists(hash).then(exists => {
+      if (!exists) {
+        errormsg('ACCOUNT NOT FOUND');
         return;
       }
-
-      // cookie
-      let date = new Date();
-      date.setDate(date.getDate() + 1);
-      document.cookie = `email=${email}; path=/; expires=${date.toUTCString()}`;
-      errormsg('Signed In!')
-      console.log('cookie set:', document.cookie);
-      location.href = '../dashboard'
+      errormsg('SIGNED IN');
+      console.log('signed in:', emailOBJ.value);
     });
+
+    // set cookie
+    let date = new Date();
+    date.setDate(date.getDate() + 1);
+    document.cookie = `hash=${hash}; path=/; expires=${date.toUTCString()}`;
+    errormsg('Cookie Set!');
+    console.log('cookie set:', document.cookie);
+
+    // redirect
+    // location.href = '../dashboard';
   });
 }
 
-function signup() {
+async function signup() {
   // elements
   let emailOBJ = document.getElementById('email_up');
   let passOBJ = document.getElementById('pass_up');
@@ -108,33 +125,34 @@ function signup() {
     return console.error('user error: email or password input not found');
   }
 
-  // values
-  let email = emailOBJ.value;
-  let pass = passOBJ.value;
-
-  // errors
-  if (email == '') return errormsg('EMAIL REQUIRED');
-  if (pass == '') return errormsg('PASSWORD REQUIRED');
-  DB.u.exists(email).then(exists => {
-    exists ? errormsg('ACCOUNT ALREADY EXISTS') : null
-    // create account
-    DB.u.create(email, pass).then(user => {
-      console.log('user created:', user);
-    }).catch(err => {
-      console.error('error creating user:', err);
+  createUserHash(emailOBJ.value, passOBJ.value).then(hash => {
+    // errors
+    if (emailOBJ.value == '') return errormsg('EMAIL REQUIRED');
+    if (passOBJ.value == '') return errormsg('PASSWORD REQUIRED');
+    DB.u.exists(hash).then(exists => {
+      if (exists) {
+        errormsg('ACCOUNT ALREADY EXISTS');
+        return;
+      }
+      DB.u.create(hash, passOBJ.value).then(() => {
+        errormsg('ACCOUNT CREATED');
+        console.log('account created:', emailOBJ.value);
+      });
     });
-  
-    // cookie
+
+    // set cookie
     let date = new Date();
     date.setDate(date.getDate() + 1);
-    document.cookie = `email=${email}; path=/; expires=${date.toUTCString()}`;
-    errormsg('Account Created!')
+    document.cookie = `hash=${hash}; path=/; expires=${date.toUTCString()}`;
+    errormsg('Signed Up and Cookie Set!');
     console.log('cookie set:', document.cookie);
-    location.href = '../dashboard'
+
+    // redirect
+    // location.href = '../dashboard';
   });
 }
 
-let name = "email=";
+let name = "hash=";
 let ca = decodeURIComponent(document.cookie).split(';');
 for(let i = 0; i <ca.length; i++) {
   let c = ca[i];
@@ -142,7 +160,7 @@ for(let i = 0; i <ca.length; i++) {
   c = c.substring(1);
   }
   if (c.indexOf(name) == 0) {
-  if (getCookie('email') != '') {
+  if (getCookie('hash') != '') {
       document.querySelector('.sign-in').style.display = 'none';
   }
   }

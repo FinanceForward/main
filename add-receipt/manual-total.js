@@ -39,20 +39,20 @@ document.addEventListener('DOMContentLoaded', function() {
     let total = amtOBJ.value;
     let month = motOBJ.value;
     let category = catOBJ.value;
-    let email = getCookie('email');
+    let hash = getCookie('hash');
 
     // errors
     if (total == '') return console.error('unfinished receipt: total required');
     if (month == '') return console.error('unfinished receipt: month required');
-    if (email == '' || !DB.u.exists(email)) return console.error('user error: not logged in or does not exist');
+    if (hash == '' || !DB.u.exists(hash)) return console.error('user error: not logged in or does not exist');
   
     // receipt log
-    console.log({total, month, category, email});
+    console.log({total, month, category, hash});
 
     // send-in receipt
-    DB.u.get(email).then(user => {
+    DB.u.get(hash).then(user => {
       if (user['totals'] == undefined || user.totals[category] == undefined || user.totals[category][month] == undefined) {
-        DB.u.update(email, {
+        DB.u.update(hash, {
           'totals': {
             [category]: {
               [month]: Number(total)
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         });
       } else {
-        DB.u.update(email, {
+        DB.u.update(hash, {
           'totals': {
             [category]: {
               [month]: Number(user.totals[category][month]) + Number(total)
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-let name = "email=";
+let name = "hash=";
 let ca = decodeURIComponent(document.cookie).split(';');
 for(let i = 0; i <ca.length; i++) {
   let c = ca[i];
@@ -81,7 +81,7 @@ for(let i = 0; i <ca.length; i++) {
   c = c.substring(1);
   }
   if (c.indexOf(name) == 0) {
-  if (getCookie('email') != '') {
+  if (getCookie('hash') != '') {
       document.querySelector('.sign-in').style.display = 'none';
   }
   }

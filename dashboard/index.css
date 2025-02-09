@@ -191,7 +191,6 @@ button {
 
     .forum {
         padding-left: 0;
-        padding-top: 80px;
         height: calc(100vh - 80px); 
     }
 
@@ -212,6 +211,22 @@ button {
 
     #menu_icon {
         display: unset !important;
+    }
+}
+
+@media screen and (max-width: 999px) {
+    .dashboard .actions button,
+    .dashboard p,
+    .dashboard ol {
+        font-size: 30px !important;
+    }
+}
+
+@media screen and (max-height: 810px) {
+    .dashboard .actions button,
+    .dashboard p,
+    .dashboard ol {
+        font-size: 30px !important;
     }
 }
 

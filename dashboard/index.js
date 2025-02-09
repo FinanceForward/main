@@ -27,7 +27,7 @@ function getCookie(cname) {
     });
   });
 
-  let name = "email=";
+  let name = "hash=";
   let ca = decodeURIComponent(document.cookie).split(';');
   for(let i = 0; i <ca.length; i++) {
     let c = ca[i];
@@ -35,7 +35,7 @@ function getCookie(cname) {
     c = c.substring(1);
     }
     if (c.indexOf(name) == 0) {
-    if (getCookie('email') != '') {
+    if (getCookie('hash') != '') {
         document.querySelector('.sign-in').style.display = 'none';
     }
     }
@@ -51,7 +51,7 @@ let totalOBJ = document.querySelector('#total');
 let topCatOBJ = document.querySelectorAll('#top-cat');
 let topCatAmtOBJ = document.querySelectorAll('#top-cat-amt');
 
-DB.u.get(getCookie('email')).then((user) => {
+DB.u.get(getCookie('hash')).then((user) => {
     console.log(user);
     let totals = user.totals;
     const d = new Date();
