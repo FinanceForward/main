@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // send-in receipt
     DB.u.get(hash).then(user => {
+      if (user == undefined) console.error('user error: not logged in or does not exist');
       if (user['totals'] == undefined || user.totals[category] == undefined || user.totals[category][month] == undefined) {
         DB.u.update(hash, {
           'totals': {

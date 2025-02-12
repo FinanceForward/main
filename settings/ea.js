@@ -35,6 +35,8 @@ async function updateAccount(email, pass) {
     let oldhash = getCookie('hash');
     let newhash = await sha256(email + pass);
     DB.u.update(oldhash, { hash: newhash });
+    document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+    document.cookie = `hash=${newhash}`;
     alert("Account updated successfully!");
 }
 
@@ -80,3 +82,14 @@ for(let i = 0; i <ca.length; i++) {
         }
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // elements
+    const sidebar = document.querySelector('.sidebar');
+    const openSidebar = document.querySelector('.logo');
+
+    // sidebar open/close
+    openSidebar.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+    });
+});
