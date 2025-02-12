@@ -1,28 +1,137 @@
-<script type="module">
-    import{Client,fql}from'https://cdn.jsdelivr.net/npm/fauna@latest/dist/browser/index.js';
-    window.Client = Client;
-    window.fql = fql;
-    console.log(fql&&Client ? 'MODULE LOADED' : 'FAILED TO LOAD MODULE')
-</script>
-<script src="../fauna.js"></script>
-<script>
-function getCookie(cname) {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for(let i = 0; i <ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
-}
-</script>
-<button onclick="DB.u.delete(getCookie('hash')); document.cookie = 'hash=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'; alert('Account deleted');">Delete Account</button>
-<button onclick="DB.u.delete(getCookie('hash')); DB.u.create(getCookie('hash'))">Delete All Data</button>
-<button onclick="document.cookie = 'hash=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'">Sign Out</button>
-<button onclick="location.href = '../edit_account'">Edit Email or Password</button>
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Account - Finance Forward</title>
+    <link rel="stylesheet" href="ea-styles.css">
+
+    <nav class="fancy-nav">
+        <ul class="nav-links">
+            <li><a href="lp.html">Home</a></li>
+            <li><a href="#sign up">Dashboard</a></li>
+        </ul>
+    </nav>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="fancy-title">Edit Your Account</h1>
+
+        <form id="editForm">
+            <div class="input-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <button type="submit" class="btn fancy-btn">Update Email</button>
+            </div>
+
+            <div class="input-group">
+                <label for="password">New Password:</label>
+                <input type="password" id="password" name="password">
+                <button type="button" onclick="updatePassword()" class="btn fancy-btn">Update Password</button>
+            </div>
+        </form>
+
+        <div class="delete-options">
+            <button onclick="confirmDelete('data')" class="btn danger-btn">Delete Account Data</button>
+            <button onclick="confirmDelete('account')" class="btn danger-btn">Delete Account</button>
+        </div>
+
+        <div class="confirmation" id="confirmationDialog" style="display: none;">
+            <h2>Confirmation</h2>
+            <p id="confirmationMessage" class="fancy-text"></p>
+            <div class="confirmation-buttons">
+                <button onclick="cancelDelete()" class="btn">Cancel</button>
+                <button onclick="proceedDelete()" class="btn danger-btn">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <a href="privacy_policy.html" class="fancy-link">Privacy Policy</a>
+    </footer>
+
+    <script src="ea.js"></script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Account - Finance Forward</title>
+    <link rel="stylesheet" href="ea-styles.css">
+    <link rel="stylesheet" href="./index.css">
+    <link rel="icon" type="image/x-icon" href="./src/fflogo.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Scripts -->
+    <script src="../fauna.js"></script>
+    <script src="./ea.js" defer></script>
+    <!-- IMPORTANT -->
+    <script type="module">
+        import{Client,fql}from'https://cdn.jsdelivr.net/npm/fauna@latest/dist/browser/index.js';
+        window.Client = Client;
+        window.fql = fql;
+        console.log(fql&&Client ? 'MODULE LOADED' : 'FAILED TO LOAD MODULE')
+    </script>
+    <!-- IMPORTANT -->
+</head>
+<body>
+    <header>
+        <img class="logo" src="../src/menu.png" alt="menu logo" id="menu_icon">
+        <div class="title">Finance Forward</div>
+        <img class="logo" src="../src/fflogo.jpg" alt="ff logo">
+    </header>
+
+    <nav class="sidebar">
+        <h1>Finance Forward</h1>
+        <ul>
+            <li><a href="../dashboard">Dashboard</a></li>
+            <li><a href="../add-receipt">Add Receipt</a></li>
+            <li><a href="../report">View Report</a></li>
+            <li><a href="../">About Us</a></li>
+        </ul>
+        <button class="sign-in" style="display: block;" onclick='location.href = "../sign-in"'>Sign In</button>
+        <div class="footer-links">
+            <a href="../settings/">Settings</a>
+            <a href="../privacy/">Privacy Policy</a>
+            <a href="../terms/">Terms of Service</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <h1 class="fancy-title">Edit Your Account</h1>
+    
+            <div id="editForm">
+                <div class="input-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email">
+                </div>
+    
+                <div class="input-group">
+                    <label for="password">New Password:</label>
+                    <input type="password" id="password" name="password">
+                    <button type="button" class="btn fancy-btn" onclick="updateAccount(document.getElementById('email').value, document.getElementById('password').value)">Update Credentials</button>
+                </div>
+            </div>
+    
+            <div class="delete-options">
+                <button onclick="confirmDelete('data')" class="btn danger-btn">Delete Account Data</button>
+                <button onclick="confirmDelete('account')" class="btn danger-btn">Delete Account</button>
+            </div>
+    
+            <div class="confirmation" id="confirmationDialog" style="display: none;">
+                <h2>Confirmation</h2>
+                <p id="confirmationMessage" class="fancy-text"></p>
+                <div class="confirmation-buttons">
+                    <button onclick="cancelDelete()" class="btn">Cancel</button>
+                    <button onclick="proceedDelete()" class="btn danger-btn">Proceed</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+<script src="./index.js" defer></script>

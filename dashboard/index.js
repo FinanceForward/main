@@ -51,7 +51,9 @@ let totalOBJ = document.querySelector('#total');
 let topCatOBJ = document.querySelectorAll('#top-cat');
 let topCatAmtOBJ = document.querySelectorAll('#top-cat-amt');
 
-DB.u.get(getCookie('hash')).then((user) => {
+let hash = getCookie('hash');
+
+DB.u.get(hash).then((user) => {
     console.log(user);
     let totals = user.totals;
     const d = new Date();

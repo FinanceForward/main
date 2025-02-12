@@ -14,8 +14,28 @@ function getCookie(cname) {
     return "";
 }
 
-function updatePassword() {
-    alert("Password update functionality would be implemented here.");
+// sha256 hash function
+async function sha256(message) {
+    // encode as UTF-8
+    const msgBuffer = new TextEncoder().encode(message);                    
+
+    // hash the message
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+
+    // convert ArrayBuffer to Array
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+    // convert bytes to hex string                  
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+}
+// end sha256 hash function
+
+async function updateAccount(email, pass) {
+    let oldhash = getCookie('hash');
+    let newhash = await sha256(email + pass);
+    DB.u.update(oldhash, { hash: newhash });
+    alert("Account updated successfully!");
 }
 
 function confirmDelete(type) {
@@ -31,10 +51,13 @@ function cancelDelete() {
 }
 
 function proceedDelete() {
-    let type = document.getElementById('confirmationMessage').innerText.includes('data') ? 'data' : 'account';
+    let type = document.getElementById('confirmationMessage').innerText.includes('keep') ? 'data' : 'account';
     alert(`Deleting ${type === 'data' ? 'data' : 'account'}. This action cannot be undone.`);
-    if (type == 'account') {DB.u.delete(getCookie('hash')); document.cookie = 'hash=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'; alert('Account deleted');}
-    else if (type == 'data') {DB.u.delete(getCookie('hash')); DB.u.create(getCookie('hash'));}
+    DB.u.delete(hash)
+    let hash = getCookie('hash')
+    if (type == 'account') {
+        DB.u.create(hash)
+    }
     document.getElementById('confirmationDialog').style.display = 'none';
 }
 
@@ -43,3 +66,17 @@ document.getElementById('editForm').addEventListener('submit', function(event) {
     alert("Email updated successfully!");
     // Here you would handle the actual email update
 });
+
+let name = "hash=";
+let ca = decodeURIComponent(document.cookie).split(';');
+for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+    c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+        if (getCookie('hash') != '') {
+            document.querySelector('.sign-in').style.display = 'none';
+        }
+    }
+}

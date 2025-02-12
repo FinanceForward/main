@@ -85,21 +85,21 @@ async function signin() {
     // errors
     if (emailOBJ.value == '') return errormsg('EMAIL REQUIRED');
     if (passOBJ.value == '') return errormsg('PASSWORD REQUIRED');
+
     DB.u.exists(hash).then(exists => {
       if (!exists) {
         errormsg('ACCOUNT NOT FOUND');
         return;
       }
       else {
-        errormsg('SIGNED IN');
-        console.log('signed in:', emailOBJ.value);
+        errormsg('ACCOUNT FOUND');
+        console.log('account found:', hash);
 
         // set cookie
         let date = new Date();
         date.setDate(date.getDate() + 1);
         document.cookie = `hash=${hash}; path=/; expires=${date.toUTCString()}`;
-        errormsg('Cookie Set!');
-        console.log('cookie set:', document.cookie);
+        errormsg('SIGNED IN!');
 
         // redirect
         location.href = '../dashboard';
@@ -131,26 +131,27 @@ async function signup() {
     // errors
     if (emailOBJ.value == '') return errormsg('EMAIL REQUIRED');
     if (passOBJ.value == '') return errormsg('PASSWORD REQUIRED');
+
     DB.u.exists(hash).then(exists => {
       if (exists) {
         errormsg('ACCOUNT ALREADY EXISTS');
         return;
       }
-      DB.u.create(hash, passOBJ.value).then(() => {
-        errormsg('ACCOUNT CREATED');
-        console.log('account created:', emailOBJ.value);
-      });
+      else {
+        DB.u.create(hash).then(_ => {
+          errormsg('ACCOUNT CREATED');
+          console.log('account created:', hash);
+
+          // set cookie
+          let date = new Date();
+          date.setDate(date.getDate() + 1);
+          document.cookie = `hash=${hash}; path=/; expires=${date.toUTCString()}`;
+
+          // redirect
+          location.href = '../dashboard';
+        });
+      }
     });
-
-    // set cookie
-    let date = new Date();
-    date.setDate(date.getDate() + 1);
-    document.cookie = `hash=${hash}; path=/; expires=${date.toUTCString()}`;
-    errormsg('Signed Up and Cookie Set!');
-    console.log('cookie set:', document.cookie);
-
-    // redirect
-    location.href = '../dashboard';
   });
 }
 

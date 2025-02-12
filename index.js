@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-let name = "email=";
+let name = "hash=";
 let ca = decodeURIComponent(document.cookie).split(';');
 for(let i = 0; i <ca.length; i++) {
     let c = ca[i];
@@ -41,7 +41,7 @@ for(let i = 0; i <ca.length; i++) {
     c = c.substring(1);
     }
     if (c.indexOf(name) == 0) {
-    if (getCookie('email') != '') {
+    if (getCookie('hash') != '') {
         document.querySelector('.sign-in').style.display = 'none';
     }
     }
