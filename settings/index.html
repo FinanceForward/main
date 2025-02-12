@@ -24,3 +24,5 @@ function getCookie(cname) {
 </script>
 <button onclick="DB.u.delete(getCookie('hash')); document.cookie = 'hash=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'; alert('Account deleted');">Delete Account</button>
 <button onclick="DB.u.delete(getCookie('hash')); DB.u.create(getCookie('hash'))">Delete All Data</button>
+<button onclick="document.cookie = 'hash=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'">Sign Out</button>
+<button onclick="location.href = '../edit_account'">Edit Email or Password</button>

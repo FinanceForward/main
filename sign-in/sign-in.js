@@ -90,19 +90,21 @@ async function signin() {
         errormsg('ACCOUNT NOT FOUND');
         return;
       }
-      errormsg('SIGNED IN');
-      console.log('signed in:', emailOBJ.value);
+      else {
+        errormsg('SIGNED IN');
+        console.log('signed in:', emailOBJ.value);
+
+        // set cookie
+        let date = new Date();
+        date.setDate(date.getDate() + 1);
+        document.cookie = `hash=${hash}; path=/; expires=${date.toUTCString()}`;
+        errormsg('Cookie Set!');
+        console.log('cookie set:', document.cookie);
+
+        // redirect
+        location.href = '../dashboard';
+      }
     });
-
-    // set cookie
-    let date = new Date();
-    date.setDate(date.getDate() + 1);
-    document.cookie = `hash=${hash}; path=/; expires=${date.toUTCString()}`;
-    errormsg('Cookie Set!');
-    console.log('cookie set:', document.cookie);
-
-    // redirect
-    location.href = '../dashboard';
   });
 }
 
