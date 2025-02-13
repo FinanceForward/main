@@ -98,9 +98,7 @@ button {
 }
 
 .footer-links {
-    position: absolute;
-    bottom: 80px;
-    width: 200px;
+    text-align: center;
 }
 
 .sidebar .sign-in:hover {
@@ -176,7 +174,7 @@ button {
     cursor: pointer;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 817px) {
     .sidebar {
         transform: translateX(-100%);
         position: fixed;
@@ -212,21 +210,16 @@ button {
     #menu_icon {
         display: unset !important;
     }
-}
 
-@media screen and (max-width: 999px) {
     .dashboard .actions button,
     .dashboard p,
     .dashboard ol {
         font-size: 30px !important;
     }
-}
 
-@media screen and (max-height: 810px) {
-    .dashboard .actions button,
-    .dashboard p,
-    .dashboard ol {
-        font-size: 30px !important;
+    .dashboard {
+        margin-left: 0 !important;
+        width: 100% !important;
     }
 }
 

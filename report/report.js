@@ -41,8 +41,6 @@ for(let i = 0; i <ca.length; i++) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelector('.sign-in').addEventListener('click', function() {
-      window.location.href = '../sign-in';
-  });
-});
+if (document.querySelector('.sign-in').style.display != 'none') {
+  window.location.href = '../sign-in';
+}

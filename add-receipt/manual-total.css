@@ -98,9 +98,7 @@ button {
 }
 
 .footer-links {
-    position: absolute;
-    bottom: 80px;
-    width: 200px;
+    text-align: center;
 }
 
 .sidebar .sign-in:hover {

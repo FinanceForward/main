@@ -40,27 +40,37 @@ async function updateAccount(email, pass) {
     alert("Account updated successfully!");
 }
 
-function confirmDelete(type) {
+function signout() {
     document.getElementById('confirmationDialog').style.display = 'block';
-    let message = type === 'data' ? 
-        "Are you sure you want to delete your account data? This action will erase all your stored data but keep your account." :
-        "Are you sure you want to delete your account? This action will permanently delete your account and all associated data.";
-    document.getElementById('confirmationMessage').innerText = message;
+    document.getElementById('confirm-delete-account').style.display = 'none';
+    document.getElementById('confirm-sign-out').style.display = 'block';
 }
 
-function cancelDelete() {
+function deleteAccount() {
+    document.getElementById('confirmationDialog').style.display = 'block';
+    document.getElementById('confirm-delete-account').style.display = 'block';
+    document.getElementById('confirm-sign-out').style.display = 'none';
+}
+
+function cancel() {
+    document.getElementById('confirm-delete-account').style.display = 'block';
+    document.getElementById('confirm-sign-out').style.display = 'block';
     document.getElementById('confirmationDialog').style.display = 'none';
 }
 
-function proceedDelete() {
-    let type = document.getElementById('confirmationMessage').innerText.includes('keep') ? 'data' : 'account';
-    alert(`Deleting ${type === 'data' ? 'data' : 'account'}. This action cannot be undone.`);
-    DB.u.delete(hash)
+function proceed() {
+    let type = document.getElementById('confirm-delete-account').style.display === 'block' ? 'account-delete' : 'sign-out';
     let hash = getCookie('hash')
-    if (type == 'account') {
-        DB.u.create(hash)
+    if (type === 'account-delete') {
+        // delete account
+        DB.u.delete(hash);
     }
+    // clear cookies
+    document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+    location.href = '../';
     document.getElementById('confirmationDialog').style.display = 'none';
+    document.getElementById('confirm-delete-account').style.display = 'block';
+    document.getElementById('confirm-sign-out').style.display = 'block';
 }
 
 document.getElementById('editForm').addEventListener('submit', function(event) {
@@ -81,6 +91,10 @@ for(let i = 0; i <ca.length; i++) {
             document.querySelector('.sign-in').style.display = 'none';
         }
     }
+}
+
+if (document.querySelector('.sign-in').style.display != 'none') {
+    window.location.href = '../sign-in';
 }
 
 document.addEventListener('DOMContentLoaded', function() {

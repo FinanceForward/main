@@ -98,9 +98,7 @@ button {
 }
 
 .footer-links {
-    position: absolute;
-    bottom: 80px;
-    width: 200px;
+    text-align: center;
 }
 
 .sidebar .sign-in:hover {
@@ -161,7 +159,7 @@ button {
     background-color: #e68a00;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 817px) {
     .sidebar {
         transform: translateX(-100%);
         position: fixed;

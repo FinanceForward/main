@@ -106,9 +106,7 @@ button {
 }
 
 .footer-links {
-    position: absolute;
-    bottom: 80px;
-    width: 200px;
+    text-align: center;
 }
 
 .sidebar .sign-in:hover {
@@ -126,17 +124,17 @@ button {
 
 .sidebar .footer-links a:hover {
     color: #FF9B07;
+}
+
 .report {
     margin-left: 250px;
     padding: 20px;
     margin-top: 60px;
     transition: margin-left 0.3s ease;
 }
-    margin-top: 60px;
-}
 
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 817px) {
     .sidebar {
         transform: translateX(-100%);
         position: fixed;

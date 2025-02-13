@@ -106,7 +106,7 @@
     
             <div id="editForm">
                 <div class="input-group">
-                    <label for="email">Email:</label>
+                    <label for="email">New Email:</label>
                     <input type="email" id="email" name="email">
                 </div>
     
@@ -118,16 +118,17 @@
             </div>
     
             <div class="delete-options">
-                <button onclick="confirmDelete('data')" class="btn danger-btn">Delete Account Data</button>
-                <button onclick="confirmDelete('account')" class="btn danger-btn">Delete Account</button>
+                <button onclick="signout()" class="btn danger-btn">Sign Out</button>
+                <button onclick="deleteAccount()" class="btn danger-btn">Delete Account</button>
             </div>
     
             <div class="confirmation" id="confirmationDialog" style="display: none;">
                 <h2>Confirmation</h2>
-                <p id="confirmationMessage" class="fancy-text"></p>
+                <p id="confirm-sign-out" class="fancy-text">Are you sure you want to sign out?</p>
+                <p id="confirm-delete-account" class="fancy-text">Are you sure you want to delete your account?</p>
                 <div class="confirmation-buttons">
-                    <button onclick="cancelDelete()" class="btn">Cancel</button>
-                    <button onclick="proceedDelete()" class="btn danger-btn">Proceed</button>
+                    <button onclick="cancel()" class="btn">Cancel</button>
+                    <button onclick="proceed()" class="btn danger-btn">Proceed</button>
                 </div>
             </div>
         </div>

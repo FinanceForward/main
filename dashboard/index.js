@@ -41,11 +41,9 @@ function getCookie(cname) {
     }
   }
 
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelector('.sign-in').addEventListener('click', function() {
-        window.location.href = '../sign-in';
-    });
-});
+if (document.querySelector('.sign-in').style.display != 'none') {
+  window.location.href = '../sign-in';
+}
 
 let totalOBJ = document.querySelector('#total');
 let topCatOBJ = document.querySelectorAll('#top-cat');

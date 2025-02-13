@@ -20,6 +20,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // elements
   const sidebar = document.querySelector('.sidebar');
   const openSidebar = document.querySelector('.logo');
+  const cont_aud = () => {document.querySelector('#continue-audio').play()};
+  const fail_aud = () => {document.querySelector('#fail-audio').play()};
 
   // sidebar open/close
   openSidebar.addEventListener('click', function() {
@@ -42,16 +44,16 @@ document.addEventListener('DOMContentLoaded', function() {
     let hash = getCookie('hash');
 
     // errors
-    if (total == '') return console.error('unfinished receipt: total required');
-    if (month == '') return console.error('unfinished receipt: month required');
-    if (hash == '' || !DB.u.exists(hash)) return console.error('user error: not logged in or does not exist');
+    if (total == '') return fail_aud();
+    if (month == '') return fail_aud();
+    if (hash == '' || !DB.u.exists(hash)) return fail_aud();
   
     // receipt log
     console.log({total, month, category, hash});
 
     // send-in receipt
     DB.u.get(hash).then(user => {
-      if (user == undefined) console.error('user error: not logged in or does not exist');
+      if (user == undefined) fail_aud();
       if (user['totals'] == undefined || user.totals[category] == undefined || user.totals[category][month] == undefined) {
         DB.u.update(hash, {
           'totals': {
@@ -69,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         });
       }
+      cont_aud();
       location.href = '../dashboard';
     });
   });
@@ -88,8 +91,6 @@ for(let i = 0; i <ca.length; i++) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelector('.sign-in').addEventListener('click', function() {
-      window.location.href = '../sign-in';
-  });
-});
+if (document.querySelector('.sign-in').style.display != 'none') {
+  window.location.href = '../sign-in';
+}
