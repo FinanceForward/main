@@ -93,4 +93,40 @@ for(let i = 0; i <ca.length; i++) {
 
 if (document.querySelector('.sign-in').style.display != 'none') {
   window.location.href = '../sign-in';
+} else {
+  let date = new Date();
+  date.setDate(date.getDate() + 1);
+  document.cookie = `hash=${getCookie('hash')}; path=/; expires=${date.toUTCString()}`;
 }
+
+// let mode = 'dark';
+// function toggleMode() {
+//   let modeSwitchOBJ = document.getElementById('mode-switch');
+//   if (mode == 'dark') {
+//     // light mode settings
+//     modeSwitchOBJ.src = '../src/moon.png';
+//     document.body.style.color = '#000000';
+//     document.querySelector('header').style.backgroundColor = '#dbdbdb';
+//     document.querySelector('.sidebar').style.backgroundColor = '#999999';
+//     document.querySelector('.forum').style.backgroundColor = '#FFFFFF';
+//     document.querySelector('.form-container').style.backgroundColor = '#dbdbdb';
+//     let date = new Date();
+//     date.setDate(date.getDate() + 1);
+//     document.cookie = `mode=light; path=/; expires=${date.toUTCString()}`;
+//   } else if (mode == 'light') {
+//     // dark mode settings
+//     modeSwitchOBJ.src = '../src/sun.png';
+//     document.body.style.color = '#FFFFFF';
+//     document.querySelector('header').style.backgroundColor = '#838383';
+//     document.querySelector('.sidebar').style.backgroundColor = '#2F2C27';
+//     document.querySelector('.forum').style.backgroundColor = '#000000';
+//     document.querySelector('.form-container').style.backgroundColor = '#2F2C27';
+//     let date = new Date();
+//     date.setDate(date.getDate() + 1);
+//     document.cookie = `mode=dark; path=/; expires=${date.toUTCString()}`;
+//   } else console.error('Mode not found');
+//   mode = mode == 'dark' ? 'light' : 'dark';
+//   console.log(modeSwitchOBJ);
+// }
+
+// if (getCookie('mode') == 'light') toggleMode();

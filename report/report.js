@@ -43,4 +43,8 @@ for(let i = 0; i <ca.length; i++) {
 
 if (document.querySelector('.sign-in').style.display != 'none') {
   window.location.href = '../sign-in';
+} else {
+  let date = new Date();
+  date.setDate(date.getDate() + 1);
+  document.cookie = `hash=${getCookie('hash')}; path=/; expires=${date.toUTCString()}`;
 }
