@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Forward</title>
+    <link rel="stylesheet" href="./manual-total.css">
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Scripts -->
+    <script src="../fauna.js"></script>
+    <!-- IMPORTANT -->
+    <script type="module">
+        import{Client,fql}from'https://cdn.jsdelivr.net/npm/fauna@latest/dist/browser/index.js';
+        window.Client = Client;
+        window.fql = fql;
+        console.log(fql&&Client ? 'MODULE LOADED' : 'FAILED TO LOAD MODULE')
+    </script>
+    <!-- IMPORTANT -->
+    <audio src="../src/Tink.mp3" id="continue-audio"></audio>
+    <audio src="../src/Sosumi.mp3" id="fail-audio"></audio>
+</head>
+<body>
+    <header>
+        <img class="logo" src="../src/menu.png" alt="menu logo" id="menu_icon">
+        <div class="title">Finance Forward</div>
+        <img class="logo" src="../src/fflogo.jpg" alt="ff logo">
+    </header>
+
+    <nav class="sidebar">
+        <h1>Finance Forward</h1>
+        <ul>
+            <li><a href="../dashboard">Dashboard</a></li>
+            <li><a href="../add-receipt">Add Receipt</a></li>
+            <li><a href="../report">View Report</a></li>
+            <li><a href="../">About Us</a></li>
+        </ul>
+        <button class="sign-in">Sign In</button>
+        <div class="footer-links">
+            <a href="../settings/">Settings</a>
+            <a href="../privacy/">Privacy Policy</a>
+            <a href="../terms/">Terms of Service</a>
+        </div>
+    </nav>
+
+    <main class="forum">
+        <div class="ad">
+            <h1>PLEASE WAIT AS WE UPLOAD YOUR RECEIPT... THIS USUALLY TAKES ABOUT 10 SECONDS</h1>
+            <div class="progress-bar">
+                <div class="progress" id="progress" style="width: 0%;"></div>
+            </div>
+            <script>
+                let progress = 0;
+                const progressBar = document.getElementById('progress');
+                const interval = setInterval(() => {
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                    } else {
+                        progress += 10;
+                        progressBar.style.width = progress + '%';
+                        progressBar.textContent = progress + '%';
+                    }
+                }, 1000);
+            </script>
+            <h3>We use Ads to keep our service free for you:</h3>
+            <script async="async" data-cfasync="false" src="//pl25859720.effectiveratecpm.com/09470266bf687cbda4590d9ce09d31a2/invoke.js"></script>
+            <div id="container-09470266bf687cbda4590d9ce09d31a2" class="ad-box"></div>
+        </div>
+    </main>
+</body>
+</html>
+<script src="./manual-total.js" defer></script>
