@@ -17,20 +17,9 @@ function getCookie(cname) {
 // end cookie script
 
 document.addEventListener('DOMContentLoaded', function() {
-  let time = (10000 + (Math.random() * 6000 - 3000))
-  let startTime = Date.now();
   setTimeout(function() {
     window.location.href = '../dashboard';
-  }, time);
-  let interval = setInterval(function() {
-    let percentDone = (((Date.now() - startTime) / time) * 100) + (Math.random() * 10 - 5);
-    console.log(`Loading: ${percentDone.toFixed(2)}%`);
-    progressBar.style.width = percentDone.toFixed(0) + '%';
-    progressBar.textContent = percentDone.toFixed(0) + '%';
-    if (Date.now() - startTime >= time) {
-      clearInterval(interval);
-    }
-  }, 1000);
+  }, 500);
 });
 
 let name = "hash=";

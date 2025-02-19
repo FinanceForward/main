@@ -45,26 +45,10 @@
 
     <main class="forum">
         <div class="ad">
-            <h1>PLEASE WAIT AS WE UPLOAD YOUR RECEIPT... THIS USUALLY TAKES ABOUT 10 SECONDS</h1>
+            <h1>PLEASE WAIT AS WE UPLOAD YOUR RECEIPT... THIS USUALLY TAKES ABOUT ½ SECOND</h1>
             <div class="progress-bar">
                 <div class="progress" id="progress" style="width: 0%;"></div>
             </div>
-            <script>
-                let progress = 0;
-                const progressBar = document.getElementById('progress');
-                const interval = setInterval(() => {
-                    if (progress >= 100) {
-                        clearInterval(interval);
-                    } else {
-                        progress += 10;
-                        progressBar.style.width = progress + '%';
-                        progressBar.textContent = progress + '%';
-                    }
-                }, 1000);
-            </script>
-            <h3>We use Ads to keep our service free for you:</h3>
-            <script async="async" data-cfasync="false" src="//pl25859720.effectiveratecpm.com/09470266bf687cbda4590d9ce09d31a2/invoke.js"></script>
-            <div id="container-09470266bf687cbda4590d9ce09d31a2" class="ad-box"></div>
         </div>
     </main>
 </body>
