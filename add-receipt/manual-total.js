@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       }
       cont_aud();
-      location.href = '../uploading';
+      location.href = '../dashboard';
     });
   });
 });
