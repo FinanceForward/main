@@ -112,7 +112,11 @@ async function signup() {
   // elements
   let emailOBJ = document.getElementById('email_up');
   let passOBJ = document.getElementById('pass_up');
+  let passCheckOBJ = document.getElementById('pass2_up');
+  let currencyOBJ = document.getElementById('currency');
   let errs = document.getElementById('su-errs');
+
+  let currency = currencyOBJ.value;
 
   function errormsg(err) {
     errs.innerHTML = err;
@@ -131,6 +135,7 @@ async function signup() {
     // errors
     if (emailOBJ.value == '') return errormsg('EMAIL REQUIRED');
     if (passOBJ.value == '') return errormsg('PASSWORD REQUIRED');
+    if (passOBJ.value != passCheckOBJ.value) return errormsg('PASSWORDS DO NOT MATCH');
 
     DB.u.exists(hash).then(exists => {
       if (exists) {
@@ -141,6 +146,9 @@ async function signup() {
         DB.u.create(hash).then(_ => {
           errormsg('ACCOUNT CREATED');
           console.log('account created:', hash);
+
+          // set currency
+          DB.u.update(hash, {'currency': currency});
 
           // set cookie
           let date = new Date();

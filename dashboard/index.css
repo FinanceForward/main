@@ -300,3 +300,7 @@ button {
     align-items: center;
     gap: 4px;
 }
+
+.total {
+    font-size: 50px;
+}

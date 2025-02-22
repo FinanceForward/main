@@ -58,6 +58,26 @@ let hash = getCookie('hash');
 DB.u.get(hash).then((user) => {
     console.log(user);
     let totals = user.totals;
+    let currency = user['currency'];
+    if (currency.includes('*')) {
+      currency = currency.replace('*', '');
+    }
+    const after = user['currency'].includes('*');
+    if (after) {
+      document.querySelectorAll('.c_after').forEach((el) => {
+        el.innerHTML = ' ' + currency;
+        console.log(el, currency);
+      });
+      document.querySelectorAll('.c').forEach((el) => {
+        el.innerHTML = '';
+        console.log(el, currency);
+      });
+    } else {
+      document.querySelectorAll('.c').forEach((el) => {
+        el.innerHTML = currency;
+        console.log(el, currency);
+      });
+    }
     const d = new Date();
     let month = d.getFullYear().toString() + '-' + (d.getMonth()+1 < 10 ? "0" : '') + (d.getMonth()+1).toString();
     let total = (
@@ -75,7 +95,7 @@ DB.u.get(hash).then((user) => {
       ((totals['l'] && totals['l'][month]) || 0) +
       ((totals['other'] && totals['other'][month]) || 0)
     );
-    totalOBJ.innerHTML = "$" + total.toFixed(2).toString();
+    totalOBJ.innerHTML = total.toFixed(2).toString();
 
     let mo = new Date().toISOString().slice(0, 7);
 

@@ -34,10 +34,13 @@ async function sha256(message) {
 async function updateAccount(email, pass) {
     let oldhash = getCookie('hash');
     let newhash = await sha256(email + pass);
-    DB.u.update(oldhash, { hash: newhash });
+    let currency = document.getElementById('currency').value;
+    DB.u.update(oldhash, { hash: newhash, currency: currency });
     document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
     document.cookie = `hash=${newhash}`;
-    alert("Account updated successfully!");
+    setTimeout(() => {
+        location.href = '../sign-in';
+    }, 500);
 }
 
 function signout() {
@@ -109,5 +112,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // sidebar open/close
     openSidebar.addEventListener('click', function() {
         sidebar.classList.toggle('active');
+    });
+
+    // set default currency
+    DB.u.get(getCookie('hash')).then(user => {
+        document.getElementById('currency').value = user.currency;
     });
 });

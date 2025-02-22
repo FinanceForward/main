@@ -1,60 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Account - Finance Forward</title>
-    <link rel="stylesheet" href="ea-styles.css">
-
-    <nav class="fancy-nav">
-        <ul class="nav-links">
-            <li><a href="lp.html">Home</a></li>
-            <li><a href="#sign up">Dashboard</a></li>
-        </ul>
-    </nav>
-</head>
-<body>
-
-    <div class="container">
-        <h1 class="fancy-title">Edit Your Account</h1>
-
-        <form id="editForm">
-            <div class="input-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-                <button type="submit" class="btn fancy-btn">Update Email</button>
-            </div>
-
-            <div class="input-group">
-                <label for="password">New Password:</label>
-                <input type="password" id="password" name="password">
-                <button type="button" onclick="updatePassword()" class="btn fancy-btn">Update Password</button>
-            </div>
-        </form>
-
-        <div class="delete-options">
-            <button onclick="confirmDelete('data')" class="btn danger-btn">Delete Account Data</button>
-            <button onclick="confirmDelete('account')" class="btn danger-btn">Delete Account</button>
-        </div>
-
-        <div class="confirmation" id="confirmationDialog" style="display: none;">
-            <h2>Confirmation</h2>
-            <p id="confirmationMessage" class="fancy-text"></p>
-            <div class="confirmation-buttons">
-                <button onclick="cancelDelete()" class="btn">Cancel</button>
-                <button onclick="proceedDelete()" class="btn danger-btn">Proceed</button>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <a href="privacy_policy.html" class="fancy-link">Privacy Policy</a>
-    </footer>
-
-    <script src="ea.js"></script>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,7 +6,7 @@
     <title>Edit Account - Finance Forward</title>
     <link rel="stylesheet" href="ea-styles.css">
     <link rel="stylesheet" href="./index.css">
-    <link rel="icon" type="image/x-icon" href="./src/fflogo.jpg">
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
     <!-- Scripts -->
     <script src="../fauna.js"></script>
@@ -113,7 +56,29 @@
                 <div class="input-group">
                     <label for="password">New Password:</label>
                     <input type="password" id="password" name="password">
-                    <button type="button" class="btn fancy-btn" onclick="updateAccount(document.getElementById('email').value, document.getElementById('password').value)">Update Credentials</button>
+                </div>
+                
+                <div class="input-group">
+                    <label for="currency">Currency:</label>
+                    <select id="currency" name="currency">
+                        <option value="$">USD ($)</option>
+                        <option value="€">EUR (€)</option>
+                        <option value="£">GBP (£)</option>
+                        <option value="¥">JPY (¥)</option>
+                        <option value="¥">CNY (¥)</option>
+                        <option value="₹">INR (₹)</option>
+                        <option value="$">AUD ($)</option>
+                        <option value="CAN$">CAN (CAN$)</option>
+                        <option value="Fr.*">CHF (Fr.)</option>
+                        <option value="₽">RUB (₽)</option>
+                        <option value="R$">BRL (R$)</option>
+                        <option value="Z$">ZWD (Z$)</option>
+                        <option value="₱">PHP (₱)</option>
+                        <option value="﷼*">SAR (﷼)</option>
+                        <option value="₪">ILS (₪)</option>
+                        <option value="₩">KRW (₩)</option>
+                    </select>
+                    <button type="button" class="btn fancy-btn" onclick="updateAccount(document.getElementById('email').value, document.getElementById('password').value)">Update Settings</button>
                 </div>
             </div>
     
