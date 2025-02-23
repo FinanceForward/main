@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Forward</title>
+    <link rel="stylesheet" href="./manual-total.css">
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Scripts -->
+    <script src="../fauna.js"></script>
+    <!-- IMPORTANT -->
+    <script type="module">
+        import{Client,fql}from'https://cdn.jsdelivr.net/npm/fauna@latest/dist/browser/index.js';
+        window.Client = Client;
+        window.fql = fql;
+        console.log(fql&&Client ? 'MODULE LOADED' : 'FAILED TO LOAD MODULE')
+    </script>
+    <!-- IMPORTANT -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,dashboard,info,receipt_long,settings"/>
+</head>
+<body>
+    <header>
+        <img class="logo" src="../src/menu.png" alt="menu logo" id="menu_icon">
+        <div class="title" id="fftitle_header">Finance Forward</div>
+        <div id="header-right">
+            <a href="../add-receipt"><img src="../src/add_sign.png" alt="plus_icon" class="logo"/></a>
+            <a href="../dashboard"><img src="../src/dash_sign.png" alt="dash_icon" class="logo" style="margin-right: 10px;"/></a>
+            <img class="logo" src="../src/fflogo.jpg" alt="ff logo">
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <h1>Finance Forward</h1>
+        <ul>
+            <li><a href="../dashboard">Home <span class="material-symbols-outlined">dashboard</span></a></li>
+            <li><a href="../add-receipt">Add Receipt <span class="material-symbols-outlined">add</span></a></li>
+            <li><a href="../report">Report <span class="material-symbols-outlined">receipt_long</span></a></li>
+            <li><a href="../">About <span class="material-symbols-outlined">info</span></a></li>
+        </ul>
+        <button class="sign-in">Sign In</button>
+        <div class="footer-links">
+            <a href="../settings/">Account <span class="material-symbols-outlined">settings</span></a>
+            <a href="../legal/">Legal</a>
+        </div>
+    </nav>
+
+    <main class="forum">
+        <p>
+            <h1>Privacy Policy</h1>
+            *Finance Forward Privacy Policy*<br/>
+            October 30, 2024<br/><br/>
+
+            *Introduction*<br/><br/>
+
+            Finance Forward ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and protect your personal information.<br/><br/>
+
+            *Scope*<br/><br/>
+
+            This Privacy Policy applies to information collected through our website and services.<br/><br/>
+
+            *Information Collection*<br/><br/>
+
+            We collect:<br/><br/>
+
+            1. Your name<br/>
+            2. Receipt information:<br/>
+            - Total<br/>
+            - Date<br/>
+            - Type of items purchased<br/>
+            3. Automatically collected information (e.g., IP address, browser type)<br/><br/>
+
+            *Use of Information*<br/><br/>
+
+            We use your information:<br/><br/>
+
+            1. To provide receipt scanning and categorization services<br/>
+            2. To generate monthly spending reports<br/>
+            3. For internal analytics and improvement<br/><br/>
+
+            *Disclosure of Information*<br/><br/>
+
+            We may share your information:<br/><br/>
+
+            1. With service providers (e.g., AI technology partners)<br/>
+            2. For compliance and security purposes<br/>
+            3. With your consent<br/><br/>
+
+            *Security Measures*<br/><br/>
+
+            We implement:<br/><br/>
+
+            1. Encryption<br/>
+            2. Firewalls<br/>
+            3. Access controls<br/>
+            4. Regular security audits<br/><br/>
+
+            *Your Rights*<br/><br/>
+
+            1. Access to your information<br/>
+            2. Correction or deletion<br/>
+            3. Complaint submission<br/><br/>
+
+            *Data Retention*<br/><br/>
+
+            We retain your information for as long as you maintain an account with us.<br/><br/>
+
+            *Changes to This Policy*<br/><br/>
+
+            We reserve the right to update this Privacy Policy.<br/><br/>
+
+            *Contact Us*<br/><br/>
+
+            For questions or concerns:<br/><br/>
+
+            Emails:<br/>
+            Primary: financeforward.help@gmail.com<br/>
+            Partnerships/Other Non-Customer: (leonardlamparter@gmail.com)<br/><br/>
+
+            *Additional Information*<br/><br/>
+
+            1. We do not collect or store credit card information.<br/>
+            2. We do not save individual receipt items.<br/>
+        </p>
+        <p>
+            <h1>Terms Of Service</h1>
+            *Terms of Service*<br/>
+            October 30, 2024<br/>
+            <br/>
+            *Introduction*<br/>
+            Please carefully read these Terms of Service ("Terms") before using Finance Forward's website and services.<br/>
+            <br/>
+            *Acceptance*<br/>
+            By using Finance Forward, you agree to these Terms.<br/>
+            <br/>
+            *Services*<br/>
+            Finance Forward provides:<br/>
+            <br/>
+            1. Receipt scanning and categorization services using AI technology.<br/>
+            2. Monthly spending reports.<br/>
+            3. Secure storage of receipt information (total, date, type of items purchased).<br/>
+            <br/>
+            *Requirements*<br/>
+            1. Provide accurate and up-to-date information.<br/>
+            2. Maintain account security and confidentiality.<br/>
+            3. Notify us promptly of changes or unauthorized access.<br/>
+            <br/>
+            *Responsibility*<br/>
+            You are responsible for:<br/>
+            <br/>
+            1. Ensuring account information accuracy.<br/>
+            2. All activities occurring under your account.<br/>
+            <br/>
+            *Prohibited Conduct*<br/>
+            Do not:<br/>
+            <br/>
+            1. Use Finance Forward for unlawful purposes.<br/>
+            2. Interfere with services.<br/>
+            3. Infringe intellectual property.<br/>
+            4. Spam or harass.<br/>
+            <br/>
+            *Intellectual Property*<br/>
+            Finance Forward retains all rights to its:<br/>
+            <br/>
+            1. Patents<br/>
+            2. Copyrights<br/>
+            3. Trademarks<br/>
+            4. Trade secrets<br/>
+            <br/>
+            *Disclaimer*<br/>
+            Finance Forward disclaims:<br/>
+            <br/>
+            1. Warranties<br/>
+            2. Liability for damages<br/>
+            <br/>
+            *Limitation of Liability*<br/>
+            Finance Forward's liability is limited.<br/>
+            <br/>
+            *Indemnification*<br/>
+            You agree to protect Finance Forward from:<br/>
+            <br/>
+            1. Lawsuits<br/>
+            2. Claims<br/>
+            3. Damages<br/>
+            4. Expenses<br/>
+            <br/>
+            *Termination*<br/>
+            Finance Forward may terminate services:<br/>
+            <br/>
+            1. Without notice<br/>
+            2. For violation of Terms<br/>
+            <br/>
+            *Changes*<br/>
+            Finance Forward reserves the right to update these Terms.<br/>
+            <br/>
+            *Contact*<br/>
+            For questions or concerns:<br/>
+            <br/>
+            Emails:<br/>
+            Primary: financeforward.help@gmail.com<br/>
+            Partnerships/Other Non-Customer: (leonardlamparter@gmail.com)<br/>
+        </p>
+    </main>
+</body>
+</html>
+<script src="./manual-total.js" defer></script>

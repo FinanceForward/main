@@ -17,27 +17,31 @@
         console.log(fql&&Client ? 'MODULE LOADED' : 'FAILED TO LOAD MODULE')
     </script>
     <!-- IMPORTANT -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,dashboard,info,receipt_long,settings"/>
 </head>
 <body>
     <header>
         <img class="logo" src="../src/menu.png" alt="menu logo" id="menu_icon">
-        <div class="title">Finance Forward</div>
-        <img class="logo" src="../src/fflogo.jpg" alt="ff logo">
+        <div class="title" id="fftitle_header">Finance Forward</div>
+        <div id="header-right">
+            <a href="../add-receipt"><img src="../src/add_sign.png" alt="plus_icon" class="logo"/></a>
+            <a href="../dashboard"><img src="../src/dash_sign.png" alt="dash_icon" class="logo" style="margin-right: 10px;"/></a>
+            <img class="logo" src="../src/fflogo.jpg" alt="ff logo">
+        </div>
     </header>
 
     <nav class="sidebar">
         <h1>Finance Forward</h1>
         <ul>
-            <li><a href="../dashboard">Dashboard</a></li>
-            <li><a href="../add-receipt">Add Receipt</a></li>
-            <li><a href="../report">View Report</a></li>
-            <li><a href="../">About Us</a></li>
+            <li><a href="../dashboard">Home <span class="material-symbols-outlined">dashboard</span></a></li>
+            <li><a href="../add-receipt">Add Receipt <span class="material-symbols-outlined">add</span></a></li>
+            <li><a href="../report">Report <span class="material-symbols-outlined">receipt_long</span></a></li>
+            <li><a href="../">About <span class="material-symbols-outlined">info</span></a></li>
         </ul>
         <button class="sign-in">Sign In</button>
         <div class="footer-links">
-            <a href="../settings/">Settings</a>
-            <a href="../privacy/">Privacy Policy</a>
-            <a href="../terms/">Terms of Service</a>
+            <a href="../settings/">Account <span class="material-symbols-outlined">settings</span></a>
+            <a href="../legal/">Legal</a>
         </div>
     </nav>
 
@@ -60,8 +64,8 @@
                 </div>
             </div>
             <div class="actions centered-div">
-                <button onclick="window.location.href='../report'">View Report</button>
-                <button onclick="window.location.href='../add-receipt'">Add Receipt</button>
+                <button onclick="window.location.href='../add-receipt'">Add Receipt <span class="material-symbols-outlined" style="font-size: 40px;">add</span></button>
+                <button onclick="window.location.href='../report'">View Report <span class="material-symbols-outlined" style="font-size: 40px;">receipt_long</span></button>
             </div>
         </section>
     </main>

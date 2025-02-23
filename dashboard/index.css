@@ -74,6 +74,7 @@ header .title {
     padding: 5px 0;
     display: block;
     transition: color 0.3s ease, background-color 0.3s ease;
+    font-size: 28px;
 }
 
 .sidebar ul li a:hover {
@@ -98,7 +99,7 @@ button {
 }
 
 .footer-links {
-    text-align: center;
+    margin-top: 48px;
 }
 
 .sidebar .sign-in:hover {
@@ -107,7 +108,7 @@ button {
 
 .sidebar .footer-links a {
     color: #FFFFFF;
-    font-size: 12px;
+    font-size: 28px;
     display: block;
     margin-top: 10px;
     text-decoration: none;
@@ -211,6 +212,10 @@ button {
         display: unset !important;
     }
 
+    #fftitle_header {
+        display: none !important;
+    }
+
     .dashboard .actions button,
     .dashboard p,
     .dashboard ol {
@@ -303,4 +308,11 @@ button {
 
 .total {
     font-size: 50px;
+}
+
+.header-right {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    justify-content: center;
 }
