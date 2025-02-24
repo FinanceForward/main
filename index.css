@@ -233,3 +233,20 @@ button {
     text-align: center;
     justify-content: center;
 }
+
+button {
+    background-color: #FF9B07;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    width: 100%;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 20px !important;
+    font-size: 18px;
+}
+
+button:hover {
+    background-color: #e68a00;
+}
