@@ -82,6 +82,26 @@ document.getElementById('editForm').addEventListener('submit', function(event) {
     // Here you would handle the actual email update
 });
 
+document.getElementById('premium').addEventListener('change', function() {
+    if (this.checked) {
+        // Here you would handle the premium subscription
+        DB.u.update(getCookie('hash'), { premium: true }).then(() => {
+            location.href = '../dashboard';
+        });
+    } else {
+        // Here you would handle the premium unsubscription
+        DB.u.update(getCookie('hash'), { premium: null}).then(() => {
+            location.href = '../dashboard';
+        });
+    }
+})
+
+document.addEventListener('DOMContentLoaded', function() {
+    DB.u.get(getCookie('hash')).then((user) => {
+        document.getElementById('premium').checked = user['premium'] == undefined ? false : true;
+    });
+});
+
 let name = "hash=";
 let ca = decodeURIComponent(document.cookie).split(';');
 for(let i = 0; i <ca.length; i++) {

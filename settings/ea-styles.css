@@ -167,3 +167,38 @@ footer {
     color: #0b7dda;
     text-decoration: underline;
 }
+
+#switch_premium {
+    background-color: #4a4a4a;
+    width: 100px;
+    height: 50px;
+    border-radius: 100px;
+    cursor: pointer;
+    position: relative;
+    transition: 0.2s;
+}
+
+#switch_premium::before {
+    position: absolute;
+    content: '';
+    background-color: #FF9B07;
+    width: 35px;
+    height: 40px;
+    border-radius: 90px;
+    margin: 5px;
+    transform: translateX(-45px);
+    transition: 0.2s;
+}
+
+input:checked + #switch_premium {
+    background-color: #FF9B07;
+}
+
+input:checked + #switch_premium::before {
+    transform: translateX(0px);
+    background-color: #4a4a4a;
+}
+
+input[type="checkbox"] {
+    display: none;
+}

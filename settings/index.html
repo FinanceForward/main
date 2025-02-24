@@ -61,7 +61,7 @@
                     <label for="password">New Password:</label>
                     <input type="password" id="password" name="password">
                 </div>
-                
+
                 <div class="input-group">
                     <label for="currency">Currency:</label>
                     <select id="currency" name="currency">
@@ -82,6 +82,11 @@
                         <option value="₪">ILS (₪)</option>
                         <option value="₩">KRW (₩)</option>
                     </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Show Hidden Features</label>
+                    <input type="checkbox" id="premium" name="premium"><label for="premium" id="switch_premium"></label><br>
                     <button type="button" class="btn fancy-btn" onclick="updateAccount(document.getElementById('email').value, document.getElementById('password').value)">Update Settings</button>
                 </div>
             </div>
