@@ -71,7 +71,14 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         });
       }
-      let recOBJ = (user['receipts'][month] || []);
+      let recOBJ;
+      if (user['receipts'] == undefined) {
+        recOBJ = [];
+      } else if (user['receipts'][month] == undefined) {
+        recOBJ = [];
+      } else {
+        recOBJ = (user['receipts'][month] || []);
+      }
       recOBJ.push([total, category]);
       DB.u.update(hash, {
         'receipts': {
