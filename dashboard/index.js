@@ -56,6 +56,7 @@ let topCatAmtOBJ = document.querySelectorAll('#top-cat-amt');
 let hash = getCookie('hash');
 
 DB.u.get(hash).then((user) => {
+    if (user['premium'] == undefined) document.querySelectorAll('.premium-feature').forEach((el) => el.style.display = 'none');
     console.log(user);
     let totals = user.totals;
     let currency = user['currency'];
@@ -129,4 +130,15 @@ DB.u.get(hash).then((user) => {
     topCatAmtOBJ.forEach((topCatAmtOBJ, i) => {
         topCatAmtOBJ.innerHTML = top3AMT[i].toFixed(2).toString();
     })
+});
+
+document.querySelectorAll('.premium-feature').forEach((el) => {
+  el.style.background = 'linear-gradient(45deg, #FF9B07, gold)';
+  let angle = 45;
+  setInterval(() => {
+    angle = (angle + 1) % 360;
+    document.querySelectorAll('.premium-feature').forEach((el) => {
+      el.style.background = `linear-gradient(${angle}deg, #FF9B07, gold)`;
+    });
+  }, 10);
 });

@@ -71,6 +71,13 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         });
       }
+      let recOBJ = (user['receipts'][month] || []);
+      recOBJ.push([total, category]);
+      DB.u.update(hash, {
+        'receipts': {
+          [month]: recOBJ
+        }
+      })
       cont_aud();
       location.href = '../dashboard';
     });
