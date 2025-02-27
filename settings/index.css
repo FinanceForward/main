@@ -233,3 +233,11 @@ button {
     text-align: center;
     justify-content: center;
 }
+
+#beta_icon {
+    background-color: #2F2C27;
+    color: #FF9B07;
+    padding: 5px;
+    font-size: 15px;
+    border-radius: 10px;
+}

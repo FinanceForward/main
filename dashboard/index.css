@@ -320,3 +320,11 @@ button {
 button {
     margin: 10px;
 }
+
+#beta_icon {
+    background-color: #2F2C27;
+    color: #FF9B07;
+    padding: 5px;
+    font-size: 15px;
+    border-radius: 10px;
+}
