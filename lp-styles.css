@@ -45,7 +45,7 @@ main {
 }
 
 .section {
-    min-height: 100vh;
+    min-height: 101vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -204,4 +204,16 @@ footer {
     .roadmap {
         display: none;
     }
+}
+
+.hidden {
+    opacity: 0;
+    filter: blur(100px);
+    transition: all 1s;
+}
+
+.show {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0);
 }
