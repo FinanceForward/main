@@ -117,23 +117,24 @@
                     macro.style.display = 'block';
                 });
                 let totals = user.totals;
+                let currency = user.currency;
                 try {
                     totals['a']
                     console.log(totals)
-                    document.getElementById('a').innerHTML = '$' + ((totals['a'] && totals['a'][month]) || 0).toFixed(2);
-                    document.getElementById('b').innerHTML = '$' + ((totals['b'] && totals['b'][month]) || 0).toFixed(2);
-                    document.getElementById('c').innerHTML = '$' + ((totals['c'] && totals['c'][month]) || 0).toFixed(2);
-                    document.getElementById('d').innerHTML = '$' + ((totals['d'] && totals['d'][month]) || 0).toFixed(2);
-                    document.getElementById('e').innerHTML = '$' + ((totals['e'] && totals['e'][month]) || 0).toFixed(2);
-                    document.getElementById('f').innerHTML = '$' + ((totals['f'] && totals['f'][month]) || 0).toFixed(2);
-                    document.getElementById('g').innerHTML = '$' + ((totals['g'] && totals['g'][month]) || 0).toFixed(2);
-                    document.getElementById('h').innerHTML = '$' + ((totals['h'] && totals['h'][month]) || 0).toFixed(2);
-                    document.getElementById('i').innerHTML = '$' + ((totals['i'] && totals['i'][month]) || 0).toFixed(2);
-                    document.getElementById('j').innerHTML = '$' + ((totals['j'] && totals['j'][month]) || 0).toFixed(2);
-                    document.getElementById('k').innerHTML = '$' + ((totals['k'] && totals['k'][month]) || 0).toFixed(2);
-                    document.getElementById('l').innerHTML = '$' + ((totals['l'] && totals['l'][month]) || 0).toFixed(2);
-                    document.getElementById('other').innerHTML = '$' + ((totals['other'] && totals['other'][month]) || 0).toFixed(2);
-                    document.getElementById('total').innerHTML = '$' + (
+                    document.getElementById('a').innerHTML = currency + ((totals['a'] && totals['a'][month]) || 0).toFixed(2);
+                    document.getElementById('b').innerHTML = currency + ((totals['b'] && totals['b'][month]) || 0).toFixed(2);
+                    document.getElementById('c').innerHTML = currency + ((totals['c'] && totals['c'][month]) || 0).toFixed(2);
+                    document.getElementById('d').innerHTML = currency + ((totals['d'] && totals['d'][month]) || 0).toFixed(2);
+                    document.getElementById('e').innerHTML = currency + ((totals['e'] && totals['e'][month]) || 0).toFixed(2);
+                    document.getElementById('f').innerHTML = currency + ((totals['f'] && totals['f'][month]) || 0).toFixed(2);
+                    document.getElementById('g').innerHTML = currency + ((totals['g'] && totals['g'][month]) || 0).toFixed(2);
+                    document.getElementById('h').innerHTML = currency + ((totals['h'] && totals['h'][month]) || 0).toFixed(2);
+                    document.getElementById('i').innerHTML = currency + ((totals['i'] && totals['i'][month]) || 0).toFixed(2);
+                    document.getElementById('j').innerHTML = currency + ((totals['j'] && totals['j'][month]) || 0).toFixed(2);
+                    document.getElementById('k').innerHTML = currency + ((totals['k'] && totals['k'][month]) || 0).toFixed(2);
+                    document.getElementById('l').innerHTML = currency + ((totals['l'] && totals['l'][month]) || 0).toFixed(2);
+                    document.getElementById('other').innerHTML = currency + ((totals['other'] && totals['other'][month]) || 0).toFixed(2);
+                    document.getElementById('total').innerHTML = currency + (
                         ((totals['a'] && totals['a'][month]) || 0) +
                         ((totals['b'] && totals['b'][month]) || 0) +
                         ((totals['c'] && totals['c'][month]) || 0) +
@@ -149,20 +150,20 @@
                         ((totals['other'] && totals['other'][month]) || 0)
                     ).toFixed(2)
                 } catch {
-                    document.getElementById('a').innerHTML = '$0.00';
-                    document.getElementById('b').innerHTML = '$0.00';
-                    document.getElementById('c').innerHTML = '$0.00';
-                    document.getElementById('d').innerHTML = '$0.00';
-                    document.getElementById('e').innerHTML = '$0.00';
-                    document.getElementById('f').innerHTML = '$0.00';
-                    document.getElementById('g').innerHTML = '$0.00';
-                    document.getElementById('h').innerHTML = '$0.00';
-                    document.getElementById('i').innerHTML = '$0.00';
-                    document.getElementById('j').innerHTML = '$0.00';
-                    document.getElementById('k').innerHTML = '$0.00';
-                    document.getElementById('l').innerHTML = '$0.00';
-                    document.getElementById('other').innerHTML = '$0.00';
-                    document.getElementById('total').innerHTML = '$0.00';
+                    document.getElementById('a').innerHTML = currency + '0.00';
+                    document.getElementById('b').innerHTML = currency + '$0.00';
+                    document.getElementById('c').innerHTML = currency + '$0.00';
+                    document.getElementById('d').innerHTML = currency + '$0.00';
+                    document.getElementById('e').innerHTML = currency + '$0.00';
+                    document.getElementById('f').innerHTML = currency + '$0.00';
+                    document.getElementById('g').innerHTML = currency + '$0.00';
+                    document.getElementById('h').innerHTML = currency + '$0.00';
+                    document.getElementById('i').innerHTML = currency + '$0.00';
+                    document.getElementById('j').innerHTML = currency + '$0.00';
+                    document.getElementById('k').innerHTML = currency + '$0.00';
+                    document.getElementById('l').innerHTML = currency + '$0.00';
+                    document.getElementById('other').innerHTML = currency + '$0.00';
+                    document.getElementById('total').innerHTML = currency + '$0.00';
                 }
                 document.getElementById('monthselect').style.display = 'none';
             });
