@@ -82,25 +82,25 @@ document.getElementById('editForm').addEventListener('submit', function(event) {
     // Here you would handle the actual email update
 });
 
-document.getElementById('premium').addEventListener('change', function() {
-    if (this.checked) {
-        // Here you would handle the premium subscription
-        DB.u.update(getCookie('hash'), { premium: true }).then(() => {
-            location.href = '../dashboard';
-        });
-    } else {
-        // Here you would handle the premium unsubscription
-        DB.u.update(getCookie('hash'), { premium: null}).then(() => {
-            location.href = '../dashboard';
-        });
-    }
-})
+// document.getElementById('premium').addEventListener('change', function() {
+//     if (this.checked) {
+//         // Here you would handle the premium subscription
+//         DB.u.update(getCookie('hash'), { premium: true }).then(() => {
+//             location.href = '../dashboard';
+//         });
+//     } else {
+//         // Here you would handle the premium unsubscription
+//         DB.u.update(getCookie('hash'), { premium: null}).then(() => {
+//             location.href = '../dashboard';
+//         });
+//     }
+// })
 
-document.addEventListener('DOMContentLoaded', function() {
-    DB.u.get(getCookie('hash')).then((user) => {
-        document.getElementById('premium').checked = user['premium'] == undefined ? false : true;
-    });
-});
+// document.addEventListener('DOMContentLoaded', function() {
+//     DB.u.get(getCookie('hash')).then((user) => {
+//         document.getElementById('premium').checked = (user['premium'] == undefined) ? false : true;
+//     });
+// });
 
 let name = "hash=";
 let ca = decodeURIComponent(document.cookie).split(';');
@@ -121,7 +121,9 @@ if (document.querySelector('.sign-in').style.display != 'none') {
 } else {
     let date = new Date();
     date.setDate(date.getDate() + 7);
-    document.cookie = `hash=${getCookie('hash')}; path=/; expires=${date.toUTCString()}`;
+    let c = `hash=${getCookie('hash')}; path=../; expires=${date.toUTCString()}`;
+    document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+    document.cookie = c;
   }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -136,6 +138,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // set default currency
     DB.u.get(getCookie('hash')).then(user => {
-        document.getElementById('currency').value = user.currency;
+        document.getElementById('currency').value = user['currency'];
     });
 });

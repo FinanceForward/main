@@ -46,16 +46,16 @@ function getCookie(cname) {
         document.querySelector('.sign-in').style.display = 'none';
     }
     }
-    document.querySelectorAll('.premium-feature').forEach((el) => {
-      el.style.background = 'linear-gradient(45deg, #FF9B07, gold)';
-      let angle = 45;
-      setInterval(() => {
-        angle = (angle + 1) % 360;
-        document.querySelectorAll('.premium-feature').forEach((el) => {
-          el.style.background = `linear-gradient(${angle}deg, #FF9B07, gold)`;
-        });
-      }, 10);
-    });
+    // document.querySelectorAll('.premium-feature').forEach((el) => {
+    //   el.style.background = 'linear-gradient(45deg, #FF9B07, gold)';
+    //   let angle = 45;
+    //   setInterval(() => {
+    //     angle = (angle + 1) % 360;
+    //     document.querySelectorAll('.premium-feature').forEach((el) => {
+    //       el.style.background = `linear-gradient(${angle}deg, #FF9B07, gold)`;
+    //     });
+    //   }, 10);
+    // });
   }
 
 if (document.querySelector('.sign-in').style.display != 'none') {
