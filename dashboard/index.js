@@ -1,3 +1,10 @@
+document.querySelector('.dashboard').classList.add('display-none')
+document.querySelector('.loader').classList.remove('display-none')
+setTimeout(() => {
+  document.querySelector('.loader').classList.add('display-none')
+  document.querySelector('.dashboard').classList.remove('display-none')
+}, 1000)
+
 // cookie script
 function getCookie(cname) {
     let name = cname + "=";
