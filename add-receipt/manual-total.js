@@ -16,6 +16,19 @@ function getCookie(cname) {
 }
 // end cookie script
 
+let c_categories;
+DB.u.get(getCookie('hash')).then((user) => {
+  c_categories = user['c_categories'] || {}
+  c_categories.forEach((newcatn) => {
+    let newcatOBJ = document.createElement('option')
+    newcatOBJ.value = newcatn
+    newcatOBJ.innerHTML = newcatn
+    document.getElementById('cat').appendChild(newcatOBJ)
+  })
+  document.getElementById('cat').innerHTML += '<option value="category_manager">Manage Categories +</option>'
+})
+
+
 document.addEventListener('DOMContentLoaded', function() {
   // elements
   const sidebar = document.querySelector('.sidebar');
@@ -27,7 +40,13 @@ document.addEventListener('DOMContentLoaded', function() {
   openSidebar.addEventListener('click', function() {
     sidebar.classList.toggle('active');
   });
-  
+
+  document.getElementById('cat').addEventListener('change', _=> {
+    if (document.getElementById('cat').value == 'category_manager') {
+      location.href = '../category_manager'
+    }
+  });
+
   // submit event listener
   document.getElementById('go').addEventListener('click', e => {
     e.preventDefault();

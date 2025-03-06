@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap">
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <style>
+        * { font-family: 'Manrope', sans-serif; background-color: black; color: white; }
+        h1 { text-align: center; }
+        li { margin-bottom: 10px; }
+        .material-symbols-outlined { font-size: 50px; color: white; text-decoration: none; }
+    </style>
+    <title>Category Manager</title>
+    <script src="../fauna.js" defer></script>
+    <script type="module">
+        import { Client, fql } from 'https://cdn.jsdelivr.net/npm/fauna@latest/dist/browser/index.js';
+        window.Client = Client;
+        window.fql = fql;
+    </script>
+</head>
+<body>
+    <a href="../dashboard"><span class="material-symbols-outlined">chevron_backward</span></a>
+    <h1>Category Manager</h1>
+    <ul id="category-list"></ul>
+    <script src="./index.js" defer></script>
+</body>
+</html>

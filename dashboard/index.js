@@ -139,6 +139,9 @@ DB.u.get(hash).then((user) => {
       "l": "Books",
       "other": "OTHER"
     }
+    user['c_categories'].forEach(c_category =>{
+      CATdict[c_category] = c_category;
+    })
     top3CAT = top3CAT.map(v => CATdict[v]);
 
     topCatOBJ.forEach((topCatOBJ, i) => {
