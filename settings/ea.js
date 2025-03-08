@@ -110,31 +110,25 @@ for(let i = 0; i <ca.length; i++) {
     c = c.substring(1);
     }
     if (c.indexOf(name) == 0) {
-        if (getCookie('hash') != '') {
-            document.querySelector('.sign-in').style.display = 'none';
+        if (getCookie('hash') != ''){} else {
+            window.location.href = '../sign-in';
         }
+    } else {
+        window.location.href = '../sign-in';
     }
 }
 
-if (document.querySelector('.sign-in').style.display != 'none') {
-    window.location.href = '../sign-in';
-} else {
-    let date = new Date();
-    date.setDate(date.getDate() + 7);
-    let c = `hash=${getCookie('hash')}; path=../; expires=${date.toUTCString()}`;
-    document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
-    document.cookie = c;
-  }
+
+let date = new Date();
+date.setDate(date.getDate() + 7);
+let c = `hash=${getCookie('hash')}; path=../; expires=${date.toUTCString()}`;
+document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+document.cookie = c;
 
 document.addEventListener('DOMContentLoaded', function() {
     // elements
     const sidebar = document.querySelector('.sidebar');
     const openSidebar = document.querySelector('.logo');
-
-    // sidebar open/close
-    openSidebar.addEventListener('click', function() {
-        sidebar.classList.toggle('active');
-    });
 
     // set default currency
     DB.u.get(getCookie('hash')).then(user => {
