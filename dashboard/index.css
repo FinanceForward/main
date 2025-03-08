@@ -28,6 +28,11 @@ header {
     z-index: 1000;
 }
 
+img {
+    height: 25px;
+    width: 25px;
+}
+
 header .logo,
 header .user-icon {
     width: 40px;
@@ -290,7 +295,8 @@ button {
     gap: 10px;
 }
 
-.dashboard .actions a {
+.dashboard .actions a,
+.dashboard .top-categories a {
     padding: 10px 20px;
     border-radius: 4px;
     cursor: pointer;
@@ -306,12 +312,20 @@ button {
     background-color: #000000 !important;
 }
 
+.dashboard .top-categories a {
+    display: none;
+}
+
 @media screen and (max-width: 768px) {
     .dashboard {
         margin-left: 0;
         padding: 10px;
         height: calc(100vh - 80px); /* Adjust height for mobile view */
         width: 100vw; /* Adjust width for mobile view */
+    }
+
+    .dashboard .top-categories a {
+        display: inline-block;
     }
 }
 

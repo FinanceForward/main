@@ -22,12 +22,25 @@
             margin-bottom: 10px;
         }
 
-        .material-symbols-outlined {
+        img {
+            height: 28px;
+            margin-top: 10px;
+            color: white;
+            text-decoration: none;
+            background-color: #FF9B07;
+        }
+
+        #chevron_backward {
             font-family: 'Material Symbols Outlined';
             font-size: 50px;
             margin-top: 10px;
             color: white;
             text-decoration: none;
+            background-color: inherit;
+        }
+
+        div {
+            margin-top: 50px;
         }
 
         div a {
@@ -46,23 +59,53 @@
         div a:hover {
             background-color: black;
         }
+
+        #search {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #FF9B07;
+            margin-bottom: 20px;
+            font-size: 20px;
+            box-sizing: border-box;
+            color: white;
+        }
+
+        .rare-use,
+        .rare-use img {
+            background-color: rgb(139, 63, 8);
+        }
     </style>
-    <title>Changelog</title>
+    <title>Links - FF</title>
 </head>
 <body>
-    <a href="../dashboard"><span class="material-symbols-outlined">chevron_backward</span></a>
+    <a href="../dashboard"><span class="material-symbols-outlined" id="chevron_backward">chevron_backward</span></a>
     <h1>Links</h1>
     <div>
-        <a href="../dashboard/">Dashboard</a>
-        <a href="../add-receipt/">Add Receipt</a>
-        <a href="../report/">View Report</a>
-        <a href="../printout/">Print Report</a>
-        <a href="../receipts/">View Receipts</a>
-        <a href="../category_manager/">Category Manager</a>
-        <a href="../settings/">Settings</a>
-        <a href="../">Info</a>
-        <a href="../changelog/">Changelog</a>
-        <a href="../legal/">Legal</a>
+        <a href="../dashboard/">Dashboard <img src="../src/icons/dashboard.png"></a>
+        <a href="../add-receipt/">Add Receipt <img src="../src/icons/add.png"></a>
+        <a href="../report/">View Report <img src="../src/icons/receipt_long.png"></a>
+        <a href="../receipts/">View Receipts <img src="../src/icons/receipt.png"></a>
+        <a href="../category_manager/">Category Manager <img src="../src/icons/manage.png"></a>
+        <a href="../printout/">Print Report <img src="../src/icons/printer.png"></a>
+        <a class="rare-use" href="../settings/">Settings <img src="../src/icons/settings.png"></a>
+        <a class="rare-use" href="../">Info <img src="../src/icons/info.png"></a>
+        <a class="rare-use" href="../legal/">Legal <img src="../src/icons/gavel.png"></a>
+        <a class="rare-use" href="../changelog/">Changelog <img src="../src/icons/log.png"></a>
     </div>
 </body>
 </html>
+<script>
+    let searchbar = document.getElementById('search');
+    searchbar.addEventListener('input', () => {
+        searchbar.value = searchbar.value.replace(/[^a-zA-Z\s]/g, '');
+        console.log(document.querySelectorAll('#links-div a').forEach(a => {
+            if (!a.textContent.toLowerCase().includes(searchbar.value.toLowerCase())) {
+                a.style.display = 'none';
+            } else {
+                a.style.display = 'inline-block';
+            }
+        }))
+        console.log(searchbar.value);
+    })
+</script>
