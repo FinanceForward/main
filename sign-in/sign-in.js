@@ -39,11 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // elements
   const sidebar = document.querySelector('.sidebar');
   const openSidebar = document.querySelector('.logo');
-
-  // sidebar open/close
-  openSidebar.addEventListener('click', function() {
-    sidebar.classList.toggle('active');
-  });
   
   // submit event listener
   const signinBtn = document.getElementById('signin-btn');
@@ -176,9 +171,3 @@ for(let i = 0; i <ca.length; i++) {
   }
   }
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelector('.sign-in').addEventListener('click', function() {
-      window.location.href = '../sign-in';
-  });
-});

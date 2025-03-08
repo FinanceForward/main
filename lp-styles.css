@@ -40,8 +40,6 @@ main {
     display: flex;
     flex-direction: column;
     margin-top: 60px;
-    width: calc(100vw - 250px);
-    margin-left: 250px;
 }
 
 .section {
@@ -204,4 +202,12 @@ footer {
     .roadmap {
         display: none;
     }
+
+    .sidebar {
+        display: initial;
+    }
+}
+
+.sidebar {
+    display: none;
 }

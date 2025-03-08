@@ -159,6 +159,10 @@ button {
     #fftitle_header {
         display: none !important;
     }
+
+    .sidebar {
+        display: initial !important;
+    }
 }
 
 #menu_icon {
@@ -178,4 +182,12 @@ button {
     padding: 5px;
     font-size: 15px;
     border-radius: 10px;
+}
+
+.sidebar {
+    display: none;
+}
+
+.report {
+    margin-left: 0
 }

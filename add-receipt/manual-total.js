@@ -1,165 +1,73 @@
-// cookie script
-function getCookie(cname) {
-  let name = cname + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(';');
-  for(let i = 0; i <ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
+// Utility function to get a cookie value
+function getCookie(name) {
+  return document.cookie.split('; ').reduce((acc, cookie) => {
+      const [key, value] = cookie.split('=');
+      return key === name ? decodeURIComponent(value) : acc;
+  }, '');
 }
-// end cookie script
 
-let c_categories;
-DB.u.get(getCookie('hash')).then((user) => {
-  c_categories = user['c_categories'] || {}
-  c_categories.forEach((newcatn) => {
-    let newcatOBJ = document.createElement('option')
-    newcatOBJ.value = newcatn
-    newcatOBJ.innerHTML = newcatn
-    document.getElementById('cat').appendChild(newcatOBJ)
-  })
-  document.getElementById('cat').innerHTML += '<option value="category_manager">Manage Categories +</option>'
-})
+// Fetch and update category options
+document.addEventListener('DOMContentLoaded', async () => {
+  const catSelect = document.getElementById('cat');
+  const hash = getCookie('hash');
+  if (!hash) return;
 
+  try {
+      const user = await DB.u.get(hash);
+      if (!user) return;
 
-document.addEventListener('DOMContentLoaded', function() {
-  // elements
-  const sidebar = document.querySelector('.sidebar');
-  const openSidebar = document.querySelector('.logo');
-  const cont_aud = () => {document.querySelector('#continue-audio').play()};
-  const fail_aud = () => {document.querySelector('#fail-audio').play()};
-
-  // sidebar open/close
-  openSidebar.addEventListener('click', function() {
-    sidebar.classList.toggle('active');
-  });
-
-  document.getElementById('cat').addEventListener('change', _=> {
-    if (document.getElementById('cat').value == 'category_manager') {
-      location.href = '../category_manager'
-    }
-  });
-
-  // submit event listener
-  document.getElementById('go').addEventListener('click', e => {
-    e.preventDefault();
-    
-    // elements
-    let amtOBJ = document.getElementById('amt');
-    let motOBJ = document.getElementById('mot');
-    let catOBJ = document.getElementById('cat');
-
-    // values
-    let total = amtOBJ.value;
-    let month = motOBJ.value;
-    let category = catOBJ.value;
-    let hash = getCookie('hash');
-
-    // errors
-    if (total == '') return fail_aud();
-    if (month == '') return fail_aud();
-    if (hash == '' || !DB.u.exists(hash)) return fail_aud();
-  
-    // receipt log
-    console.log({total, month, category, hash});
-
-    // send-in receipt
-    DB.u.get(hash).then(user => {
-      if (user == undefined) fail_aud();
-      if (user['totals'] == undefined || user.totals[category] == undefined || user.totals[category][month] == undefined) {
-        DB.u.update(hash, {
-          'totals': {
-            [category]: {
-              [month]: Number(total)
-            }
-          }
-        });
-      } else {
-        DB.u.update(hash, {
-          'totals': {
-            [category]: {
-              [month]: Number(user.totals[category][month]) + Number(total)
-            }
-          }
-        });
-      }
-      let recOBJ;
-      if (user['receipts'] == undefined) {
-        recOBJ = [];
-      } else if (user['receipts'][month] == undefined) {
-        recOBJ = [];
-      } else {
-        recOBJ = (user['receipts'][month] || []);
-      }
-      recOBJ.push([total, category]);
-      DB.u.update(hash, {
-        'receipts': {
-          [month]: recOBJ
-        }
-      })
-      cont_aud();
-      location.href = '../dashboard';
-    });
-  });
+      (user.c_categories || []).forEach(category => {
+          const option = new Option(category, category);
+          catSelect.appendChild(option);
+      });
+      catSelect.innerHTML += '<option value="category_manager">Manage Categories +</option>';
+  } catch (error) {
+      console.error('Error fetching categories:', error);
+  }
 });
 
-let name = "hash=";
-let ca = decodeURIComponent(document.cookie).split(';');
-for(let i = 0; i <ca.length; i++) {
-  let c = ca[i];
-  while (c.charAt(0) == ' ') {
-  c = c.substring(1);
+// Redirect to category manager
+document.getElementById('cat').addEventListener('change', event => {
+  if (event.target.value === 'category_manager') {
+      location.href = '../category_manager';
   }
-  if (c.indexOf(name) == 0) {
-  if (getCookie('hash') != '') {
-      document.querySelector('.sign-in').style.display = 'none';
-  }
-  }
-}
+});
 
-if (document.querySelector('.sign-in').style.display != 'none') {
+// Handle receipt submission
+document.getElementById('go').addEventListener('click', async event => {
+  event.preventDefault();
+  const total = document.getElementById('amt').value.trim();
+  const month = document.getElementById('mot').value.trim();
+  const category = document.getElementById('cat').value;
+  const hash = getCookie('hash');
+
+  if (!total || !month || !hash) return document.getElementById('fail-audio').play();
+
+  try {
+      const user = await DB.u.get(hash);
+      if (!user) return document.getElementById('fail-audio').play();
+      
+      const updatedTotals = user.totals || {};
+      updatedTotals[category] = updatedTotals[category] || {};
+      updatedTotals[category][month] = (Number(updatedTotals[category][month]) || 0) + Number(total);
+      
+      const updatedReceipts = user.receipts || {};
+      updatedReceipts[month] = updatedReceipts[month] || [];
+      updatedReceipts[month].push([total, category]);
+
+      await DB.u.update(hash, { totals: updatedTotals, receipts: updatedReceipts });
+      document.getElementById('continue-audio').play();
+      location.href = '../dashboard';
+  } catch (error) {
+      console.error('Error submitting receipt:', error);
+      document.getElementById('fail-audio').play();
+  }
+});
+
+// Check authentication and redirect if necessary
+if (!getCookie('hash')) {
   window.location.href = '../sign-in';
 } else {
-  let date = new Date();
-  date.setDate(date.getDate() + 7);
-  document.cookie = `hash=${getCookie('hash')}; path=/; expires=${date.toUTCString()}`;
+  document.querySelector('.sign-in').style.display = 'none';
+  document.cookie = `hash=${getCookie('hash')}; path=/; expires=${new Date(Date.now() + 7 * 864e5).toUTCString()}`;
 }
-
-// let mode = 'dark';
-// function toggleMode() {
-//   let modeSwitchOBJ = document.getElementById('mode-switch');
-//   if (mode == 'dark') {
-//     // light mode settings
-//     modeSwitchOBJ.src = '../src/moon.png';
-//     document.body.style.color = '#000000';
-//     document.querySelector('header').style.backgroundColor = '#dbdbdb';
-//     document.querySelector('.sidebar').style.backgroundColor = '#999999';
-//     document.querySelector('.forum').style.backgroundColor = '#FFFFFF';
-//     document.querySelector('.form-container').style.backgroundColor = '#dbdbdb';
-//     let date = new Date();
-//     date.setDate(date.getDate() + 1);
-//     document.cookie = `mode=light; path=/; expires=${date.toUTCString()}`;
-//   } else if (mode == 'light') {
-//     // dark mode settings
-//     modeSwitchOBJ.src = '../src/sun.png';
-//     document.body.style.color = '#FFFFFF';
-//     document.querySelector('header').style.backgroundColor = '#838383';
-//     document.querySelector('.sidebar').style.backgroundColor = '#2F2C27';
-//     document.querySelector('.forum').style.backgroundColor = '#000000';
-//     document.querySelector('.form-container').style.backgroundColor = '#2F2C27';
-//     let date = new Date();
-//     date.setDate(date.getDate() + 1);
-//     document.cookie = `mode=dark; path=/; expires=${date.toUTCString()}`;
-//   } else console.error('Mode not found');
-//   mode = mode == 'dark' ? 'light' : 'dark';
-//   console.log(modeSwitchOBJ);
-// }
-
-// if (getCookie('mode') == 'light') toggleMode();

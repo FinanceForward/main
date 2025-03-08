@@ -3,7 +3,7 @@ document.querySelector('.loader').classList.remove('display-none')
 setTimeout(() => {
   document.querySelector('.loader').classList.add('display-none')
   document.querySelector('.dashboard').classList.remove('display-none')
-}, 1000)
+}, 250)
 
 // cookie script
 function getCookie(cname) {
@@ -46,16 +46,6 @@ function getCookie(cname) {
         document.querySelector('.sign-in').style.display = 'none';
     }
     }
-    document.querySelectorAll('.premium-feature').forEach((el) => {
-      el.style.background = 'linear-gradient(45deg, #FF9B07, gold)';
-      let angle = 45;
-      setInterval(() => {
-        angle = (angle + 1) % 360;
-        document.querySelectorAll('.premium-feature').forEach((el) => {
-          el.style.background = `linear-gradient(${angle}deg, #FF9B07, gold)`;
-        });
-      }, 10);
-    });
   }
 
 if (document.querySelector('.sign-in').style.display != 'none') {
@@ -98,21 +88,10 @@ DB.u.get(hash).then((user) => {
     }
     const d = new Date();
     let month = d.getFullYear().toString() + '-' + (d.getMonth()+1 < 10 ? "0" : '') + (d.getMonth()+1).toString();
-    let total = (
-      ((totals['a'] && totals['a'][month]) || 0) +
-      ((totals['b'] && totals['b'][month]) || 0) +
-      ((totals['c'] && totals['c'][month]) || 0) +
-      ((totals['d'] && totals['d'][month]) || 0) +
-      ((totals['e'] && totals['e'][month]) || 0) +
-      ((totals['f'] && totals['f'][month]) || 0) +
-      ((totals['g'] && totals['g'][month]) || 0) +
-      ((totals['h'] && totals['h'][month]) || 0) +
-      ((totals['i'] && totals['i'][month]) || 0) +
-      ((totals['j'] && totals['j'][month]) || 0) +
-      ((totals['k'] && totals['k'][month]) || 0) +
-      ((totals['l'] && totals['l'][month]) || 0) +
-      ((totals['other'] && totals['other'][month]) || 0)
-    );
+    let total = Object.values(user.totals).reduce((sum, category) => {
+      if (category[month]) sum += category[month];
+      return sum;
+    }, 0);
     totalOBJ.innerHTML = total.toFixed(2).toString();
 
     let mo = new Date().toISOString().slice(0, 7);

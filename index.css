@@ -209,17 +209,14 @@ button {
         width: 100%; 
     }
 
-    #menu_icon {
-        display: unset !important;
-    }
-
-    #fftitle_header {
-        display: none !important;
-    }
-
     main {
         margin-left: 0 !important;
         width: 100vw !important;
+    }
+
+    a[href="./add-receipt"],
+    a[href="./dashboard"] {
+        display: none;
     }
 }
 

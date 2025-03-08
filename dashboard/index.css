@@ -82,6 +82,10 @@ header .title {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+.sidebar ul li .nav-others {
+    font-size: 14px;
+}
+
 .sidebar .sign-in {
     background-color: #FF9B07;
     color: white;
@@ -226,6 +230,15 @@ button {
         margin-left: 0 !important;
         width: 100% !important;
     }
+
+    .actions {
+        display: none !important;
+    }
+
+    .top-categories,
+    .total-spent {
+        height: 50% !important;
+    }
 }
 
 #menu_icon {
@@ -260,9 +273,12 @@ button {
     font-size: 20px;
 }
 
-.dashboard p,
+.dashboard p {
+    font-size: 40px;
+}
+
 .dashboard ol {
-    font-size: 50px;
+    font-size: 30px;
 }
 .dashboard ol {
     list-style-type: none;
@@ -274,19 +290,20 @@ button {
     gap: 10px;
 }
 
-.dashboard .actions button {
-    background-color: #FF9B07;
-    color: #FFFFFF;
-    border: none;
+.dashboard .actions a {
     padding: 10px 20px;
     border-radius: 4px;
     cursor: pointer;
+    background-color: #FF9B07;
     transition: background-color 0.3s ease;
-    font-size: 50px;
+    white-space: nowrap;
+    font-size: 30px;
+    display: inline-block;
+    margin: 3px;
 }
 
-.dashboard .actions button:hover {
-    background-color: #e68a00;
+.dashboard .actions a:hover {
+    background-color: #000000 !important;
 }
 
 @media screen and (max-width: 768px) {
@@ -331,4 +348,8 @@ button {
 
 .display-none {
     display: none;
+}
+
+#nav-other {
+    cursor: pointer;
 }
