@@ -64,6 +64,10 @@ let hash = getCookie('hash');
 
 DB.u.get(hash).then((user) => {
     if (user['premium'] == undefined) document.querySelectorAll('.premium-feature').forEach((el) => el.style.display = 'none');
+    if (user['version'] == undefined) {
+      alert("Welcome to Beta 1.1, We've added a few new features, hope you enjoy them!")
+      DB.u.update(hash, { 'version' : 'beta1.1' })
+    }
     console.log(user);
     let totals = user.totals;
     let currency = user['currency'];
