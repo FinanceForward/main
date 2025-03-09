@@ -120,21 +120,7 @@
                     document.getElementById('k').innerHTML = currency + ((totals['k'] && totals['k'][month]) || 0).toFixed(2) + currency_suffix;
                     document.getElementById('l').innerHTML = currency + ((totals['l'] && totals['l'][month]) || 0).toFixed(2) + currency_suffix;
                     document.getElementById('other').innerHTML = currency + ((totals['other'] && totals['other'][month]) || 0).toFixed(2) + currency_suffix;
-                    document.getElementById('total').innerHTML = currency + (
-                        ((totals['a'] && totals['a'][month]) || 0) +
-                        ((totals['b'] && totals['b'][month]) || 0) +
-                        ((totals['c'] && totals['c'][month]) || 0) +
-                        ((totals['d'] && totals['d'][month]) || 0) +
-                        ((totals['e'] && totals['e'][month]) || 0) +
-                        ((totals['f'] && totals['f'][month]) || 0) +
-                        ((totals['g'] && totals['g'][month]) || 0) +
-                        ((totals['h'] && totals['h'][month]) || 0) +
-                        ((totals['i'] && totals['i'][month]) || 0) +
-                        ((totals['j'] && totals['j'][month]) || 0) +
-                        ((totals['k'] && totals['k'][month]) || 0) +
-                        ((totals['l'] && totals['l'][month]) || 0) +
-                        ((totals['other'] && totals['other'][month]) || 0)
-                    ).toFixed(2) + currency_suffix;
+                    document.getElementById('total').innerHTML = currency + Object.keys(totals).reduce((sum, key) => sum + ((totals[key] && totals[key][month]) || 0), 0).toFixed(2) + currency_suffix;
                 } catch {
                     document.getElementById('a').innerHTML = currency + '0.00' + currency_suffix;
                     document.getElementById('b').innerHTML = currency + '0.00' + currency_suffix;
