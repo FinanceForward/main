@@ -21,7 +21,7 @@
 <body>
     <main class="report">
         <div class="report-container">
-            <macro>Finance Forward BETA 1.0</macro>
+            <macro>Finance Forward BETA 1.1</macro>
             <macro>Monthly Report</macro>
             <div id="monthselect">
                 <micro>Select the month of the report you would like to print</micro><br><br>
@@ -41,6 +41,7 @@
             <macro>Pets<total id="j"></total></macro>
             <macro>Health<total id="k"></total></macro>
             <macro>Books<total id="l"></total></macro>
+            <div id="c_cats"></div>
             <macro>OTHER<total id="other"></total></macro><br>
             <macro>TOTAL<total id="total"></total></macro>
         </div>
@@ -69,6 +70,9 @@
     }
 </style>
 <script>
+    function addCategory(name, total) {
+        document.getElementById('c_cats').innerHTML += `<macro>${name}<total>${total}</total></macro><br/>`
+    }
     document.addEventListener('DOMContentLoaded', function() {
         let monthOBJ = document.getElementById('month');
         document.querySelectorAll('macro').forEach(function(macro) {
@@ -91,53 +95,46 @@
                 });
                 let totals = user.totals;
                 let currency = user.currency;
+                let currency_suffix = currency.replace('*', '');
+                if (currency != currency_suffix) {currency = ''; currency_suffix = ' ' + currency_suffix}
+                else {currency_suffix = ''}
                 try {
                     totals['a']
                     console.log(totals)
-                    document.getElementById('a').innerHTML = currency + ((totals['a'] && totals['a'][month]) || 0).toFixed(2);
-                    document.getElementById('b').innerHTML = currency + ((totals['b'] && totals['b'][month]) || 0).toFixed(2);
-                    document.getElementById('c').innerHTML = currency + ((totals['c'] && totals['c'][month]) || 0).toFixed(2);
-                    document.getElementById('d').innerHTML = currency + ((totals['d'] && totals['d'][month]) || 0).toFixed(2);
-                    document.getElementById('e').innerHTML = currency + ((totals['e'] && totals['e'][month]) || 0).toFixed(2);
-                    document.getElementById('f').innerHTML = currency + ((totals['f'] && totals['f'][month]) || 0).toFixed(2);
-                    document.getElementById('g').innerHTML = currency + ((totals['g'] && totals['g'][month]) || 0).toFixed(2);
-                    document.getElementById('h').innerHTML = currency + ((totals['h'] && totals['h'][month]) || 0).toFixed(2);
-                    document.getElementById('i').innerHTML = currency + ((totals['i'] && totals['i'][month]) || 0).toFixed(2);
-                    document.getElementById('j').innerHTML = currency + ((totals['j'] && totals['j'][month]) || 0).toFixed(2);
-                    document.getElementById('k').innerHTML = currency + ((totals['k'] && totals['k'][month]) || 0).toFixed(2);
-                    document.getElementById('l').innerHTML = currency + ((totals['l'] && totals['l'][month]) || 0).toFixed(2);
-                    document.getElementById('other').innerHTML = currency + ((totals['other'] && totals['other'][month]) || 0).toFixed(2);
-                    document.getElementById('total').innerHTML = currency + (
-                        ((totals['a'] && totals['a'][month]) || 0) +
-                        ((totals['b'] && totals['b'][month]) || 0) +
-                        ((totals['c'] && totals['c'][month]) || 0) +
-                        ((totals['d'] && totals['d'][month]) || 0) +
-                        ((totals['e'] && totals['e'][month]) || 0) +
-                        ((totals['f'] && totals['f'][month]) || 0) +
-                        ((totals['g'] && totals['g'][month]) || 0) +
-                        ((totals['h'] && totals['h'][month]) || 0) +
-                        ((totals['i'] && totals['i'][month]) || 0) +
-                        ((totals['j'] && totals['j'][month]) || 0) +
-                        ((totals['k'] && totals['k'][month]) || 0) +
-                        ((totals['l'] && totals['l'][month]) || 0) +
-                        ((totals['other'] && totals['other'][month]) || 0)
-                    ).toFixed(2)
+                    document.getElementById('a').innerHTML = currency + ((totals['a'] && totals['a'][month]) || 0).toFixed(2) + currency_suffix;
+                    document.getElementById('b').innerHTML = currency + ((totals['b'] && totals['b'][month]) || 0).toFixed(2) + currency_suffix;
+                    document.getElementById('c').innerHTML = currency + ((totals['c'] && totals['c'][month]) || 0).toFixed(2) + currency_suffix;
+                    document.getElementById('d').innerHTML = currency + ((totals['d'] && totals['d'][month]) || 0).toFixed(2) + currency_suffix;
+                    document.getElementById('e').innerHTML = currency + ((totals['e'] && totals['e'][month]) || 0).toFixed(2) + currency_suffix;
+                    document.getElementById('f').innerHTML = currency + ((totals['f'] && totals['f'][month]) || 0).toFixed(2) + currency_suffix;
+                    document.getElementById('g').innerHTML = currency + ((totals['g'] && totals['g'][month]) || 0).toFixed(2) + currency_suffix;
+                    document.getElementById('h').innerHTML = currency + ((totals['h'] && totals['h'][month]) || 0).toFixed(2) + currency_suffix;
+                    document.getElementById('i').innerHTML = currency + ((totals['i'] && totals['i'][month]) || 0).toFixed(2) + currency_suffix;
+                    document.getElementById('j').innerHTML = currency + ((totals['j'] && totals['j'][month]) || 0).toFixed(2) + currency_suffix;
+                    document.getElementById('k').innerHTML = currency + ((totals['k'] && totals['k'][month]) || 0).toFixed(2) + currency_suffix;
+                    document.getElementById('l').innerHTML = currency + ((totals['l'] && totals['l'][month]) || 0).toFixed(2) + currency_suffix;
+                    document.getElementById('other').innerHTML = currency + ((totals['other'] && totals['other'][month]) || 0).toFixed(2) + currency_suffix;
+                    document.getElementById('total').innerHTML = currency + Object.keys(totals).reduce((sum, key) => sum + ((totals[key] && totals[key][month]) || 0), 0).toFixed(2) + currency_suffix;
                 } catch {
-                    document.getElementById('a').innerHTML = currency + '0.00';
-                    document.getElementById('b').innerHTML = currency + '0.00';
-                    document.getElementById('c').innerHTML = currency + '0.00';
-                    document.getElementById('d').innerHTML = currency + '0.00';
-                    document.getElementById('e').innerHTML = currency + '0.00';
-                    document.getElementById('f').innerHTML = currency + '0.00';
-                    document.getElementById('g').innerHTML = currency + '0.00';
-                    document.getElementById('h').innerHTML = currency + '0.00';
-                    document.getElementById('i').innerHTML = currency + '0.00';
-                    document.getElementById('j').innerHTML = currency + '0.00';
-                    document.getElementById('k').innerHTML = currency + '0.00';
-                    document.getElementById('l').innerHTML = currency + '0.00';
-                    document.getElementById('other').innerHTML = currency +'0.00';
-                    document.getElementById('total').innerHTML = currency +'0.00';
+                    document.getElementById('a').innerHTML = currency + '0.00' + currency_suffix;
+                    document.getElementById('b').innerHTML = currency + '0.00' + currency_suffix;
+                    document.getElementById('c').innerHTML = currency + '0.00' + currency_suffix;
+                    document.getElementById('d').innerHTML = currency + '0.00' + currency_suffix;
+                    document.getElementById('e').innerHTML = currency + '0.00' + currency_suffix;
+                    document.getElementById('f').innerHTML = currency + '0.00' + currency_suffix;
+                    document.getElementById('g').innerHTML = currency + '0.00' + currency_suffix;
+                    document.getElementById('h').innerHTML = currency + '0.00' + currency_suffix;
+                    document.getElementById('i').innerHTML = currency + '0.00' + currency_suffix;
+                    document.getElementById('j').innerHTML = currency + '0.00' + currency_suffix;
+                    document.getElementById('k').innerHTML = currency + '0.00' + currency_suffix;
+                    document.getElementById('l').innerHTML = currency + '0.00' + currency_suffix;
+                    document.getElementById('other').innerHTML = currency + '0.00' + currency_suffix;
+                    document.getElementById('total').innerHTML = currency + '0.00' + currency_suffix;
                 }
+                let c_cat_totals = Object.keys(totals).filter(key => !['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'other'].includes(key));
+                c_cat_totals.forEach(cat => {
+                    addCategory(cat, currency + ((totals[cat] && totals[cat][month]) || 0).toFixed(2) + currency_suffix);
+                });
                 document.getElementById('monthselect').style.display = 'none';
                 print()
                 location.href="../report"

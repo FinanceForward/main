@@ -202,3 +202,15 @@ input:checked + #switch_premium::before {
 input[type="checkbox"] {
     display: none;
 }
+
+main {
+    margin: 0 !important;
+}
+
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-size: 50px;
+    margin-top: 10px;
+    color: white;
+    text-decoration: none;
+}

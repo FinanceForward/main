@@ -24,13 +24,16 @@ let CATdict = {
     "k": "Health",
     "l": "Books",
     "other": "OTHER"
-  }
+}
 DB.u.get(getCookie('hash')).then((user) => {
     if (user == undefined) return location.href = '../sign-in';
     if (user['premium'] == undefined) {
         alert('You need to be a premium user to access this feature');
         return location.href = '../dashboard'
     };
+    user['c_categories'].forEach(c_category =>{
+        CATdict[c_category] = c_category
+    })
     let m = new Date().toISOString().slice(0, 7);
     let rlist = user['receipts'][m] || [];
     rlist.forEach((receipt) => {

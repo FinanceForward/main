@@ -221,3 +221,11 @@ button {
     font-size: 15px;
     border-radius: 10px;
 }
+
+p {
+    margin-bottom: 100px;
+}
+
+h4 {
+    margin: 0;
+}

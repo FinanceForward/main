@@ -28,6 +28,11 @@ header {
     z-index: 1000;
 }
 
+img {
+    height: 25px;
+    width: 25px;
+}
+
 header .logo,
 header .user-icon {
     width: 40px;
@@ -80,6 +85,10 @@ header .title {
 .sidebar ul li a:hover {
     color: #FF9B07;
     background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar ul li .nav-others {
+    font-size: 14px;
 }
 
 .sidebar .sign-in {
@@ -226,6 +235,15 @@ button {
         margin-left: 0 !important;
         width: 100% !important;
     }
+
+    .actions {
+        display: none !important;
+    }
+
+    .top-categories,
+    .total-spent {
+        height: 50% !important;
+    }
 }
 
 #menu_icon {
@@ -260,9 +278,12 @@ button {
     font-size: 20px;
 }
 
-.dashboard p,
+.dashboard p {
+    font-size: 40px;
+}
+
 .dashboard ol {
-    font-size: 50px;
+    font-size: 30px;
 }
 .dashboard ol {
     list-style-type: none;
@@ -274,19 +295,25 @@ button {
     gap: 10px;
 }
 
-.dashboard .actions button {
-    background-color: #FF9B07;
-    color: #FFFFFF;
-    border: none;
+.dashboard .actions a,
+.dashboard .top-categories a {
     padding: 10px 20px;
     border-radius: 4px;
     cursor: pointer;
+    background-color: #FF9B07;
     transition: background-color 0.3s ease;
-    font-size: 50px;
+    white-space: nowrap;
+    font-size: 30px;
+    display: inline-block;
+    margin: 3px;
 }
 
-.dashboard .actions button:hover {
-    background-color: #e68a00;
+.dashboard .actions a:hover {
+    background-color: #000000 !important;
+}
+
+.dashboard .top-categories a {
+    display: none;
 }
 
 @media screen and (max-width: 768px) {
@@ -295,6 +322,10 @@ button {
         padding: 10px;
         height: calc(100vh - 80px); /* Adjust height for mobile view */
         width: 100vw; /* Adjust width for mobile view */
+    }
+
+    .dashboard .top-categories a {
+        display: inline-block;
     }
 }
 
@@ -331,4 +362,8 @@ button {
 
 .display-none {
     display: none;
+}
+
+#nav-other {
+    cursor: pointer;
 }
