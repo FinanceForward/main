@@ -101,7 +101,7 @@
                 });
                 let totals = user.totals;
                 let currency = user.currency;
-                let currency_suffix = currency.replace('*', '');
+                let currency_suffix = currency.replace(/\*/g, '');
                 if (currency != currency_suffix) {currency = ''; currency_suffix = ' ' + currency_suffix}
                 else {currency_suffix = ''}
                 try {
