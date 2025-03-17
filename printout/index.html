@@ -120,6 +120,11 @@
             return cookie[name];
             }
             DB.u.get(getCookie('hash')).then(user => {
+                setTimeout(_ => {
+                    document.getElementById('monthselect').style.display = 'none';
+                    print()
+                    location.href="../report"
+                }, 1000);
                 document.querySelectorAll('macro').forEach(function(macro) {
                     macro.style.display = 'block';
                 });
@@ -165,10 +170,7 @@
                 c_cat_totals.forEach(cat => {
                     addCategory(cat, currency + ((totals[cat] && totals[cat][month]) || 0).toFixed(2) + currency_suffix);
                 });
-                document.getElementById('monthselect').style.display = 'none';
                 addCategory('Subscriptions', currency + processGrandTotal(user['subs']).toFixed(2) + currency_suffix);
-                print()
-                location.href="../report"
             });
         });
     });

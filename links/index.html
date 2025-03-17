@@ -81,12 +81,14 @@
 <body>
     <a href="../dashboard"><span class="material-symbols-outlined" id="chevron_backward">chevron_backward</span></a>
     <h1>Links</h1>
-    <div>
+    <input type="text" id="search" placeholder="Search...">
+    <div id="links-div">
         <a href="../dashboard/">Dashboard <img src="../src/icons/dashboard.png"></a>
         <a href="../add-receipt/">Add Receipt <img src="../src/icons/add.png"></a>
         <a href="../report/">View Report <img src="../src/icons/receipt_long.png"></a>
         <a href="../receipts/">View Receipts <img src="../src/icons/receipt.png"></a>
         <a href="../category_manager/">Category Manager <img src="../src/icons/manage.png"></a>
+        <a href="../subs_manager/">Subscription Manager <img src="../src/icons/subscriptions.png"></a>
         <a href="../printout/">Print Report <img src="../src/icons/printer.png"></a>
         <a class="rare-use" href="../settings/">Settings <img src="../src/icons/settings.png"></a>
         <a class="rare-use" href="../">Info <img src="../src/icons/info.png"></a>
@@ -108,4 +110,47 @@
         }))
         console.log(searchbar.value);
     })
+    searchbar.addEventListener('change', () => {
+        searchbar.value = searchbar.value.replace(/[^a-zA-Z\s]/g, '');
+        let count = 0;
+        let fo;
+        console.log(document.querySelectorAll('#links-div a').forEach(a => {
+            if (a.textContent.toLowerCase().includes(searchbar.value.toLowerCase())) {
+                count++;
+                fo = a;
+            }
+        }))
+        if (count == 1) {
+            fo.click();
+        }
+        console.log(searchbar.value);
+    })
+
+    // shortcuts
+    document.addEventListener('keydown', function(event) {
+    // SHIFT + D = DASHBOARD
+    if (event.shiftKey && event.key === 'D') {
+        window.location.href = '../dashboard'
+    }
+
+    // SHIFT + R = ADD RECEIPT
+    if (event.shiftKey && event.key === 'R') {
+        window.location.href = '../add-receipt';
+    }
+
+    // SHIFT + V = VIEW REPORT
+    if (event.shiftKey && event.key === 'V') {
+        window.location.href = '../report';
+    }
+
+    // SHIFT + P = PRINTOUT REPORT
+    if (event.shiftKey && event.key === 'P') {
+        window.location.href = '../printout';
+    }
+
+    // SHIFT + L = LINKS
+    if (event.shiftKey && event.key === 'L') {
+        window.location.href = '../links';
+    }
+    });
 </script>
