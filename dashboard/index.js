@@ -69,6 +69,7 @@ DB.u.get(hash).then((user) => {
       alert("Welcome to Beta 1.2 (Pre-Release), We've added a few new features, hope you enjoy them!")
       DB.u.update(hash, { 'version' : 'beta1.2pr' })
     }
+    user['c_categories'] = user['c_categories'] || [];
     console.log(user);
     let totals = user.totals;
     let currency = user['currency'];
