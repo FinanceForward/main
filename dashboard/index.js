@@ -4,6 +4,7 @@ setTimeout(() => {
   document.querySelector('.loader').classList.add('display-none')
   document.querySelector('.dashboard').classList.remove('display-none')
 }, 250)
+document.querySelector('#beta_icon').innerHTML = version
 
 // cookie script
 function getCookie(cname) {
@@ -64,10 +65,11 @@ let hash = getCookie('hash');
 
 DB.u.get(hash).then((user) => {
     if (user['premium'] == undefined) document.querySelectorAll('.premium-feature').forEach((el) => el.style.display = 'none');
-    if (user['version'] == undefined) {
-      alert("Welcome to Beta 1.1, We've added a few new features, hope you enjoy them!")
-      DB.u.update(hash, { 'version' : 'beta1.1' })
+    if (user['version'] != 'beta1.2pr') {
+      alert("Welcome to Beta 1.2 (Pre-Release), We've added a few new features, hope you enjoy them!")
+      DB.u.update(hash, { 'version' : 'beta1.2pr' })
     }
+    user['c_categories'] = user['c_categories'] || [];
     console.log(user);
     let totals = user.totals;
     let currency = user['currency'];
@@ -133,4 +135,46 @@ DB.u.get(hash).then((user) => {
     topCatAmtOBJ.forEach((topCatAmtOBJ, i) => {
         topCatAmtOBJ.innerHTML = top3AMT[i].toFixed(2).toString();
     })
+});
+
+// shortcuts
+document.addEventListener('keydown', function(event) {
+  // SHIFT = SHOW SHORTCUTS
+  if (event.shiftKey) {
+    document.querySelector('.shortcuts').style.display = 'block';
+    document.querySelector('.dashboard').style.display = 'none';
+  }
+
+  // SHIFT + D = DASHBOARD
+  if (event.shiftKey && event.key === 'D') {
+    window.location.href = '../dashboard'
+  }
+
+  // SHIFT + R = ADD RECEIPT
+  if (event.shiftKey && event.key === 'R') {
+    window.location.href = '../add-receipt';
+  }
+
+  // SHIFT + V = VIEW REPORT
+  if (event.shiftKey && event.key === 'V') {
+    window.location.href = '../report';
+  }
+
+  // SHIFT + P = PRINTOUT REPORT
+  if (event.shiftKey && event.key === 'P') {
+    window.location.href = '../printout';
+  }
+
+  // SHIFT + L = LINKS
+  if (event.shiftKey && event.key === 'L') {
+    window.location.href = '../links';
+  }
+});
+
+document.addEventListener('keyup', function(event) {
+  // RELEASE SHIFT = HIDE SHORTCUTS
+  if (!event.shiftKey) {
+    document.querySelector('.shortcuts').style.display = 'none';
+    document.querySelector('.dashboard').style.display = '';
+  }
 });

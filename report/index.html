@@ -76,6 +76,36 @@
     }
 </style>
 <script>
+    // DATECONFIG & SUB
+    function processGrandTotal(subs) {
+        const today = new Date();
+        const dayOfMonth = today.getDate();
+        const month = today.getMonth() + 1;
+        const weekdaysPassed = (targetDay) => {
+            return Array.from({ length: dayOfMonth }, (_, i) => new Date(today.getFullYear(), today.getMonth(), i + 1))
+                .filter(date => date.getDay() === targetDay).length;
+        };
+        const DOW = (x) => ({'sunday':0 , 'monday':1 , 'tuesday':2 , 'wednesday':3 , 'thursday':4 , 'friday':5 , 'saturday':6})[x.toLowerCase()];
+        
+        const calculateTotal = (sub) => {
+            switch (sub.frequency) {
+                case 'weekly':
+                    return weekdaysPassed(DOW(sub.date) % 7) * sub.price;
+                case 'monthly':
+                    return (dayOfMonth >= sub.date ? sub.price : 0);
+                case 'yearly':
+                    return ((month == sub.date[1] && dayOfMonth >= sub.date[0]) ? sub.price : 0);
+                default:
+                    console.error('ERROR: calculateTotal() error');
+                    return 0;
+            }
+        };
+
+        return (subs || []).reduce((p, n) => p + calculateTotal(n), 0);
+    }
+</script>
+<script>
+    // REPORT SCRIPTS
     function addCategory(name, total) {
         document.getElementById('c_cats').innerHTML += `<macro>${name}<total>${total}</total></macro><br/>`
     }
@@ -141,6 +171,7 @@
                 c_cat_totals.forEach(cat => {
                     addCategory(cat, currency + ((totals[cat] && totals[cat][month]) || 0).toFixed(2) + currency_suffix);
                 });
+                addCategory('Subscriptions', currency + processGrandTotal(user['subs']).toFixed(2) + currency_suffix);
                 document.getElementById('monthselect').style.display = 'none';
             });
         });

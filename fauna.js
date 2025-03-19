@@ -1,6 +1,5 @@
 let RunQ =  async (query) => await (new Client({secret: 'fnAF1LlG-fAAQiSiyTR_I23rhEFg8xZgUWgLDs7p'})).query(query)
 
-
 // EXPORT FUNCTIONS
 let DB = {
     'user': {
@@ -20,7 +19,11 @@ let DB = {
     'runQ': RunQ
 }
 
+let version = "BETA 1.2"
+
 window.DB = DB
+window.version = version
+window.RunQ = RunQ
 
 /**
  * About this file: fauna.js

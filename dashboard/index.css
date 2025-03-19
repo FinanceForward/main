@@ -244,6 +244,17 @@ button {
     .total-spent {
         height: 50% !important;
     }
+
+    .dashboard {
+        margin-left: 0;
+        padding: 10px;
+        height: calc(100vh - 80px); /* Adjust height for mobile view */
+        width: 100vw; /* Adjust width for mobile view */
+    }
+
+    .dashboard .top-categories a {
+        display: inline-block;
+    }
 }
 
 #menu_icon {
@@ -314,19 +325,6 @@ button {
 
 .dashboard .top-categories a {
     display: none;
-}
-
-@media screen and (max-width: 768px) {
-    .dashboard {
-        margin-left: 0;
-        padding: 10px;
-        height: calc(100vh - 80px); /* Adjust height for mobile view */
-        width: 100vw; /* Adjust width for mobile view */
-    }
-
-    .dashboard .top-categories a {
-        display: inline-block;
-    }
 }
 
 .centered-div {

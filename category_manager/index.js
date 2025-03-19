@@ -1,3 +1,31 @@
+// shortcuts
+document.addEventListener('keydown', function(event) {
+    // SHIFT + D = DASHBOARD
+    if (event.shiftKey && event.key === 'D') {
+      window.location.href = '../dashboard'
+    }
+  
+    // SHIFT + R = ADD RECEIPT
+    if (event.shiftKey && event.key === 'R') {
+      window.location.href = '../add-receipt';
+    }
+  
+    // SHIFT + V = VIEW REPORT
+    if (event.shiftKey && event.key === 'V') {
+      window.location.href = '../report';
+    }
+  
+    // SHIFT + P = PRINTOUT REPORT
+    if (event.shiftKey && event.key === 'P') {
+      window.location.href = '../printout';
+    }
+  
+    // SHIFT + L = LINKS
+    if (event.shiftKey && event.key === 'L') {
+      window.location.href = '../links';
+    }
+});
+
 // ✅ Optimized Cookie Retrieval
 const getCookie = (name) => {
     return document.cookie.split("; ")
@@ -15,6 +43,7 @@ const categoryNames = {
 
 const categoryList = document.getElementById("category-list");
 let userCategories = new Set(); // ✅ Using a Set for quick lookups
+let userx;
 
 // ✅ Fetch User & Categories Efficiently
 DB.u.get(getCookie('hash')).then(user => {
@@ -23,6 +52,7 @@ DB.u.get(getCookie('hash')).then(user => {
 
     // ✅ Add user's categories
     userCategories = new Set(user.c_categories);
+    userx = user;
     renderCategories();
 });
 
@@ -58,8 +88,48 @@ categoryList.addEventListener("click", (e) => {
 });
 
 // ✅ Efficient Category Removal (No Page Reload)
+let x;
 function removeCategory(category) {
-    userCategories.delete(category);
+    userCategories.delete(category); // remove the category from userCategories
+
+    let cx = userx['totals'][category] // category totals for all months
+    let totalsk = userx['totals'] // totals for all categories and months;
+
+    console.log("PRELOOP cx:")
+    console.log(JSON.stringify(cx))
+    console.log("PRELOOP totalsk:")
+    console.log(JSON.stringify(totalsk))
+
+    if (cx) {
+        Object.keys(cx).forEach((monthz, i) => {
+            x = totalsk
+            let totalz = cx[monthz]; // for each month of the category, monthz is the month and totalz is the total of the month
+            let hasPropertyOther = false
+            if (totalsk.hasOwnProperty('other') && (hasPropertyOther = true) && totalsk['other'].hasOwnProperty(monthz)) totalsk['other'][monthz] = (totalsk['other'][monthz] || 0) + (totalz || 0) // set the category 'other' in the month monthz to the original or 0 plus the totalz or 0
+            else if (hasPropertyOther) totalsk['other'][monthz] = totalz || 0
+            else {
+                totalsk['other'] = {};
+                totalsk['other'][monthz] = totalz;
+            }
+            cx[monthz] = 0 // set the deleted category's total for month monthz to 0
+            console.log(`RUN ${i} cx:`)
+            console.log(JSON.stringify(cx))
+            console.log(`RUN ${i} totalsk:`)
+            console.log(JSON.stringify(totalsk))
+        })
+        totalsk[category] = null;
+
+        console.log("POSTLOOP cx:")
+        console.log(JSON.stringify(cx))
+        console.log("POSTLOOP totalsk:")
+        console.log(JSON.stringify(totalsk))
+
+        DB.u.update(getCookie('hash'), {
+            'totals': totalsk
+        })
+    }
+
+    
     updateDatabase();
 }
 
@@ -74,6 +144,8 @@ function addCategory() {
 
 // ✅ Update Database Efficiently
 function updateDatabase() {
-    DB.u.update(getCookie('hash'), { c_categories: [...userCategories] });
+    DB.u.update(getCookie('hash'), {
+        'c_categories': [...userCategories], // update categories
+    });
     renderCategories(); // ✅ Re-render instead of reloading
 }
