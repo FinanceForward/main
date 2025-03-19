@@ -19,7 +19,7 @@ let DB = {
     'runQ': RunQ
 }
 
-let version = "BETA 1.2 PRE-RELEASE"
+let version = "BETA 1.2"
 
 window.DB = DB
 window.version = version
