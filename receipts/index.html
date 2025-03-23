@@ -39,15 +39,8 @@
         }
     </style>
     <title>Receipts</title>
-    <!-- Scripts -->
-    <script src="../fauna.js"></script>
     <!-- IMPORTANT -->
-    <script type="module">
-        import{Client,fql}from'https://cdn.jsdelivr.net/npm/fauna@latest/dist/browser/index.js';
-        window.Client = Client;
-        window.fql = fql;
-        console.log(fql&&Client ? 'MODULE LOADED' : 'FAILED TO LOAD MODULE')
-    </script>
+    <script defer src="../firestore.js" type="module"></script>
     <!-- IMPORTANT -->
 </head>
 <body>
@@ -55,5 +48,5 @@
     <h1>Receipts</h1>
     <ul></ul>
 </body>
-</html>
 <script src="./index.js" defer></script>
+</html>

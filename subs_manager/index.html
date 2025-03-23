@@ -15,12 +15,7 @@
         input[type="date"],#sub-detail-dow { background-color: white; color: black; }
     </style>
     <title>Subscription Manager</title>
-    <script src="../fauna.js" defer></script>
-    <script type="module">
-        import { Client, fql } from 'https://cdn.jsdelivr.net/npm/fauna@latest/dist/browser/index.js';
-        window.Client = Client;
-        window.fql = fql;
-    </script>
+    <script defer src="../firestore.js" type="module"></script>
 </head>
 <body>
     <a href="../dashboard"><span class="material-symbols-outlined">chevron_backward</span></a>

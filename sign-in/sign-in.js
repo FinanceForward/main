@@ -139,19 +139,22 @@ async function signup() {
       }
       else {
         DB.u.create(hash).then(_ => {
-          errormsg('ACCOUNT CREATED');
           console.log('account created:', hash);
 
           // set currency
-          DB.u.update(hash, {'currency': currency});
+          DB.u.update(hash, {'currency': currency}).then(() => {
+            console.log('currency set:', currency);
+            errormsg('ACCOUNT CREATED');
 
-          // set cookie
-          let date = new Date();
-          date.setDate(date.getDate() + 1);
-          document.cookie = `hash=${hash}; path=/; expires=${date.toUTCString()}`;
+            // set cookie
+            let date = new Date();
+            date.setDate(date.getDate() + 1);
+            document.cookie = `hash=${hash}; path=/; expires=${date.toUTCString()}`;
+            errormsg('LOGGED IN');
 
-          // redirect
-          location.href = '../dashboard';
+            // redirect
+            location.href = '../dashboard';
+          })
         });
       }
     });

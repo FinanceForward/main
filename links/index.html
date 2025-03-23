@@ -95,62 +95,62 @@
         <a class="rare-use" href="../legal/">Legal <img src="../src/icons/gavel.png"></a>
         <a class="rare-use" href="../changelog/">Changelog <img src="../src/icons/log.png"></a>
     </div>
+    <script>
+        let searchbar = document.getElementById('search');
+        searchbar.addEventListener('input', () => {
+            searchbar.value = searchbar.value.replace(/[^a-zA-Z\s]/g, '');
+            console.log(document.querySelectorAll('#links-div a').forEach(a => {
+                if (!a.textContent.toLowerCase().includes(searchbar.value.toLowerCase())) {
+                    a.style.display = 'none';
+                } else {
+                    a.style.display = 'inline-block';
+                }
+            }))
+            console.log(searchbar.value);
+        })
+        searchbar.addEventListener('change', () => {
+            searchbar.value = searchbar.value.replace(/[^a-zA-Z\s]/g, '');
+            let count = 0;
+            let fo;
+            console.log(document.querySelectorAll('#links-div a').forEach(a => {
+                if (a.textContent.toLowerCase().includes(searchbar.value.toLowerCase())) {
+                    count++;
+                    fo = a;
+                }
+            }))
+            if (count == 1) {
+                fo.click();
+            }
+            console.log(searchbar.value);
+        })
+
+        // shortcuts
+        document.addEventListener('keydown', function(event) {
+        // SHIFT + D = DASHBOARD
+        if (event.shiftKey && event.key === 'D') {
+            window.location.href = '../dashboard'
+        }
+
+        // SHIFT + R = ADD RECEIPT
+        if (event.shiftKey && event.key === 'R') {
+            window.location.href = '../add-receipt';
+        }
+
+        // SHIFT + V = VIEW REPORT
+        if (event.shiftKey && event.key === 'V') {
+            window.location.href = '../report';
+        }
+
+        // SHIFT + P = PRINTOUT REPORT
+        if (event.shiftKey && event.key === 'P') {
+            window.location.href = '../printout';
+        }
+
+        // SHIFT + L = LINKS
+        if (event.shiftKey && event.key === 'L') {
+            window.location.href = '../links';
+        }
+        });
+    </script>
 </body>
 </html>
-<script>
-    let searchbar = document.getElementById('search');
-    searchbar.addEventListener('input', () => {
-        searchbar.value = searchbar.value.replace(/[^a-zA-Z\s]/g, '');
-        console.log(document.querySelectorAll('#links-div a').forEach(a => {
-            if (!a.textContent.toLowerCase().includes(searchbar.value.toLowerCase())) {
-                a.style.display = 'none';
-            } else {
-                a.style.display = 'inline-block';
-            }
-        }))
-        console.log(searchbar.value);
-    })
-    searchbar.addEventListener('change', () => {
-        searchbar.value = searchbar.value.replace(/[^a-zA-Z\s]/g, '');
-        let count = 0;
-        let fo;
-        console.log(document.querySelectorAll('#links-div a').forEach(a => {
-            if (a.textContent.toLowerCase().includes(searchbar.value.toLowerCase())) {
-                count++;
-                fo = a;
-            }
-        }))
-        if (count == 1) {
-            fo.click();
-        }
-        console.log(searchbar.value);
-    })
-
-    // shortcuts
-    document.addEventListener('keydown', function(event) {
-    // SHIFT + D = DASHBOARD
-    if (event.shiftKey && event.key === 'D') {
-        window.location.href = '../dashboard'
-    }
-
-    // SHIFT + R = ADD RECEIPT
-    if (event.shiftKey && event.key === 'R') {
-        window.location.href = '../add-receipt';
-    }
-
-    // SHIFT + V = VIEW REPORT
-    if (event.shiftKey && event.key === 'V') {
-        window.location.href = '../report';
-    }
-
-    // SHIFT + P = PRINTOUT REPORT
-    if (event.shiftKey && event.key === 'P') {
-        window.location.href = '../printout';
-    }
-
-    // SHIFT + L = LINKS
-    if (event.shiftKey && event.key === 'L') {
-        window.location.href = '../links';
-    }
-    });
-</script>

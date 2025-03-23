@@ -9,16 +9,7 @@
     <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
     <!-- Scripts -->
-    <script src="../fauna.js"></script>
     <script src="./ea.js" defer></script>
-    <!-- IMPORTANT -->
-    <script type="module">
-        import{Client,fql}from'https://cdn.jsdelivr.net/npm/fauna@latest/dist/browser/index.js';
-        window.Client = Client;
-        window.fql = fql;
-        console.log(fql&&Client ? 'MODULE LOADED' : 'FAILED TO LOAD MODULE')
-    </script>
-    <!-- IMPORTANT -->
 </head>
 <body>
     <main>
@@ -82,5 +73,5 @@
         </div>
     </main>
 </body>
-</html>
 <script src="./index.js" defer></script>
+</html>

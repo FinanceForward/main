@@ -13,13 +13,7 @@
         .material-symbols-outlined { font-size: 50px; color: white; text-decoration: none; }
     </style>
     <title>Report</title>
-    <script src="../fauna.js" defer></script>
-    <link rel="stylesheet" href="./report.css">
-    <script type="module">
-        import { Client, fql } from 'https://cdn.jsdelivr.net/npm/fauna@latest/dist/browser/index.js';
-        window.Client = Client;
-        window.fql = fql;
-    </script>
+    <script defer src="../firestore.js" type="module"></script>
 </head>
 <body>
     <a href="../dashboard"><span class="material-symbols-outlined">chevron_backward</span></a>
