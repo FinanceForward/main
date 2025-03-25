@@ -83,7 +83,12 @@ document.getElementById('go').addEventListener('click', async event => {
       updatedReceipts[month] = updatedReceipts[month] || [];
       updatedReceipts[month].push([total, category]);
 
-      await DB.u.update(hash, { totals: updatedTotals, receipts: updatedReceipts });
+      // await DB.u.update(hash, { totals: updatedTotals, receipts: updatedReceipts });
+      let newTotal = await DB.uCompute.get(hash, 'totals', month, category);
+      if (newTotal === null) newTotal = 0;
+      newTotal += Number(total);
+      await DB.uCompute.add(hash, 'totals', month, category, newTotal);
+      await DB.uCompute.add(hash, 'receipts', month, category, total);
       document.getElementById('continue-audio').play();
       location.href = '../dashboard';
   } catch (error) {

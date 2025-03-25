@@ -167,6 +167,84 @@ let DB = {
                 console.error("Error getting field:", error);
                 return null; // Error occurred
             }
+        },
+
+        'sum': async (hash, collectionName, documentName) => {
+            try {
+                // Step 1: Query the 'users' collection to find the document with the matching 'hash' field
+                const usersRef = collection(db, "users");
+                const userQuery = query(usersRef, where("hash", "==", hash));
+                const userSnap = await getDocs(userQuery);
+        
+                if (userSnap.empty) {
+                    console.error("User not found with hash:", hash);
+                    return null; // User not found
+                }
+        
+                // Step 2: Get the actual user document reference
+                const userDocRef = userSnap.docs[0].ref;
+        
+                // Step 3: Reference the subcollection and document inside the user
+                const subCollectionRef = collection(userDocRef, collectionName);
+                const documentRef = doc(subCollectionRef, documentName);
+        
+                // Step 4: Get the document
+                const docSnap = await getDoc(documentRef);
+        
+                if (!docSnap.exists()) {
+                    console.info("Document not found:", documentName);
+                    return 0; // Document doesn't exist
+                }
+        
+                // Step 5: Sum all numeric values in the document
+                const data = docSnap.data();
+                let total = 0;
+        
+                for (let key in data) {
+                    if (typeof data[key] === "number") {
+                        total += data[key];
+                    }
+                }
+        
+                return total;
+            } catch (error) {
+                console.error("Error calculating sum:", error);
+                return null; // Error occurred
+            }
+        },
+
+        'all': async (hash, collectionName, documentName) => {
+            try {
+                // Step 1: Query the 'users' collection to find the document with the matching 'hash' field
+                const usersRef = collection(db, "users");
+                const userQuery = query(usersRef, where("hash", "==", hash));
+                const userSnap = await getDocs(userQuery);
+        
+                if (userSnap.empty) {
+                    console.error("User not found with hash:", hash);
+                    return {}; // User not found, return empty object
+                }
+        
+                // Step 2: Get the actual user document reference
+                const userDocRef = userSnap.docs[0].ref;
+        
+                // Step 3: Reference the subcollection and document inside the user
+                const subCollectionRef = collection(userDocRef, collectionName);
+                const documentRef = doc(subCollectionRef, documentName);
+        
+                // Step 4: Get the document
+                const docSnap = await getDoc(documentRef);
+        
+                if (!docSnap.exists()) {
+                    return {}; // Document doesn't exist, return empty object
+                }
+        
+                // Step 5: Return the entire document data as a JSON object
+                return docSnap.data();
+            } catch (error) {
+                console.error("Error retrieving document data:", error);
+                return {}; // Return empty object on error
+            }
         }
     },
     'runQ': (query) => {
@@ -175,7 +253,7 @@ let DB = {
     }
 };
 
-let version = "BETA 1.2";
+let version = "BETA 1.2 FIRE (pre-release)";
 
 // Export the DB functions for use in the global scope
 window.DB = DB;

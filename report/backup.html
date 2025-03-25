@@ -3,18 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Forward</title>
-    <link rel="stylesheet" href="./report.css">
-    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap">
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <style>
+        body { font-family: 'Manrope', sans-serif; background-color: black; color: white; }
+        h1 { text-align: center; }
+        li { margin-bottom: 10px; }
+        .material-symbols-outlined { font-size: 50px; color: white; text-decoration: none; }
+    </style>
+    <title>Report</title>
+    <script defer src="../firestore.js" type="module"></script>
 </head>
 <body>
+    <a href="../dashboard"><span class="material-symbols-outlined">chevron_backward</span></a>
+    <h1>Monthly Report</h1>
     <main class="report">
         <div class="report-container">
-            <macro>Finance Forward BETA 1.1</macro>
             <macro>Monthly Report</macro>
+            <micro>Here is your monthly report</micro>
+            <br>
             <div id="monthselect">
-                <micro>Select the month of the report you would like to print</micro><br><br>
                 <label for="month">Select Month:</label>
                 <input type="month" id="month" name="month">
             </div>
@@ -34,10 +43,12 @@
             <div id="c_cats"></div>
             <macro>OTHER<total id="other"></total></macro><br>
             <macro>TOTAL<total id="total"></total></macro>
+            <p onclick="location.href='../printout'" style="cursor: pointer; background-color: #FF9B07; color: white; padding: 10px 20px; border-radius: 5px; text-align: center; display: inline-block;">Print Report</p>
         </div>
     </main>
 </main>
 </body>
+</html>
 <style>
     .report-container {
         display: flex;
@@ -109,17 +120,12 @@
             return cookie[name];
             }
             DB.u.get(getCookie('hash')).then(user => {
-                setTimeout(_ => {
-                    document.getElementById('monthselect').style.display = 'none';
-                    print()
-                    location.href="../report"
-                }, 1000);
                 document.querySelectorAll('macro').forEach(function(macro) {
                     macro.style.display = 'block';
                 });
                 let totals = user.totals;
                 let currency = user.currency;
-                let currency_suffix = currency.replace('*', '');
+                let currency_suffix = currency.replace(/\*/g, '');
                 if (currency != currency_suffix) {currency = ''; currency_suffix = ' ' + currency_suffix}
                 else {currency_suffix = ''}
                 try {
@@ -160,9 +166,9 @@
                     addCategory(cat, currency + ((totals[cat] && totals[cat][month]) || 0).toFixed(2) + currency_suffix);
                 });
                 addCategory('Subscriptions', currency + processGrandTotal(user['subs']).toFixed(2) + currency_suffix);
+                document.getElementById('monthselect').style.display = 'none';
             });
         });
     });
 </script>
 <script src="report.js" defer></script>
-</html>

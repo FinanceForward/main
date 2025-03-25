@@ -1,9 +1,11 @@
 document.querySelector('.dashboard').classList.add('display-none')
 document.querySelector('.loader').classList.remove('display-none')
+let startTime = Date.now()
 setTimeout(() => {
   document.querySelector('.loader').classList.add('display-none')
   document.querySelector('.dashboard').classList.remove('display-none')
-}, 250)
+  console.log('Backup load executed.')
+}, 5000)
 document.querySelector('#beta_icon').innerHTML = version
 
 // cookie script
@@ -64,50 +66,54 @@ let topCatAmtOBJ = document.querySelectorAll('#top-cat-amt');
 let hash = getCookie('hash');
 
 DB.u.get(hash).then((user) => {
-    if (user['premium'] == undefined) document.querySelectorAll('.premium-feature').forEach((el) => el.style.display = 'none');
-    if (user['version'] != 'beta1.2pr') {
-      alert("Welcome to Beta 1.2 (Pre-Release), We've added a few new features, hope you enjoy them!")
-      DB.u.update(hash, { 'version' : 'beta1.2pr' })
-    }
-    user['c_categories'] = user['c_categories'] || [];
-    console.log(user);
-    let totals = user.totals;
-    let currency = user['currency'];
-    if (currency.includes('*')) {
-      currency = currency.replace('*', '');
-    }
-    const after = user['currency'].includes('*');
-    if (after) {
-      document.querySelectorAll('.c_after').forEach((el) => {
-        el.innerHTML = ' ' + currency;
-        console.log(el, currency);
-      });
-      document.querySelectorAll('.c').forEach((el) => {
-        el.innerHTML = '';
-        console.log(el, currency);
-      });
-    } else {
-      document.querySelectorAll('.c').forEach((el) => {
-        el.innerHTML = currency;
-        console.log(el, currency);
-      });
-    }
-    const d = new Date();
-    let month = d.getFullYear().toString() + '-' + (d.getMonth()+1 < 10 ? "0" : '') + (d.getMonth()+1).toString();
-    let total = Object.values(user.totals).reduce((sum, category) => {
-      if (category[month]) sum += category[month];
-      return sum;
-    }, 0);
+  console.log(user);
+  if (user['premium'] == undefined) document.querySelectorAll('.premium-feature').forEach((el) => el.style.display = 'none');
+  if (user['version'] != 'beta1.2') {
+    alert("Welcome to Beta 1.2, We've added a few new features, hope you enjoy them!")
+    DB.u.update(hash, { 'version' : 'beta1.2' })
+  }
+  user['c_categories'] = user['c_categories'] || [];
+  console.log(user);
+  let totals = user.totals;
+  let currency = user['currency'] || '$';
+  if (currency.includes('*')) {
+    currency = currency.replace('*', '');
+  }
+  const after = user['currency'].includes('*');
+  if (after) {
+    document.querySelectorAll('.c_after').forEach((el) => {
+      el.innerHTML = ' ' + currency;
+      console.log(el, currency);
+    });
+    document.querySelectorAll('.c').forEach((el) => {
+      el.innerHTML = '';
+      console.log(el, currency);
+    });
+  } else {
+    document.querySelectorAll('.c').forEach((el) => {
+      el.innerHTML = currency;
+      console.log(el, currency);
+    });
+  }
+  const d = new Date();
+  let month = d.getFullYear().toString() + '-' + (d.getMonth()+1 < 10 ? "0" : '') + (d.getMonth()+1).toString();
+
+  DB.uCompute.all(hash, 'totals', month).then((totals) => {
+    let total = Object.values(totals).reduce((sum, value) => sum + value, 0);
+    console.log(total);
+
     totalOBJ.innerHTML = total.toFixed(2).toString();
 
     let mo = new Date().toISOString().slice(0, 7);
 
-    let top3AMT = Object.values(totals).map(t => t[mo] || 0).sort((a, b) => b - a).slice(0, 3)
+    let top3AMT = Object.values(totals)
+      .sort((a, b) => b - a)
+      .slice(0, 3);
     let top3CAT = Object.keys(totals)
-        .map(key => ({ key, value: totals[key][mo] || 0 }))
-        .sort((a, b) => b.value - a.value)
-        .slice(0, 3)
-        .map(item => item.key);
+      .map(key => ({ key, value: totals[key][mo] || 0 }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 3)
+      .map(item => item.key);
 
     let CATdict = {
       "a": "Groceries",
@@ -128,13 +134,19 @@ DB.u.get(hash).then((user) => {
       CATdict[c_category] = c_category;
     })
     top3CAT = top3CAT.map(v => CATdict[v]);
+    console.log(top3CAT, top3AMT);
 
     topCatOBJ.forEach((topCatOBJ, i) => {
         topCatOBJ.innerHTML = top3CAT[i] || "N/A";
     })
     topCatAmtOBJ.forEach((topCatAmtOBJ, i) => {
-        topCatAmtOBJ.innerHTML = top3AMT[i].toFixed(2).toString();
+        topCatAmtOBJ.innerHTML = (top3AMT[i] || 0).toFixed(2).toString();
     })
+    let endTime = Date.now()
+    document.querySelector('.loader').classList.add('display-none')
+    document.querySelector('.dashboard').classList.remove('display-none')
+    console.log(`Page loaded in ${endTime - startTime}ms`)
+  });
 });
 
 // shortcuts
