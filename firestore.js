@@ -18,93 +18,150 @@ const db = getFirestore(app);
 // DB Functions (Only using Firestore SDK functions)
 let DB = {
     'user': {
+        /**
+         * Creates a new user document in Firestore.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @returns {Promise<void>} A promise that resolves when the user is created.
+         */
         'create': async (hash) => {
-            // Create a new user document in Firestore
             await addDoc(collection(db, "users"), { hash });
         },
+
+        /**
+         * Retrieves a user document by hash.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @returns {Promise<Object|null>} The user data or null if not found.
+         */
         'get': async (hash) => {
-            // Query users by hash, return first matching document
             const q = query(collection(db, "users"), where("hash", "==", hash));
             const querySnapshot = await getDocs(q);
             if (querySnapshot.empty) {
-                return null; // No user found
+                return null;
             }
-            return querySnapshot.docs[0].data(); // Return the first matched document
+            return querySnapshot.docs[0].data();
         },
+
+        /**
+         * Updates a user document with the given updates.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @param {Object} updates - The updates to apply to the user document.
+         * @returns {Promise<boolean>} True if the update was successful, false otherwise.
+         */
         'update': async (hash, updates) => {
-            // Query for the user with the given hash
             const q = query(collection(db, "users"), where("hash", "==", hash));
             const querySnapshot = await getDocs(q);
             if (!querySnapshot.empty) {
                 const docRef = querySnapshot.docs[0].ref;
-                // Update the user document with the provided updates
                 await updateDoc(docRef, updates);
-                return true; // Successfully updated
+                return true;
             }
-            return false; // No matching user found
+            return false;
         },
+
+        /**
+         * Checks if a user with the given hash exists.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @returns {Promise<boolean>} True if the user exists, false otherwise.
+         */
         'exists': async (hash) => {
-            // Check if the user with the given hash exists
             const q = query(collection(db, "users"), where("hash", "==", hash));
             const querySnapshot = await getDocs(q);
-            return !querySnapshot.empty; // Returns true if user exists
+            return !querySnapshot.empty;
         },
+
+        /**
+         * Deletes a user document by hash.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @returns {Promise<boolean>} True if the deletion was successful, false otherwise.
+         */
         'delete': async (hash) => {
-            // Query for the user with the given hash
             const q = query(collection(db, "users"), where("hash", "==", hash));
             const querySnapshot = await getDocs(q);
             if (!querySnapshot.empty) {
-                // Delete the document if it exists
                 await deleteDoc(querySnapshot.docs[0].ref);
-                return true; // Successfully deleted
+                return true;
             }
-            return false; // No matching user found
+            return false;
         }
     },
     'u': {
+        /**
+         * Creates a new user document and returns its ID.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @returns {Promise<string>} The document ID of the newly created user.
+         */
         'create': async (hash) => {
-            // Create and return a new user document ID
             const docRef = await addDoc(collection(db, "users"), { hash });
-            return docRef.id; // Return the document ID of the newly created user
+            return docRef.id;
         },
+
+        /**
+         * Retrieves a user document by hash.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @returns {Promise<Object|null>} The user data or null if not found.
+         */
         'get': async (hash) => {
-            // Query for a user and return the data
             const q = query(collection(db, "users"), where("hash", "==", hash));
             const querySnapshot = await getDocs(q);
             if (querySnapshot.empty) {
-                return null; // No user found
+                return null;
             }
-            return querySnapshot.docs[0].data(); // Return the first matched document data
+            return querySnapshot.docs[0].data();
         },
+
+        /**
+         * Updates a user document with the given updates.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @param {Object} updates - The updates to apply to the user document.
+         * @returns {Promise<boolean>} True if the update was successful, false otherwise.
+         */
         'update': async (hash, updates) => {
-            // Query for the user and update their data
             const q = query(collection(db, "users"), where("hash", "==", hash));
             const querySnapshot = await getDocs(q);
             if (!querySnapshot.empty) {
                 const docRef = querySnapshot.docs[0].ref;
                 await updateDoc(docRef, updates);
-                return true; // Successfully updated
+                return true;
             }
-            return false; // No matching user found
+            return false;
         },
+
+        /**
+         * Checks if a user with the given hash exists.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @returns {Promise<boolean>} True if the user exists, false otherwise.
+         */
         'exists': async (hash) => {
-            // Check if the user exists
             const q = query(collection(db, "users"), where("hash", "==", hash));
             const querySnapshot = await getDocs(q);
-            return !querySnapshot.empty; // Return true if user exists
+            return !querySnapshot.empty;
         },
+
+        /**
+         * Deletes a user document by hash.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @returns {Promise<null>} Null if the deletion was successful or no user was found.
+         */
         'delete': async (hash) => {
-            // Delete a user document
             const q = query(collection(db, "users"), where("hash", "==", hash));
             const querySnapshot = await getDocs(q);
             if (!querySnapshot.empty) {
                 await deleteDoc(querySnapshot.docs[0].ref);
-                return null; // Successfully deleted
+                return null;
             }
-            return null; // No matching user found
+            return null;
         }
     },
     'uCompute': {
+        /**
+         * Adds or updates a field in a subcollection document.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @param {string} collectionName - The name of the subcollection.
+         * @param {string} documentName - The name of the document.
+         * @param {string} field - The field to add or update.
+         * @param {any} value - The value to set for the field.
+         * @returns {Promise<boolean>} True if the operation was successful, false otherwise.
+         */
         'add': async (hash, collectionName, documentName, field, value) => {
             try {
                 // Step 1: Query the 'users' collection to find the document with the matching 'hash' field
@@ -134,6 +191,14 @@ let DB = {
             }
         },
 
+        /**
+         * Retrieves a specific field from a subcollection document.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @param {string} collectionName - The name of the subcollection.
+         * @param {string} documentName - The name of the document.
+         * @param {string} field - The field to retrieve.
+         * @returns {Promise<any|null>} The value of the field or null if not found.
+         */
         'get': async (hash, collectionName, documentName, field) => {
             try {
                 // Step 1: Query the 'users' collection to find the document with the matching 'hash' field
@@ -169,6 +234,13 @@ let DB = {
             }
         },
 
+        /**
+         * Sums all numeric fields in a subcollection document.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @param {string} collectionName - The name of the subcollection.
+         * @param {string} documentName - The name of the document.
+         * @returns {Promise<number|null>} The sum of all numeric fields or null on error.
+         */
         'sum': async (hash, collectionName, documentName) => {
             try {
                 // Step 1: Query the 'users' collection to find the document with the matching 'hash' field
@@ -213,6 +285,13 @@ let DB = {
             }
         },
 
+        /**
+         * Retrieves all fields from a subcollection document.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @param {string} collectionName - The name of the subcollection.
+         * @param {string} documentName - The name of the document.
+         * @returns {Promise<Object>} The document data as a JSON object.
+         */
         'all': async (hash, collectionName, documentName) => {
             try {
                 // Step 1: Query the 'users' collection to find the document with the matching 'hash' field
@@ -247,8 +326,13 @@ let DB = {
             }
         }
     },
+
+    /**
+     * Runs a custom Firestore query.
+     * @param {Query} query - The Firestore query to execute.
+     * @returns {Promise<QuerySnapshot>} The query results.
+     */
     'runQ': (query) => {
-        // Run a custom query (for use with querying data)
         return getDocs(query);
     }
 };
