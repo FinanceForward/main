@@ -18,7 +18,10 @@
 <body>
     <a href="../dashboard"><span class="material-symbols-outlined">chevron_backward</span></a>
     <h1>Category Manager</h1>
-    <ul id="category-list"></ul>
+    <ul id="category-list">
+        <h1>PLEASE WAIT AS WE LOAD YOUR CATEGORIES</h1>
+    </ul>
+    <input type="text" id="newcatname"><button onclick="document.getElementById('ac').textContent = 'Adding...'; add(document.getElementById('newcatname').value).then(_=>{ document.getElementById('ac').textContent = 'Add Category'; document.getElementById('newcatname').value = ''});" id="ac">Add Category</button>
     <script src="./index.js" defer></script>
 </body>
 </html>

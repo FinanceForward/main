@@ -41,10 +41,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!hash) return;
 
   try {
-      const user = await DB.u.get(hash);
-      if (!user) return;
+      const categories = Object.keys(await DB.uCompute.all(hash, 'other', 'categories') || {});
 
-      (user.c_categories || []).forEach(category => {
+      (categories || []).forEach(category => {
           const option = new Option(category, category);
           catSelect.appendChild(option);
       });
@@ -70,27 +69,21 @@ document.getElementById('go').addEventListener('click', async event => {
   const hash = getCookie('hash');
 
   if (!total || !month || !hash) return document.getElementById('fail-audio').play();
+  if (!hash) location.href = '../sign-in'
 
   try {
-      const user = await DB.u.get(hash);
-      if (!user) return document.getElementById('fail-audio').play();
-      
-      const updatedTotals = user.totals || {};
-      updatedTotals[category] = updatedTotals[category] || {};
-      updatedTotals[category][month] = (Number(updatedTotals[category][month]) || 0) + Number(total);
-      
-      const updatedReceipts = user.receipts || {};
-      updatedReceipts[month] = updatedReceipts[month] || [];
-      updatedReceipts[month].push([total, category]);
-
-      // await DB.u.update(hash, { totals: updatedTotals, receipts: updatedReceipts });
+      document.getElementById('go').innerHTML = "CALCULATING..."
       let newTotal = await DB.uCompute.get(hash, 'totals', month, category);
       if (newTotal === null) newTotal = 0;
       newTotal += Number(total);
+      document.getElementById('go').innerHTML = "ADDING TOTAL..."
       await DB.uCompute.add(hash, 'totals', month, category, newTotal);
-      await DB.uCompute.add(hash, 'receipts', month, category, total);
+      document.getElementById('go').innerHTML = "ADDING RECEIPT..."
+      const receiptID = '#' + Math.random().toString(36).substring(2, 10).padEnd(8, '0');
+      await DB.uCompute.add(hash, 'receipts', month, category + receiptID, total);
+      document.getElementById('go').innerHTML = "DONE!"
       document.getElementById('continue-audio').play();
-      location.href = '../dashboard';
+      document.getElementById('continue-audio').onended = _=> {location.href = '../dashboard'};
   } catch (error) {
       console.error('Error submitting receipt:', error);
       document.getElementById('fail-audio').play();
@@ -101,6 +94,5 @@ document.getElementById('go').addEventListener('click', async event => {
 if (!getCookie('hash')) {
   window.location.href = '../sign-in';
 } else {
-  document.querySelector('.sign-in').style.display = 'none';
   document.cookie = `hash=${getCookie('hash')}; path=/; expires=${new Date(Date.now() + 7 * 864e5).toUTCString()}`;
 }

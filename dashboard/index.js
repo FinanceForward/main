@@ -68,9 +68,9 @@ let hash = getCookie('hash');
 DB.u.get(hash).then((user) => {
   console.log(user);
   if (user['premium'] == undefined) document.querySelectorAll('.premium-feature').forEach((el) => el.style.display = 'none');
-  if (user['version'] != 'beta1.2') {
-    alert("Welcome to Beta 1.2, We've added a few new features, hope you enjoy them!")
-    DB.u.update(hash, { 'version' : 'beta1.2' })
+  if (user['version'] != 'beta1.2fire') {
+    alert("Welcome to Beta 1.2 Fire, We've migrated to a new database and fixed a couple bugs.")
+    DB.u.update(hash, { 'version' : 'beta1.2fire' })
   }
   user['c_categories'] = user['c_categories'] || [];
   console.log(user);
@@ -124,7 +124,6 @@ DB.u.get(hash).then((user) => {
       "f": "Livingware",
       "g": "Appliances",
       "h": "Gardenware",
-      "i": "Bills/Subcriptions",
       "j": "Pets",
       "k": "Health",
       "l": "Books",
@@ -133,7 +132,7 @@ DB.u.get(hash).then((user) => {
     user['c_categories'].forEach(c_category =>{
       CATdict[c_category] = c_category;
     })
-    top3CAT = top3CAT.map(v => CATdict[v]);
+    top3CAT = top3CAT.map(v => CATdict[v] || v);
     console.log(top3CAT, top3AMT);
 
     topCatOBJ.forEach((topCatOBJ, i) => {

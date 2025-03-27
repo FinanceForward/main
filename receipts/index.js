@@ -1,13 +1,14 @@
-function getCookie(name) {
-    let cookieArr = document.cookie.split(";");
-    for(let i = 0; i < cookieArr.length; i++) {
-        let cookiePair = cookieArr[i].split("=");
-        if(name == cookiePair[0].trim()) {
-            return decodeURIComponent(cookiePair[1]);
-        }
+const hash = (() => {
+  let cookieArr = document.cookie.split(";");
+  for(let i = 0; i < cookieArr.length; i++) {
+    let cookiePair = cookieArr[i].split("=");
+    if("hash" == cookiePair[0].trim()) {
+      return decodeURIComponent(cookiePair[1]);
     }
-    return null;
-}
+  }
+  return null;
+})();
+if (!hash) location.href = '../sign-in'
 
 // shortcuts
 document.addEventListener('keydown', function(event) {
@@ -47,30 +48,43 @@ let CATdict = {
     "f": "Livingware",
     "g": "Appliances",
     "h": "Gardenware",
-    "i": "Bills/Subcriptions",
     "j": "Pets",
     "k": "Health",
     "l": "Books",
     "other": "OTHER"
 }
-DB.u.get(getCookie('hash')).then((user) => {
-    if (user == undefined) return location.href = '../sign-in';
-    // if (user['premium'] == undefined) {
-    //     alert('You need to be a premium user to access this feature');
-    //     return location.href = '../dashboard'
-    // };
-    user['c_categories'].forEach(c_category =>{
-        CATdict[c_category] = c_category
-    })
-    let m = new Date().toISOString().slice(0, 7);
-    let rlist = user['receipts'][m] || [];
-    rlist.forEach((receipt) => {
-        let li = document.createElement('li')
-        li.innerHTML = `<strong>${CATdict[receipt[1]] || `Marked as OTHER <small>(Used to be custom category)</small>`}</strong> - ${receipt[0]} - <button onclick="removeReceipt(${receipt[1]}, ${receipt[0]}, null)">Remove Receipt</button>`
-        rlistOBJ.appendChild(li)
-    })
-})
 
-function removeReceipt(catID, total, month) {
-    console.log(`Removing A Receipt Under Category "${CATdict[catID]}" For A Total Amount Of "${total}" On The Month Of "${month}"`)
+let month = new Date().toISOString().slice(0, 7);
+
+async function render() {
+  if (!hash) return location.href = '../sign-in';
+  let c_categories = Object.keys(await DB.uCompute.all(hash, 'custom', 'categories'));
+  c_categories.forEach(c_category => CATdict[c_category] = c_category);
+  let rlist = await DB.uCompute.all(hash, 'receipts', month);
+  let rlistCategories = Object.keys(rlist).map(v => v.split('#')[0]);
+  console.log(rlist)
+  let rlistValues = Object.values(rlist);
+  rlistOBJ.innerHTML = ''
+  rlistCategories.forEach((category, index) => {
+    let value = rlistValues[index];
+    let li = document.createElement('li');
+    li.innerHTML = `<strong>${CATdict[category] || `Custom Category: ` +category.toString()}</strong> - ${value} - <button onclick="this.innerHTML='Removing...'; removeReceipt('${category}', '${Object.keys(rlist)[index].split('#')[1]}', '${month}', '${value}')">Remove Receipt</button>`;
+    rlistOBJ.appendChild(li);
+  });
 }
+
+async function removeReceipt(category, categoryID, month, amount) {
+    console.log(`Removing A Receipt Under Category "${category}" On The Month Of "${month}" With An ID Of "${categoryID}"`)
+    console.log(typeof (category+'#'+categoryID))
+    console.log(category+'#'+categoryID)
+    await DB.uCompute.deleteF(hash, 'receipts', month, category+'#'+categoryID)
+    let newTotal = await DB.uCompute.get(hash, 'totals', month, category);
+    if (newTotal === null) newTotal = 0;
+    newTotal -= Number(amount);
+    await DB.uCompute.add(hash, 'totals', month, category, newTotal);
+    console.log(`Receipt Deleted`)
+    await render();
+    console.log(`Rendered`)
+}
+
+render();

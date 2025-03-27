@@ -71,7 +71,6 @@
         "f": "Livingware",
         "g": "Appliances",
         "h": "Gardenware",
-        "i": "Bills/Subcriptions",
         "j": "Pets",
         "k": "Health",
         "l": "Books",
@@ -99,6 +98,7 @@
                 let currency = user.currency.includes('*') ? '' : user.currency;
                 let currency_after = user.currency.includes('*') ? user.currency.replace('*', '') : '';
                 DB.uCompute.all(hash, 'totals', month).then(totals => { // this will return a JSON object like {c: 5, other: 10}
+                    Object.keys(CATdict).forEach(v => totals[v] = (totals[v] || 0));
                     let k = Object.keys(totals).map(c => CATdict[c] || c)
                     let v = Object.values(totals)
                     k.forEach((x,i) => {

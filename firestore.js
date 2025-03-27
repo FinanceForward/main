@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, setDoc, getDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // Firebase config (replace with your actual credentials)
 const firebaseConfig = {
@@ -323,6 +323,50 @@ let DB = {
             } catch (error) {
                 console.error("Error retrieving document data:", error);
                 return {}; // Return empty object on error
+            }
+        },
+
+        /**
+         * Deletes a specific field from a document in a subcollection.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @param {string} collectionName - The name of the subcollection.
+         * @param {string} documentName - The name of the document.
+         * @param {string} fieldName - The name of the field to delete.
+         * @returns {Promise<boolean>} True if the field was successfully deleted, false otherwise.
+         */
+        'deleteF': async (hash, collectionName, documentName, fieldName) => {
+            try {
+                if (typeof fieldName !== "string") {
+                    console.error("Field name must be a string!");
+                    return false;
+                }
+        
+                // Step 1: Find user by hash
+                const usersRef = collection(db, "users");
+                const userQuery = query(usersRef, where("hash", "==", hash));
+                const userSnap = await getDocs(userQuery);
+        
+                if (userSnap.empty) {
+                    console.error("User not found with hash:", hash);
+                    return false; // User not found
+                }
+        
+                // Step 2: Get user document reference
+                const userDocRef = userSnap.docs[0].ref;
+        
+                // Step 3: Reference the subcollection and document
+                const subCollectionRef = collection(userDocRef, collectionName);
+                const documentRef = doc(subCollectionRef, documentName);
+        
+                // Step 4: Remove the field from the document
+                await updateDoc(documentRef, {
+                    [String(fieldName)]: deleteField()
+                });
+        
+                return true; // Successfully deleted
+            } catch (error) {
+                console.error("Error deleting field:", error);
+                return false;
             }
         }
     },
