@@ -37,7 +37,7 @@ async function render() {
     let cCats = Object.keys(await DB.uCompute.all(hash, 'other', 'categories')); // all changeable categories
     let cats = [...uCats, ...cCats]; // all categories
 
-    cList.innerHTML = ''
+    cList.innerHTML = '<li>Default Categories Are Not Shown...</li>'
     cats.forEach(category => {
         let obj = document.createElement('li');
         let removeBTN = document.createElement('button');
@@ -45,7 +45,7 @@ async function render() {
         removeBTN.textContent = 'Remove Category';
         removeBTN.onclick = _=> {removeBTN.textContent = 'Deleting, Please Wait...'; remove(category)};
         if (!uCats.includes(category)) obj.appendChild(removeBTN);
-        cList.appendChild(obj)
+        !uCats.includes(category)? cList.appendChild(obj) : ''
     })
 }
 

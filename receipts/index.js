@@ -68,7 +68,7 @@ async function render() {
   rlistCategories.forEach((category, index) => {
     let value = rlistValues[index];
     let li = document.createElement('li');
-    li.innerHTML = `<strong>${CATdict[category] || `Custom Category: ` +category.toString()}</strong> - ${value} - <button onclick="this.innerHTML='Removing...'; removeReceipt('${category}', '${Object.keys(rlist)[index].split('#')[1]}', '${month}', '${value}')">Remove Receipt</button>`;
+    li.innerHTML = `<strong>${CATdict[category] || `Custom Category: ` +category.toString()}</strong> - ${value} - <button onclick="this.innerHTML='Removing...'; removeReceipt('${category}', '${Object.keys(rlist)[index].split('#')[1]}', '${month}', '${value}')" class="rrbtn">Remove Receipt</button>`;
     rlistOBJ.appendChild(li);
   });
 }

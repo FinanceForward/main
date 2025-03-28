@@ -43,7 +43,7 @@ class DateConfig {
 }
 
 class Sub {
-    static DOW = x => ({'sunday':0 , 'monday':1 , 'tuesday':2 , 'wednesday':3 , 'thursday':4 , 'friday':5 , 'saturday':6})[x.toLowerCase()]
+    static DOW = x => ({'sunday':0 , 'monday':1 , 'tuesday':2 , 'wednesday':3 , 'thursday':4 , 'friday':5 , 'saturday':6})[x]
 
     static weekly(price, DOW) {
         return DateConfig.getWeekdaysPassed(DOW %7)*price
@@ -60,13 +60,13 @@ class Sub {
     static processTotal(sub) {
         switch (sub.frequency) {
             case 'weekly':
-                return Sub.weekly(sub.price, Sub.DOW(sub.date));
+                return Sub.weekly(sub.price, Sub.DOW(sub.freq_value));
 
             case 'monthly':
-                return Sub.monthly(sub.price, sub.date);
+                return Sub.monthly(sub.price, sub.freq_value);
 
             case 'yearly':
-                return Sub.yearly(sub.price, sub.date);
+                return Sub.yearly(sub.price, sub.freq_value);
         
             default:
                 console.error('ERROR: Sub.processTotal() error')
@@ -80,54 +80,46 @@ class Sub {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const subList = document.getElementById('sub-list');
-    const subNameInput = document.getElementById('sub-name');
-    const subPriceInput = document.getElementById('sub-price');
-    const subFrequencyInput = document.getElementById('sub-frequency');
-    const subDetailDate = document.getElementById('sub-detail-date');  // Date input
-    const subDetailDOW = document.getElementById('sub-detail-dow');  // DOW input
-    const subDetailDOM = document.getElementById('sub-detail-dom');  // DOM input
-    const addSubBtn = document.getElementById('add-sub');
+    const subList = document.getElementById('sub-list'); // subscription list
+    // new inputs
+    const subNameInput = document.getElementById('sub-name'); // name
+    const subPriceInput = document.getElementById('sub-price'); // price
+    // frequency
+    const subFrequencyInput = document.getElementById('sub-frequency'); // frequency select
+    const subDetailDate = document.getElementById('sub-detail-date');  // For Day of Year (or Date)
+    const subDetailDOW = document.getElementById('sub-detail-dow');  // For Day of Week (abreviated as DOW)
+    const subDetailDOM = document.getElementById('sub-detail-dom');  // For Day of Month (abreviated as DOM)
+    // btns
+    const addSubBtn = document.getElementById('add-sub'); // add button
 
     subDetailDate.style.display = 'none';
     subDetailDOW.style.display = 'unset';
     subDetailDOM.style.display = 'none';
 
-    let subs = [];
+    // EACH SUB CONTAINS: name, price, frequency, freq_value
+    let subs = []; /* TO DO: DELETE THIS */
 
-    function loadSubscriptions() {
-        DB.u.get(getCookie('hash')).then(user => {
-            subs = user['subs'] || [];
-            console.log(Sub.processGrandTotal(subs))
-            renderSubscriptions();
-        });
-    }
-
-    function renderSubscriptions() {
+    async function renderSubscriptions() {
+        let subscriptions = await DB.uDoc.allDocs(getCookie('hash'), 'subscriptions')
         subList.innerHTML = '';
-        subs.forEach(sub => {
+        subscriptions.forEach(sub => {
             const li = document.createElement('li');
-            li.textContent = `${sub.name} - $${sub.price} - ${sub.frequency} - ${sub.date} | `;
-            li.textContent += Sub.processTotal(sub).toString();
+            li.innerHTML = `<h3 style="margin-right:10px">${sub.name}</h3> $${sub.price} - ${sub.frequency} - ${sub.freq_value}`;
+            console.log(sub)
+            console.log(Sub.processTotal(sub))
             
             const removeBtn = document.createElement('button');
-            removeBtn.textContent = '×';
+            removeBtn.textContent = 'Remove Subsription';
             removeBtn.classList.add('remove-sub');
             removeBtn.onclick = function() {
-                subs = subs.filter(s => s !== sub);
+                removeBtn.innerHTML = 'Removing...'
+                DB.uDoc.deleteDoc(getCookie('hash'), 'subscriptions', sub.name)
                 renderSubscriptions();
-                updateDatabase();
             };
             
             li.appendChild(removeBtn);
             subList.appendChild(li);
         });
-    }
-
-    function updateDatabase() {
-        const hash = getCookie('hash');
-        if (!hash) return;
-        DB.u.update(hash, { subs });
     }
 
     let setting = "weekly";
@@ -150,27 +142,27 @@ document.addEventListener('DOMContentLoaded', function() {
     })
 
     addSubBtn.addEventListener('click', function() {
-        const subName = subNameInput.value.trim();
-        const subPrice = parseFloat(subPriceInput.value.trim());
-        const subFrequency = subFrequencyInput.value;
-        let subDate = null;  // Getting the date from sub-detail input
+        let subscription = {};
+        subscription['name'] = subNameInput.value.trim();
+        subscription['price'] = parseFloat(subPriceInput.value.trim());
+        subscription['frequency'] = subFrequencyInput.value;
         switch(setting) {
             case('weekly'):
-                subDate = subDetailDOW.value;
+                subscription['freq_value'] = subDetailDOW.value;
                 console.log('Current Setting: WEEKLY');
                 break;
 
             case('monthly'):
-                subDate = Number(subDetailDOM.value);
+                subscription['freq_value'] = Number(subDetailDOM.value);
                 console.log('Current Setting: MONTHLY');
-                console.log('Day of Month:', subDate);
+                console.log('Day of Month:', subDetailDOM.value);
                 break;
 
             case('yearly'):
                 const dateParts = subDetailDate.value.split('-');
-                subDate = [parseInt(dateParts[2]), parseInt(dateParts[1])];
+                subscription['freq_value'] = [parseInt(dateParts[2]), parseInt(dateParts[1])];
                 console.log('Current Setting: YEARLY');
-                console.log('Date:', subDate);
+                console.log('Date:', subscription.freq_value);
                 break;
 
             default:
@@ -178,11 +170,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
         }
 
-        if (subName && !isNaN(subPrice) && subPrice > 0 && subDate && !subs.some(s => s.name === subName)) {
-            const newSub = { name: subName, price: subPrice, frequency: subFrequency, date: subDate };
-            subs.push(newSub);
+        /* TO DO: Add a confirmation that the subscription doesn't exist already */
+        if (subscription.name && !isNaN(subscription.price) && subscription.price > 0 && subscription.freq_value) {
+            DB.uDoc.newDoc(getCookie('hash'), 'subscriptions', subscription.name, subscription)
             renderSubscriptions();
-            updateDatabase();
             
             subNameInput.value = '';
             subPriceInput.value = '';
@@ -190,5 +181,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    loadSubscriptions();
+    renderSubscriptions();
 });

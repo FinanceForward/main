@@ -371,6 +371,116 @@ let DB = {
         }
     },
 
+    'uDoc': {
+        /**
+         * Retrieves all documents from a subcollection.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @param {string} collectionName - The name of the subcollection.
+         * @returns {Promise<Object[]>} An array of documents as JSON objects.
+         */
+        'allDocs': async (hash, collectionName) => {
+            try {
+                // Step 1: Query the 'users' collection to find the document with the matching 'hash' field
+                const usersRef = collection(db, "users");
+                const userQuery = query(usersRef, where("hash", "==", hash));
+                const userSnap = await getDocs(userQuery);
+
+                if (userSnap.empty) {
+                    console.error("User not found with hash:", hash);
+                    return []; // User not found, return empty array
+                }
+
+                // Step 2: Get the actual user document reference
+                const userDocRef = userSnap.docs[0].ref;
+
+                // Step 3: Reference the subcollection
+                const subCollectionRef = collection(userDocRef, collectionName);
+
+                // Step 4: Get all documents in the subcollection
+                const subCollectionSnap = await getDocs(subCollectionRef);
+
+                // Step 5: Map the documents to JSON objects
+                return subCollectionSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } catch (error) {
+                console.error("Error retrieving all documents:", error);
+                return []; // Return empty array on error
+            }
+        },
+
+        /**
+         * Creates a new document in a subcollection with specified fields.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @param {string} collectionName - The name of the subcollection.
+         * @param {string} name - The name of the new document.
+         * @param {Object} fields - A JSON object mapping field names to field values.
+         * @returns {Promise<boolean>} True if the document was successfully created, false otherwise.
+         */
+        'newDoc': async (hash, collectionName, name, fields) => {
+            try {
+            // Step 1: Query the 'users' collection to find the document with the matching 'hash' field
+            const usersRef = collection(db, "users");
+            const userQuery = query(usersRef, where("hash", "==", hash));
+            const userSnap = await getDocs(userQuery);
+
+            if (userSnap.empty) {
+                console.error("User not found with hash:", hash);
+                return false; // User not found
+            }
+
+            // Step 2: Get the actual user document reference
+            const userDocRef = userSnap.docs[0].ref;
+
+            // Step 3: Reference the subcollection and create a new document
+            const subCollectionRef = collection(userDocRef, collectionName);
+            const documentRef = doc(subCollectionRef, name);
+
+            // Step 4: Set the document with the provided fields
+            await setDoc(documentRef, fields);
+
+            return true; // Successfully created
+            } catch (error) {
+            console.error("Error creating new document:", error);
+            return false; // Error occurred
+            }
+        },
+
+        /**
+         * Deletes a document from a subcollection.
+         * @param {string} hash - The unique hash identifier for the user.
+         * @param {string} collectionName - The name of the subcollection.
+         * @param {string} name - The name of the document to delete.
+         * @returns {Promise<boolean>} True if the document was successfully deleted, false otherwise.
+         */
+        'deleteDoc': async (hash, collectionName, name) => {
+            try {
+                // Step 1: Query the 'users' collection to find the document with the matching 'hash' field
+                const usersRef = collection(db, "users");
+                const userQuery = query(usersRef, where("hash", "==", hash));
+                const userSnap = await getDocs(userQuery);
+
+                if (userSnap.empty) {
+                    console.error("User not found with hash:", hash);
+                    return false; // User not found
+                }
+
+                // Step 2: Get the actual user document reference
+                const userDocRef = userSnap.docs[0].ref;
+
+                // Step 3: Reference the subcollection and document
+                const subCollectionRef = collection(userDocRef, collectionName);
+                const documentRef = doc(subCollectionRef, name);
+
+                // Step 4: Delete the document
+                await deleteDoc(documentRef);
+
+                return true; // Successfully deleted
+            } catch (error) {
+                console.error("Error deleting document:", error);
+                return false; // Error occurred
+            }
+        }
+    },
+
     /**
      * Runs a custom Firestore query.
      * @param {Query} query - The Firestore query to execute.
