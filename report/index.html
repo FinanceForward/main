@@ -59,7 +59,52 @@
     }
 </style>
 <script>
-    // To Do: add subscription calculation
+class DateConfig {
+    static today = () => [new Date().getDate(), new Date().getMonth() + 1] // 0 -> DATE ; 1 -> MONTH
+
+    static getWeekdaysPassed(targetDay) {
+        const today = new Date();
+        return Array.from({ length: today.getDate() }, (_, i) => new Date(today.getFullYear(), today.getMonth(), i + 1))
+            .filter(date => date.getDay() === targetDay).length;
+    }
+}
+
+class Sub {
+    static DOW = x => ({'sunday':0 , 'monday':1 , 'tuesday':2 , 'wednesday':3 , 'thursday':4 , 'friday':5 , 'saturday':6})[x]
+
+    static weekly(price, DOW) {
+        return DateConfig.getWeekdaysPassed(DOW %7)*price
+    }
+
+    static monthly(price, date) {
+        return (DateConfig.today()[0] >= date ? price : 0)
+    }
+
+    static yearly(price, date) {
+        return ((DateConfig.today()[1] == date[1] && DateConfig.today()[0] >= date[0]) ? price : 0)
+    }
+
+    static processTotal(sub) {
+        switch (sub.frequency) {
+            case 'weekly':
+                return Sub.weekly(sub.price, Sub.DOW(sub.freq_value));
+
+            case 'monthly':
+                return Sub.monthly(sub.price, sub.freq_value);
+
+            case 'yearly':
+                return Sub.yearly(sub.price, sub.freq_value);
+        
+            default:
+                console.error('ERROR: Sub.processTotal() error')
+                return;
+        }
+    }
+
+    static processGrandTotal(subs) {
+        return subs.reduce((p, n) => p+Sub.processTotal(n), 0)
+    }
+}
 </script>
 <script>
     let CATdict = {
@@ -99,15 +144,21 @@
                 let currency_after = user.currency.includes('*') ? user.currency.replace('*', '') : '';
                 DB.uCompute.all(hash, 'totals', month).then(totals => { // this will return a JSON object like {c: 5, other: 10}
                     Object.keys(CATdict).forEach(v => totals[v] = (totals[v] || 0));
-                    let k = Object.keys(totals).map(c => CATdict[c] || c)
-                    let v = Object.values(totals)
+                    let kv = Object.keys(totals).map(c => [CATdict[c] || c, totals[c]]).sort((a, b) => a[0].localeCompare(b[0]))
+                    let k = kv.map(c=>c[0])
+                    let v = kv.map(c=>c[1])
                     k.forEach((x,i) => {
                         let category = x;
                         let amount = `${currency}${v[i]}${currency_after}`;
                         addCategory(category, amount, cardOBJ)
                     });
-                    document.getElementById('monthselect').innerHTML = ''; // Loading sign removed
-                    document.getElementById('printbtn').style.display = '';
+                    DB.uDoc.allDocs(hash, 'subscriptions').then(subscriptions => {
+                        subscriptions.forEach(subscription => {
+                            addCategory(subscription.name, `$${Sub.processTotal(subscription)}`, cardOBJ);
+                        });
+                        document.getElementById('monthselect').innerHTML = ''; // Loading sign removed
+                        document.getElementById('printbtn').style.display = '';
+                    })
                 })
             })
             document.getElementById('printbtn').addEventListener('click', e => {
