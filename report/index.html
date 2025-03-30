@@ -153,9 +153,12 @@ class Sub {
                         addCategory(category, amount, cardOBJ)
                     });
                     DB.uDoc.allDocs(hash, 'subscriptions').then(subscriptions => {
+                        let ttlCategories = 0;
                         subscriptions.forEach(subscription => {
-                            addCategory(subscription.name, `$${Sub.processTotal(subscription)}`, cardOBJ);
+                            addCategory(subscription.name, `${currency}${Sub.processTotal(subscription)}${currency_after}`, cardOBJ);
+                            ttlCategories = Sub.processTotal(subscription)
                         });
+                        addCategory('TOTAL:', `${currency}${v.reduce((acc, curr) => acc + curr, 0) + ttlCategories}${currency_after}`, cardOBJ)
                         document.getElementById('monthselect').innerHTML = ''; // Loading sign removed
                         document.getElementById('printbtn').style.display = '';
                     })

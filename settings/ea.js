@@ -1,165 +1,73 @@
 function getCookie(cname) {
     let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for(let i = 0; i <ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
+    return decodeURIComponent(document.cookie).split(';').map(c => c.trim()).find(c => c.startsWith(name))?.substring(name.length) || "";
 }
 
-// shortcuts
 document.addEventListener('keydown', function(event) {
-    // SHIFT + D = DASHBOARD
-    if (event.shiftKey && event.key === 'D') {
-      window.location.href = '../dashboard'
+    const shortcuts = {
+        'D': '../dashboard',
+        'R': '../add-receipt',
+        'V': '../report',
+        'P': '../printout',
+        'L': '../links'
+    };
+    if (event.shiftKey && shortcuts[event.key]) {
+        window.location.href = shortcuts[event.key];
     }
-  
-    // SHIFT + R = ADD RECEIPT
-    if (event.shiftKey && event.key === 'R') {
-      window.location.href = '../add-receipt';
-    }
-  
-    // SHIFT + V = VIEW REPORT
-    if (event.shiftKey && event.key === 'V') {
-      window.location.href = '../report';
-    }
-  
-    // SHIFT + P = PRINTOUT REPORT
-    if (event.shiftKey && event.key === 'P') {
-      window.location.href = '../printout';
-    }
-  
-    // SHIFT + L = LINKS
-    if (event.shiftKey && event.key === 'L') {
-      window.location.href = '../links';
-    }
-  });
+});
 
-// sha256 hash function
 async function sha256(message) {
-    // encode as UTF-8
-    const msgBuffer = new TextEncoder().encode(message);                    
-
-    // hash the message
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-
-    // convert ArrayBuffer to Array
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-
-    // convert bytes to hex string                  
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    return hashHex;
+    const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(message));
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
-// end sha256 hash function
 
+// * DONE
 async function updateAccount(email, pass) {
-    let oldhash = getCookie('hash');
-    let newhash = await sha256(email + pass);
-    let currency = document.getElementById('currency').value;
-    DB.u.update(oldhash, { hash: newhash, currency: currency });
-    document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
-    document.cookie = `hash=${newhash}`;
-    setTimeout(() => {
-        location.href = '../sign-in';
-    }, 500);
+    const oldhash = getCookie('hash');
+    const newhash = await sha256(email + pass);
+    const currency = document.getElementById('currency').value;
+    await DB.u.update(oldhash, { 'hash': newhash });
+    await DB.u.update(oldhash, { 'currency': currency });
+    document.cookie = `hash=${newhash}; path=/; expires=${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString()}`;
+    location.href = '../dashboard'
 }
 
-function signout() {
-    document.getElementById('confirmationDialog').style.display = 'block';
-    document.getElementById('confirm-delete-account').style.display = 'none';
-    document.getElementById('confirm-sign-out').style.display = 'block';
+// TODO - remove this
+async function signout() {
+    toggleDialog('sign-out')
 }
 
-function deleteAccount() {
+function toggleDialog(type) {
+    const isDelete = type === 'delete';
     document.getElementById('confirmationDialog').style.display = 'block';
-    document.getElementById('confirm-delete-account').style.display = 'block';
-    document.getElementById('confirm-sign-out').style.display = 'none';
+    document.getElementById('confirm-delete-account').style.display = isDelete ? 'block' : 'none';
+    document.getElementById('confirm-sign-out').style.display = isDelete ? 'none' : 'block';
 }
 
 function cancel() {
-    document.getElementById('confirm-delete-account').style.display = 'block';
-    document.getElementById('confirm-sign-out').style.display = 'block';
     document.getElementById('confirmationDialog').style.display = 'none';
 }
 
 function proceed() {
-    let type = document.getElementById('confirm-delete-account').style.display === 'block' ? 'account-delete' : 'sign-out';
-    let hash = getCookie('hash')
-    if (type === 'account-delete') {
-        // delete account
-        DB.u.delete(hash);
-    }
-    // clear cookies
-    document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
-    location.href = '../';
-    document.getElementById('confirmationDialog').style.display = 'none';
-    document.getElementById('confirm-delete-account').style.display = 'block';
-    document.getElementById('confirm-sign-out').style.display = 'block';
-}
-
-document.getElementById('editForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    alert("Email updated successfully!");
-    // Here you would handle the actual email update
-});
-
-document.getElementById('premium').addEventListener('change', function() {
-    if (this.checked) {
-        // Here you would handle the premium subscription
-        DB.u.update(getCookie('hash'), { premium: true }).then(() => {
+    const isDelete = document.getElementById('confirm-delete-account').style.display === 'block';
+    if (isDelete) {
+        DB.u.delete(getCookie('hash')).then(_=> {
+            document.cookie = "hash=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
             location.href = '../dashboard';
-        });
+        })
     } else {
-        // Here you would handle the premium unsubscription
-        DB.u.update(getCookie('hash'), { premium: null}).then(() => {
-            location.href = '../dashboard';
-        });
-    }
-})
-
-document.addEventListener('DOMContentLoaded', function() {
-    DB.u.get(getCookie('hash')).then((user) => {
-        document.getElementById('premium').checked = (user['premium'] == undefined) ? false : true;
-    });
-});
-
-let name = "hash=";
-let ca = decodeURIComponent(document.cookie).split(';');
-for(let i = 0; i <ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') {
-    c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-        if (getCookie('hash') != ''){} else {
-            window.location.href = '../sign-in';
-        }
-    } else {
-        window.location.href = '../sign-in';
+        document.cookie = "hash=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+        location.href = '../dashboard';
     }
 }
 
-
-let date = new Date();
-date.setDate(date.getDate() + 7);
-let c = `hash=${getCookie('hash')}; path=../; expires=${date.toUTCString()}`;
-document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
-document.cookie = c;
-
+// * DONE
 document.addEventListener('DOMContentLoaded', function() {
-    // elements
-    const sidebar = document.querySelector('.sidebar');
-    const openSidebar = document.querySelector('.logo');
+    const hash = getCookie('hash');
+    if (!hash) return (window.location.href = '../sign-in');
 
-    // set default currency
-    DB.u.get(getCookie('hash')).then(user => {
-        document.getElementById('currency').value = user['currency'];
+    DB.u.get(hash).then(user => {
+        user && (document.getElementById('premium').checked = !!(user['premium'] ?? false));
+        user && (document.getElementById('currency').value = (user['currency'] ?? ''));
     });
 });

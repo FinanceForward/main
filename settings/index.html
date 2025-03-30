@@ -48,18 +48,13 @@
                         <option value="₪">ILS (₪)</option>
                         <option value="₩">KRW (₩)</option>
                     </select>
-                </div>
-
-                <div class="input-group">
-                    <label>Advanced Mode (AKA. Premium)</label>
-                    <input type="checkbox" id="premium" name="premium"><label for="premium" id="switch_premium"></label><br>
                     <button type="button" class="btn fancy-btn" onclick="updateAccount(document.getElementById('email').value, document.getElementById('password').value)">Update Settings</button>
                 </div>
             </div>
     
             <div class="delete-options">
-                <button onclick="signout()" class="btn danger-btn">Sign Out</button>
-                <button onclick="deleteAccount()" class="btn danger-btn">Delete Account</button>
+                <button onclick="toggleDialog('signout')" class="btn danger-btn">Sign Out</button>
+                <button onclick="toggleDialog('delete')" class="btn danger-btn">Delete Account</button>
             </div>
     
             <div class="confirmation" id="confirmationDialog" style="display: none;">

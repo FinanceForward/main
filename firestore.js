@@ -491,9 +491,11 @@ let DB = {
     }
 };
 
-let version = "BETA 1.2 FIRE (pre-release)";
+let version = "BETA 1.2 FIRE";
+let versionNOTES = "We've migrated to a new database and fixed a few bugs. This will be the last version update before Finance Forward GAMMA";
 
 // Export the DB functions for use in the global scope
 window.DB = DB;
 window.version = version;
-export { DB, version };
+window.versionNOTES = versionNOTES;
+export { DB, version, versionNOTES };

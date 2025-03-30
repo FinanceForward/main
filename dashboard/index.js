@@ -8,6 +8,53 @@ setTimeout(() => {
 }, 5000)
 document.querySelector('#beta_icon').innerHTML = version
 
+class DateConfig {
+  static today = () => [new Date().getDate(), new Date().getMonth() + 1] // 0 -> DATE ; 1 -> MONTH
+
+  static getWeekdaysPassed(targetDay) {
+      const today = new Date();
+      return Array.from({ length: today.getDate() }, (_, i) => new Date(today.getFullYear(), today.getMonth(), i + 1))
+          .filter(date => date.getDay() === targetDay).length;
+  }
+}
+
+class Sub {
+  static DOW = x => ({'sunday':0 , 'monday':1 , 'tuesday':2 , 'wednesday':3 , 'thursday':4 , 'friday':5 , 'saturday':6})[x]
+
+  static weekly(price, DOW) {
+      return DateConfig.getWeekdaysPassed(DOW %7)*price
+  }
+
+  static monthly(price, date) {
+      return (DateConfig.today()[0] >= date ? price : 0)
+  }
+
+  static yearly(price, date) {
+      return ((DateConfig.today()[1] == date[1] && DateConfig.today()[0] >= date[0]) ? price : 0)
+  }
+
+  static processTotal(sub) {
+      switch (sub.frequency) {
+          case 'weekly':
+              return Sub.weekly(sub.price, Sub.DOW(sub.freq_value));
+
+          case 'monthly':
+              return Sub.monthly(sub.price, sub.freq_value);
+
+          case 'yearly':
+              return Sub.yearly(sub.price, sub.freq_value);
+      
+          default:
+              console.error('ERROR: Sub.processTotal() error')
+              return;
+      }
+  }
+
+  static processGrandTotal(subs) {
+      return subs.reduce((p, n) => p+Sub.processTotal(n), 0)
+  }
+}
+
 // cookie script
 function getCookie(cname) {
     let name = cname + "=";
@@ -67,14 +114,12 @@ let hash = getCookie('hash');
 
 DB.u.get(hash).then((user) => {
   console.log(user);
-  if (user['premium'] == undefined) document.querySelectorAll('.premium-feature').forEach((el) => el.style.display = 'none');
-  if (user['version'] != 'beta1.2fire') {
-    alert("Welcome to Beta 1.2 Fire, We've migrated to a new database and fixed a couple bugs.")
-    DB.u.update(hash, { 'version' : 'beta1.2fire' })
+  if (user['version'] != version) {
+    alert(`Welcome to ${version}, ${versionNOTES}`)
+    DB.u.update(hash, { 'version' : version})
   }
   user['c_categories'] = user['c_categories'] || [];
   console.log(user);
-  let totals = user.totals;
   let currency = user['currency'] || '$';
   if (currency.includes('*')) {
     currency = currency.replace('*', '');
@@ -98,7 +143,11 @@ DB.u.get(hash).then((user) => {
   const d = new Date();
   let month = d.getFullYear().toString() + '-' + (d.getMonth()+1 < 10 ? "0" : '') + (d.getMonth()+1).toString();
 
-  DB.uCompute.all(hash, 'totals', month).then((totals) => {
+  DB.uCompute.all(hash, 'totals', month).then(async (totals) => {
+    let subscriptions = await DB.uDoc.allDocs(hash, 'subscriptions');
+    subscriptions.forEach(subscription => {
+      totals[subscription.name] = Sub.processTotal(subscription);
+    })
     let total = Object.values(totals).reduce((sum, value) => sum + value, 0);
     console.log(total);
 
