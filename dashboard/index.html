@@ -7,15 +7,8 @@
     <link rel="stylesheet" href="./index.css">
     <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Scripts -->
-    <script src="../fauna.js"></script>
     <!-- IMPORTANT -->
-    <script type="module">
-        import{Client,fql}from'https://cdn.jsdelivr.net/npm/fauna@latest/dist/browser/index.js';
-        window.Client = Client;
-        window.fql = fql;
-        console.log(fql&&Client ? 'MODULE LOADED' : 'FAILED TO LOAD MODULE')
-    </script>
+    <script defer src="../firestore.js" type="module"></script>
     <!-- IMPORTANT -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,dashboard,info,receipt_long,settings"/>
 </head>
@@ -66,7 +59,6 @@
                 <div>
                     <a href="../add-receipt">Add Receipt <img src="../src/icons/add.png"></a>
                     <a href="../report">View Report <img src="../src/icons/receipt_long.png"></a>
-                    <a href="../receipts" class="premium-feature">View Receipts <img src="../src/icons/receipt.png"></a><br>
                     <a href="../links">See More <img src="../src/icons/log.png"></a>
                 </div>
             </div>
@@ -86,6 +78,5 @@
             </h1>
         </div>
     </main>
-</body>
-</html>
 <script src="./index.js" defer></script>
+</html>

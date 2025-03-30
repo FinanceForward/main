@@ -252,7 +252,7 @@ button {
         width: 100vw; /* Adjust width for mobile view */
     }
 
-    .dashboard .top-categories a {
+    .dashboard .top-categories div a {
         display: inline-block;
     }
 }

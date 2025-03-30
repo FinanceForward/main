@@ -9,16 +9,8 @@
     <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
     <!-- Scripts -->
-    <script src="../fauna.js"></script>
     <script src="./ea.js" defer></script>
-    <!-- IMPORTANT -->
-    <script type="module">
-        import{Client,fql}from'https://cdn.jsdelivr.net/npm/fauna@latest/dist/browser/index.js';
-        window.Client = Client;
-        window.fql = fql;
-        console.log(fql&&Client ? 'MODULE LOADED' : 'FAILED TO LOAD MODULE')
-    </script>
-    <!-- IMPORTANT -->
+    <script src="../firestore.js" defer type="module"></script>
 </head>
 <body>
     <main>
@@ -56,18 +48,13 @@
                         <option value="₪">ILS (₪)</option>
                         <option value="₩">KRW (₩)</option>
                     </select>
-                </div>
-
-                <div class="input-group">
-                    <label>Advanced Mode (AKA. Premium)</label>
-                    <input type="checkbox" id="premium" name="premium"><label for="premium" id="switch_premium"></label><br>
                     <button type="button" class="btn fancy-btn" onclick="updateAccount(document.getElementById('email').value, document.getElementById('password').value)">Update Settings</button>
                 </div>
             </div>
     
             <div class="delete-options">
-                <button onclick="signout()" class="btn danger-btn">Sign Out</button>
-                <button onclick="deleteAccount()" class="btn danger-btn">Delete Account</button>
+                <button onclick="toggleDialog('signout')" class="btn danger-btn">Sign Out</button>
+                <button onclick="toggleDialog('delete')" class="btn danger-btn">Delete Account</button>
             </div>
     
             <div class="confirmation" id="confirmationDialog" style="display: none;">
@@ -83,4 +70,3 @@
     </main>
 </body>
 </html>
-<script src="./index.js" defer></script>
