@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap">
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <style>
+        * {
+            font-family: 'Manrope', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            color: #ffffff;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 600px;
+        }
+        li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #1e1e1e;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .material-symbols-outlined {
+            font-size: 50px;
+            color: #ffffff;
+            text-decoration: none;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+            align-self: flex-start;
+        }
+        input[type="text"] {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            width: 300px;
+            max-width: 100%;
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff4500;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #FF9B07;
+        }
+    </style>
+    <title>Category Manager</title>
+    <script defer src="../firestore.js" type="module"></script>
+</head>
+<body>
+    <a href="../dashboard"><span class="material-symbols-outlined">chevron_backward</span></a>
+    <h1>Category Manager</h1>
+    <ul id="category-list">
+        <div id="defaults"></div>
+        <h1>PLEASE WAIT AS WE LOAD YOUR CATEGORIES</h1>
+    </ul>
+    <input type="text" id="newcatname" placeholder="Category Name"/><button onclick="document.getElementById('ac').textContent = 'Adding...'; add(document.getElementById('newcatname').value).then(_=>{ document.getElementById('ac').textContent = 'Add Category'; document.getElementById('newcatname').value = ''});" id="ac">Add Category</button>
+    <script src="./index.js" defer></script>
+</body>
+</html>

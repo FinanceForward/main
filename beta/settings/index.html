@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Account - Finance Forward</title>
+    <link rel="stylesheet" href="ea-styles.css">
+    <link rel="stylesheet" href="./index.css">
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Scripts -->
+    <script src="./ea.js" defer></script>
+    <script src="../firestore.js" defer type="module"></script>
+</head>
+<body>
+    <main>
+        <div class="container">
+            <h1 class="fancy-title">Edit Your Account</h1>
+    
+            <div id="editForm">
+                <div class="input-group">
+                    <label for="email">New Email:</label>
+                    <input type="email" id="email" name="email">
+                </div>
+    
+                <div class="input-group">
+                    <label for="password">New Password:</label>
+                    <input type="password" id="password" name="password">
+                </div>
+
+                <div class="input-group">
+                    <label for="currency">Currency:</label>
+                    <select id="currency" name="currency">
+                        <option value="$">USD ($)</option>
+                        <option value="€">EUR (€)</option>
+                        <option value="£">GBP (£)</option>
+                        <option value="¥">JPY (¥)</option>
+                        <option value="¥">CNY (¥)</option>
+                        <option value="₹">INR (₹)</option>
+                        <option value="$">AUD ($)</option>
+                        <option value="CAN$">CAN (CAN$)</option>
+                        <option value="Fr.*">CHF (Fr.)</option>
+                        <option value="₽">RUB (₽)</option>
+                        <option value="R$">BRL (R$)</option>
+                        <option value="Z$">ZWD (Z$)</option>
+                        <option value="₱">PHP (₱)</option>
+                        <option value="﷼*">SAR (﷼)</option>
+                        <option value="₪">ILS (₪)</option>
+                        <option value="₩">KRW (₩)</option>
+                    </select>
+                    <button type="button" class="btn fancy-btn" onclick="updateAccount(document.getElementById('email').value, document.getElementById('password').value)">Update Settings</button>
+                </div>
+            </div>
+    
+            <div class="delete-options">
+                <button onclick="toggleDialog('signout')" class="btn danger-btn">Sign Out</button>
+                <button onclick="toggleDialog('delete')" class="btn danger-btn">Delete Account</button>
+            </div>
+    
+            <div class="confirmation" id="confirmationDialog" style="display: none;">
+                <h2>Confirmation</h2>
+                <p id="confirm-sign-out" class="fancy-text">Are you sure you want to sign out?</p>
+                <p id="confirm-delete-account" class="fancy-text">Are you sure you want to delete your account?</p>
+                <div class="confirmation-buttons">
+                    <button onclick="cancel()" class="btn">Cancel</button>
+                    <button onclick="proceed()" class="btn danger-btn">Proceed</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

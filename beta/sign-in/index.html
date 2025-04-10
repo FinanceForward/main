@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Forward</title>
+    <link rel="stylesheet" href="./sign-in.css">
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Scripts -->
+    <script defer src="../firestore.js" type="module"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,dashboard,info,receipt_long,settings"/>
+</head>
+<body>
+    <main class="forum">
+        <div id = "sign-in" class="form-container">
+            <h1>Welcome Back! <br> Sign In</h1>
+            <br><br>
+            <input type="email" id="email" name="email" placeholder="Enter Email"/>
+            <br><br>
+            <input type="password" id="pass" name="password" placeholder="Enter Password"/>
+            <br><br>
+            <button class="go" id="signin-btn">Sign In!</button>
+            <p id="si-errs"></p>
+            <br><br><br><br>
+            <a onclick="document.getElementById('sign-in').hidden = true; document.getElementById('sign-up').hidden = false" class="swt">SIGN UP INSTEAD</a>
+        </div>
+        <div id = "sign-up" class="form-container" hidden>
+            <h1>Welcome! <br> Sign Up</h1>
+            <br><br>
+            <input type="email" id="email_up" name="email" placeholder="Enter Email"/>
+            <br><br>
+            <input type="password" id="pass_up" name="password" placeholder="Enter Password"/>
+            <br><br>
+            <input type="password" id="pass2_up" name="password" placeholder="Re-enter Password"/>
+            <br><br>
+            <select id="currency" name="currency">
+                <option value="$">USD ($)</option>
+                <option value="€">EUR (€)</option>
+                <option value="£">GBP (£)</option>
+                <option value="¥">JPY (¥)</option>
+                <option value="¥">CNY (¥)</option>
+                <option value="₹">INR (₹)</option>
+                <option value="$">AUD ($)</option>
+                <option value="CAN$">CAN (CAN$)</option>
+                <option value="Fr.*">CHF (Fr.)</option>
+                <option value="₽">RUB (₽)</option>
+                <option value="R$">BRL (R$)</option>
+                <option value="Z$">ZWD (Z$)</option>
+                <option value="₱">PHP (₱)</option>
+                <option value="﷼*">SAR (﷼)</option>
+                <option value="₪">ILS (₪)</option>
+                <option value="₩">KRW (₩)</option>
+            </select>
+            <br><br>
+            <button class="go" id="signup-btn">Sign Up!</button>
+            <p id="su-errs"></p>
+            <br><br><br><br>
+            <a onclick="document.getElementById('sign-in').hidden = false; document.getElementById('sign-up').hidden = true" class="swt">SIGN IN INSTEAD</a>
+        </div>
+    </main>
+</body>
+<script src="./sign-in.js" defer></script>
+</html>

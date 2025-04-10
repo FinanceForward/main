@@ -3,73 +3,775 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Forward</title>
-    <link rel="stylesheet" href="./index.css">
-    <link rel="stylesheet" href="./lp-styles.css">
-    <link rel="icon" type="image/x-icon" href="./src/fflogo.jpg">
+    <title>Finance Forward - Simple Expense Tracking (GAMMA)</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
-    <!-- IMPORTANT -->
+    <link rel="stylesheet" href="./landing_gamma.css">
+    <link rel="icon" type="image/x-icon" href="./src/fflogo.jpg">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap&icon_names=bar_chartsecurityreceipt_longgroups"/>
+
     <script defer src="./firestore.js" type="module"></script>
-    <!-- IMPORTANT -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,dashboard,info,receipt_long,settings"/>
-</head>
+    </head>
 <body>
-    <header>
-        <div class="title" id="fftitle_header">Finance Forward <span id="beta_icon">BETA 1.1</span></div>
-        <div id="header-right">
-            <img class="logo" src="./src/fflogo.jpg" alt="ff logo">
+    <header class="header">
+        <div class="header__container">
+            <a href="#" class="header__brand" aria-label="Finance Forward Home">
+                <img class="header__logo" src="./src/fflogo.jpg" alt="Finance Forward Logo">
+                <span class="header__title">Finance Forward <span class="header__version-badge">GAMMA (GEMINI PRE-RELEASE)</span></span>
+            </a>
+            <nav class="header__nav">
+                <a href="./sign-in/" class="button button--primary header__cta" id="header-cta-button">
+                    Sign In
+                </a>
+            </nav>
         </div>
     </header>
 
-    <main>
-        <section class="section hidden" id="home" data-color-theme="warm" style="background-image: url('./src/fflogo.jpg');">
-            <div id="fadeDiv" style="text-align: center; color: black; font-size: 24px; margin-top: 20px; background-color: aqua; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); font-size: 50px;">
-                Scroll Down
+    <main class="main-content">
+
+        <section class="hero" id="home">
+            <div class="hero__content animate-on-scroll">
+                <img class="hero__title hero__title-logo" src="./src/fflogo.jpg" alt="Finance Forward Logo">
+                <h1 class="hero__title hero__title-brand-name">Finance Forward</h1>
+                <h1 class="hero__title">Take Control of Your Spending. Simply.</h1>
+                <p class="hero__subtitle">Effortless expense tracking for individuals and businesses. Gain clarity, stay on budget, and manage your finances with ease.</p>
+                <a href="./sign-in/" class="button button--primary button--large hero__cta">Get Started Free</a>
+                </div>
+        </section>
+
+        <section class="feature feature--alt" id="simplicity">
+            <div class="feature__container">
+                <div class="feature__text animate-on-scroll">
+                    <span class="material-symbols-outlined feature__icon">receipt_long</span>
+                    <h2 class="feature__title">Simplified Expense Tracking</h2>
+                    <p class="feature__description">No more messy spreadsheets or confusing reports. Finance Forward offers an intuitive interface that makes recording and reviewing expenses seamless. Categorize transactions and monitor your financial health in real time with just a few clicks.</p>
+                    <a href="./sign-in/" class="button button--secondary feature__cta">Learn More</a>
+                </div>
+                <div class="feature__image-placeholder animate-on-scroll">
+                    <img src="./src/lp_shows/ez_interface.png" alt="Simplified interface illustration">
+                </div>
             </div>
         </section>
-        <section class="section hidden" id="about" data-color-theme="cool">
-            <h2>Take Control of Your Finances</h2>
-            <h3>Managing your expenses shouldn't be complicated or expensive.</h3>
-            <h3>At Finance Forward, we make it simple. Our platform helps you track your spending effortlessly, giving you clear insights into where your money goes.</h3>
-            <h3>Whether you're an individual staying on budget or a business managing costs, we provide the tools you need.</h3>
-            <a href="./sign-in/"><button>Start Today</button></a>
+
+        <section class="feature" id="insights">
+             <div class="feature__container feature__container--reversed">
+                 <div class="feature__image-placeholder animate-on-scroll">
+                    <img src="https://placehold.co/600x400/2F2C27/FF9B07?text=OMICRON (Paid Plan)\n COMING SOON" alt="Data insights illustration">
+                 </div>
+                <div class="feature__text animate-on-scroll">
+                    <span class="material-symbols-outlined feature__icon">bar_chart</span>
+                    <h2 class="feature__title"><span class="feature__coming-soon">Coming Soon (Premium)</span><br>Automated Insights, Smarter Decisions</h2>
+                    <p class="feature__description">Understanding your financial habits is key. Our upcoming premium plan automatically analyzes spending patterns, providing insights to help you save more and spend wisely. Set alerts, track recurring expenses, and get tailored recommendations.</p>
+                </div>
+            </div>
         </section>
-        <section class="section hidden" id="about2" data-color-theme="dark">
-            <h2>Simplified Expense Tracking</h2>
-            <h3>No more messy spreadsheets or confusing reports.</h3>
-            <h3>Finance Forward offers an intuitive interface that makes recording and reviewing expenses seamless.</h3>
-            <h3>With just a few clicks, you can categorize transactions, set budgets, and monitor your financial health in real time.</h3>
-            <a href="./sign-in/"><button>Get Started</button></a>
+
+        <section class="feature feature--alt" id="security">
+            <div class="feature__container">
+                <div class="feature__text animate-on-scroll">
+                    <span class="material-symbols-outlined feature__icon">security</span>
+                    <h2 class="feature__title">Secure and Reliable</h2>
+                    <p class="feature__description">Your financial data is sensitive, and security is our top priority. Finance Forward uses strong encryption and secure cloud storage (via Google Firestore) to keep your information safe. Track your finances confidently and without worry.</p>
+                </div>
+                 <div class="feature__image-placeholder animate-on-scroll">
+                    <img src="./src/lp_shows/data_security.png" alt="Security shield illustration">
+                 </div>
+            </div>
         </section>
-        <section class="section hidden" id="about3" data-color-theme="bright">
-            <h2>COMING SOON - PREMIUM PLAN</h2>
-            <h2>Automated Insights, Smarter Decisions</h2>
-            <h3>Understanding your financial habits is key to making better decisions.</h3>
-            <h3>Finance Forward automatically analyzes your spending patterns and provides insights to help you save more and spend wisely.</h3>
-            <h3>Set alerts, track recurring expenses, and get recommendations tailored to your goals—all in one easy-to-use dashboard.</h3>
-            <a href="./sign-in/"><button>Join Now</button></a>
+
+         <section class="feature" id="audience">
+             <div class="feature__container feature__container--reversed">
+                <div class="feature__text animate-on-scroll">
+                    <span class="material-symbols-outlined feature__icon">groups</span>
+                    <h2 class="feature__title">Designed for Everyone</h2>
+                    <p class="feature__description">Whether you're an entrepreneur, freelancer, individual, or business managing costs, Finance Forward is built for you. Our clean, distraction-free platform ensures you get the information needed without unnecessary complexity. Financial clarity should be accessible to all.</p>
+                </div>
+            </div>
         </section>
-        <section class="section hidden" id="about4" data-color-theme="cool">
-            <h2>Designed for Everyone<h2>
-            <h3>Whether you're an entrepreneur, freelancer, or just someone who wants to take charge of their finances, Finance Forward is built for you.</h3>
-            <h3>Our clean, distraction-free platform ensures that you get the information you need without unnecessary complexity.</h3>
-            <h2>Financial clarity should be accessible to everyone, which is why we're committed to keeping Finance Forward availible everywhere.</h2>
-            <a href="./sign-in/"><button>Start Today</button></a>
+
+        <section class="cta-final" id="get-started">
+            <div class="cta-final__content animate-on-scroll">
+                <h2 class="cta-final__title">Start Your Financial Journey Today</h2>
+                <p class="cta-final__description">Gain the confidence to take control of your financial future. Sign up for Finance Forward and start tracking your expenses with clarity and ease.</p>
+                <a href="./sign-in/" class="button button--primary button--large cta-final__button">Get Started Now</a>
+            </div>
         </section>
-        <section class="section hidden" id="about5" data-color-theme="dark">
-            <h2>Secure and Reliable</h2>
-            <h3>We understand that your financial data is sensitive, which is why security is our top priority.</h3>
-            <h3>Finance Forward uses encryption and secure cloud storage to keep your information safe.</h3>
-            <h3>You can trust us to provide a secure environmenth where you can confidently track your finances without worry.</h3>
-            <a href="./sign-in/"><button>Join Now</button></a>
-        </section>
-        <section class="section hidden" data-color-theme="bright">
-            <h2>Start Your Financial Journey Today</h2>
-            <h3>Finance Forward is your first step toward smarter money management.</h3>
-            <h3>With our simple yet powerful expense-tracking tools, you'll gain the confidence to take control of your financial future.</h3>
-            <h3>Sign up today and start tracking your expenses with ease!</h3>
-            <a href="./sign-in/"><button>Get Started</button></a>
-        </section>
+
     </main>
-<script src="./index.js" defer></script>
+
+    <footer class="footer">
+        <div class="footer__container">
+            <p class="footer__copyright">&copy; <span id="footer-year"></span> Finance Forward. All rights reserved.</p>
+            <nav class="footer__nav">
+                <a href="./sign-in/" class="footer__link">Sign In</a>
+            </nav>
+        </div>
+    </footer>
+
+    <st src="./landing_gamma.js" defer></script>
+</body>
 </html>
+
+<style>
+/* landing_gamma.css */
+
+/* --- Base Styles & Variables --- */
+:root {
+    /* Color Palette (Consistent with Dashboard) */
+    --color-background: #000000;
+    --color-background-alt: #1E1E1E; /* Dark gray for alternate sections */
+    --color-background-card: #2F2C27; /* Dark brown-gray for cards/elements */
+    --color-text: #FFFFFF;
+    --color-text-muted: #a0a0a0; /* Lighter gray for subtitles */
+    --color-header-bg: #1a1a1a; /* Slightly darker header than dashboard */
+    --color-primary-accent: #FF9B07; /* Orange */
+    --color-primary-accent-hover: #e68a00; /* Darker Orange */
+    --color-border-subtle: #4a4a4a;
+
+    /* Font */
+    --font-family-base: 'Manrope', sans-serif;
+
+    /* Spacing */
+    --space-xs: 0.25rem; /* 4px */
+    --space-sm: 0.5rem;  /* 8px */
+    --space-md: 1rem;    /* 16px */
+    --space-lg: 1.5rem;  /* 24px */
+    --space-xl: 2rem;    /* 32px */
+    --space-xxl: 3rem;   /* 48px */
+    --space-section: 5rem; /* 80px Vertical space between sections */
+
+    /* Sizes */
+    --header-height: 70px; /* Slightly taller header */
+    --container-width: 1100px; /* Max width for content */
+
+    /* Transitions & Animations */
+    --transition-speed: 0.3s;
+    --transition-ease: ease-in-out;
+    --animation-duration: 0.6s;
+
+    /* Borders */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 20px; /* Consistent button radius */
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth; /* Keep smooth scrolling */
+    scroll-padding-top: var(--header-height); /* Offset for fixed header */
+}
+
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.7; /* Slightly more line height for readability */
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color var(--transition-speed) var(--transition-ease);
+}
+a:hover {
+    color: var(--color-primary-accent);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+h1, h2, h3 {
+    line-height: 1.3;
+    font-weight: 700;
+    margin-bottom: var(--space-md);
+}
+
+h1 { font-size: 3rem; } /* 48px */
+h2 { font-size: 2.25rem; } /* 36px */
+h3 { font-size: 1.5rem; } /* 24px */
+
+p {
+    margin-bottom: var(--space-lg);
+    color: var(--color-text-muted);
+    max-width: 65ch; /* Improve readability */
+}
+section p { /* More specific selector */
+     color: var(--color-text-muted);
+}
+section .feature__text p { /* Even more specific for feature text */
+     color: var(--color-text); /* Make feature text brighter */
+}
+
+
+/* --- Utility Classes --- */
+.container {
+    max-width: var(--container-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
+}
+
+/* --- Buttons (Refined from lp-styles) --- */
+.button {
+    display: inline-block;
+    padding: var(--space-sm) var(--space-lg); /* 10px 24px */
+    font-size: 1rem; /* 16px */
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    transition: background-color var(--transition-speed) var(--transition-ease),
+                transform var(--transition-speed) var(--transition-ease),
+                box-shadow var(--transition-speed) var(--transition-ease);
+    position: relative;
+    overflow: hidden; /* For potential future effects */
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+.button--primary {
+    background-color: var(--color-primary-accent);
+    color: var(--color-background); /* Dark text on orange */
+}
+.button--primary:hover {
+    background-color: var(--color-primary-accent-hover);
+    color: var(--color-background);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 155, 7, 0.3); /* Subtle glow */
+}
+.button--primary:active {
+     transform: translateY(1px);
+     box-shadow: none;
+}
+
+.button--secondary {
+    background-color: transparent;
+    color: var(--color-primary-accent);
+    border: 2px solid var(--color-primary-accent);
+}
+.button--secondary:hover {
+    background-color: rgba(255, 155, 7, 0.1); /* Subtle orange background */
+    color: var(--color-primary-accent);
+    transform: translateY(-2px);
+}
+.button--secondary:active {
+     transform: translateY(1px);
+}
+
+
+.button--large {
+    padding: var(--space-md) var(--space-xl); /* 16px 32px */
+    font-size: 1.125rem; /* 18px */
+}
+
+/* --- Header --- */
+.header {
+    background-color: var(--color-header-bg);
+    color: var(--color-text);
+    height: var(--header-height);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: background-color var(--transition-speed) var(--transition-ease);
+}
+/* Optional: Add slight transparency on scroll */
+/* body:not(.scrolled-past-hero) .header {
+    background-color: transparent;
+    box-shadow: none;
+} */
+
+.header__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+}
+
+.header__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--color-text); /* Ensure link color is white */
+}
+.header__brand:hover {
+    color: var(--color-text); /* Prevent color change on hover */
+}
+
+
+.header__logo {
+    width: 40px;
+    height: 40px;
+}
+
+.header__title {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.header__version-badge {
+    background-color: var(--color-background-card);
+    color: var(--color-primary-accent);
+    padding: 2px var(--space-sm);
+    font-size: 0.7rem; /* 11.2px */
+    border-radius: var(--border-radius-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-left: var(--space-xs);
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+.header__nav {
+    /* Navigation styles if more links are added */
+}
+
+.header__cta {
+    /* Specific styling for the header button if needed */
+}
+
+/* --- Main Content --- */
+.main-content {
+    padding-top: var(--header-height); /* Prevent content from hiding behind fixed header */
+}
+
+/* --- Hero Section --- */
+.hero {
+    min-height: calc(100vh - var(--header-height)); /* Full viewport height minus header */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: var(--color-background); /* Base background */
+    /* Optional: Subtle gradient or background pattern */
+    /* background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('path/to/subtle-bg.jpg') center/cover no-repeat; */
+    padding: var(--space-xxl) var(--space-lg);
+    position: relative; /* For scroll indicator */
+}
+
+.hero__content {
+    max-width: 800px; /* Limit content width */
+}
+
+.hero__title {
+    font-size: 3.5rem; /* 56px */
+    margin-bottom: var(--space-lg);
+    color: var(--color-text);
+    line-height: 1.2;
+}
+
+.hero__title-brand-name {
+    color: var(--color-primary-accent);
+}
+
+.hero__title-logo {
+    width: 80px; /* Logo size */
+    height: 80px;
+    justify-self: center;
+    margin-bottom: var(--space-lg);
+}
+
+.hero__subtitle {
+    font-size: 1.25rem; /* 20px */
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xl);
+    max-width: 60ch; /* Limit line length */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero__cta {
+    margin-top: var(--space-lg);
+}
+
+.hero__scroll-indicator {
+    position: absolute;
+    bottom: var(--space-xl);
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--color-text-muted);
+    animation: bounce 2s infinite;
+}
+.hero__scroll-indicator .material-symbols-outlined {
+    font-size: 2rem;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40% { transform: translateX(-50%) translateY(-10px); }
+    60% { transform: translateX(-50%) translateY(-5px); }
+}
+
+
+/* --- Feature Sections --- */
+.feature {
+    padding: var(--space-section) 0;
+    overflow: hidden; /* Contain animations */
+}
+.feature--alt {
+    background-color: var(--color-background-alt); /* Alternate background */
+}
+
+.feature__container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Default 2 columns */
+    gap: var(--space-xxl);
+    align-items: center;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+}
+.feature__container--reversed {
+    /* Reverses column order implicitly via element order in HTML */
+}
+
+.feature__text {
+    /* Styles for the text content block */
+}
+
+.feature__icon {
+    height: 3rem; /* 48px */
+    font-size: 3rem; /* 48px */
+    color: var(--color-primary-accent);
+    margin-bottom: var(--space-md);
+    display: inline-block; /* Needed for margin */
+}
+
+.feature__title {
+    margin-bottom: var(--space-lg);
+    color: var(--color-text);
+}
+
+.feature__description {
+    font-size: 1.1rem; /* Slightly larger feature text */
+    color: var(--color-text); /* Brighter text for features */
+     max-width: 55ch;
+}
+
+.feature__coming-soon {
+    display: block;
+    font-size: 0.7em;
+    color: var(--color-primary-accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: var(--space-xs);
+}
+
+.feature__cta {
+    margin-top: var(--space-lg);
+}
+
+.feature__image-placeholder {
+    /* Styles for the image container */
+    border-radius: var(--border-radius-md);
+    overflow: hidden; /* Clip image to rounded corners */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+.feature__image-placeholder img {
+    display: block; /* Remove extra space */
+    width: 100%;
+    object-fit: cover; /* Cover the container */
+}
+
+/* --- Final CTA Section --- */
+.cta-final {
+    background-color: var(--color-background-card); /* Use card background */
+    padding: var(--space-section) var(--space-lg);
+    text-align: center;
+}
+
+.cta-final__content {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.cta-final__title {
+    color: var(--color-text);
+    margin-bottom: var(--space-lg);
+}
+
+.cta-final__description {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    margin-bottom: var(--space-xl);
+}
+
+.cta-final__button {
+     margin-top: var(--space-lg);
+}
+
+/* --- Footer --- */
+.footer {
+    background-color: var(--color-header-bg); /* Match header */
+    padding: var(--space-lg) 0;
+    border-top: 1px solid var(--color-border-subtle);
+    margin-top: var(--space-section); /* Space above footer */
+}
+
+.footer__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    gap: var(--space-md);
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+}
+
+.footer__copyright {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0; /* Override default p margin */
+}
+
+.footer__nav {
+    display: flex;
+    gap: var(--space-lg);
+}
+
+.footer__link {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+.footer__link:hover {
+    color: var(--color-primary-accent);
+}
+
+/* --- Scroll Animations --- */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px); /* Start slightly lower */
+    transition: opacity var(--animation-duration) var(--transition-ease),
+                transform var(--animation-duration) var(--transition-ease);
+}
+
+.animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger animations within sections */
+.feature__container > *:nth-child(1).animate-on-scroll.is-visible { transition-delay: 0.1s; }
+.feature__container > *:nth-child(2).animate-on-scroll.is-visible { transition-delay: 0.2s; }
+
+
+/* --- Responsive Design --- */
+@media screen and (max-width: 992px) {
+    h1 { font-size: 2.5rem; } /* 40px */
+    h2 { font-size: 2rem; } /* 32px */
+    h3 { font-size: 1.375rem; } /* 22px */
+
+    .hero__title {
+        font-size: 3rem; /* 48px */
+    }
+
+    .feature__container {
+        grid-template-columns: 1fr; /* Stack columns */
+        gap: var(--space-xl);
+        text-align: center; /* Center text when stacked */
+    }
+    .feature__container--reversed .feature__image-placeholder {
+         /* Ensure image comes first when stacked if desired */
+         order: -1;
+    }
+     .feature__text {
+        max-width: 600px; /* Limit text width when centered */
+        margin: 0 auto;
+     }
+     .feature__description {
+         margin-left: auto;
+         margin-right: auto;
+     }
+     .feature__image-placeholder {
+         max-width: 500px; /* Limit image width when stacked */
+         margin: 0 auto;
+     }
+}
+
+@media screen and (max-width: 768px) {
+    :root {
+        --header-height: 60px; /* Smaller header on mobile */
+        --space-section: 4rem; /* Less space between sections */
+    }
+
+    h1 { font-size: 2.25rem; } /* 36px */
+    h2 { font-size: 1.75rem; } /* 28px */
+    h3 { font-size: 1.25rem; } /* 20px */
+
+    .header__title {
+        font-size: 1.1rem; /* Smaller title */
+    }
+     .header__version-badge {
+         display: none; /* Hide badge on small screens */
+     }
+
+    .hero {
+         min-height: calc(90vh - var(--header-height)); /* Slightly less height */
+         padding: var(--space-xl) var(--space-md);
+    }
+    .hero__title {
+        font-size: 2.5rem; /* 40px */
+    }
+    .hero__subtitle {
+        font-size: 1.1rem; /* 17.6px */
+    }
+
+    .button {
+        padding: var(--space-sm) var(--space-md); /* Smaller padding */
+        font-size: 0.9rem;
+    }
+    .button--large {
+         padding: var(--space-sm) var(--space-lg);
+         font-size: 1rem;
+    }
+
+    .footer__container {
+        flex-direction: column; /* Stack footer items */
+        gap: var(--space-sm);
+    }
+    .footer__nav {
+        margin-top: var(--space-sm);
+    }
+}
+</style>
+
+<script>
+// landing_gamma.js
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Landing Page DOM Loaded. Initializing...");
+
+    // --- Global Variable Setup ---
+    // Assume 'version' is defined globally or in firestore.js
+    // const version = 'GAMMA (GEMINI PRE-RELEASE)'; // Example if not global
+
+    // --- Element Selectors ---
+    const header = document.querySelector('.header');
+    const headerCtaButton = document.getElementById('header-cta-button');
+    const footerYear = document.getElementById('footer-year');
+    const elementsToAnimate = document.querySelectorAll('.animate-on-scroll');
+
+    // --- Initialization Functions ---
+
+    /**
+     * Updates the footer copyright year.
+     */
+    function updateFooterYear() {
+        if (footerYear) {
+            footerYear.textContent = new Date().getFullYear();
+        }
+    }
+
+    /**
+     * Gets a cookie value by name.
+     * @param {string} cname - The name of the cookie.
+     * @returns {string} The cookie value or an empty string if not found.
+     */
+    function getCookie(cname) {
+        const name = cname + "=";
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const ca = decodedCookie.split(';');
+        for(let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) === 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Updates the header CTA button based on login status (cookie check).
+     */
+    function updateHeaderCta() {
+        if (!headerCtaButton) return;
+
+        const userHash = getCookie('hash'); // Check for the login cookie
+
+        if (userHash) {
+            // User is logged in
+            document.querySelectorAll('[href="./sign-in/"]').forEach(link => {
+                link.href = './dashboard/'; // Update all sign-in links to dashboard
+                link.textContent = 'Go to Dashboard'; // Update text
+            });
+            headerCtaButton.textContent = 'Go to Dashboard';
+            headerCtaButton.href = './dashboard/'; // Link to dashboard
+            console.log("User logged in, CTA updated to Dashboard link.");
+        } else {
+            // User is not logged in
+            headerCtaButton.textContent = 'Sign In';
+            headerCtaButton.href = './sign-in/'; // Link to sign-in page
+            console.log("User not logged in, CTA set to Sign In link.");
+        }
+    }
+
+    /**
+     * Sets up the Intersection Observer to trigger animations on scroll.
+     */
+    function setupScrollAnimations() {
+        if (!elementsToAnimate || elementsToAnimate.length === 0) {
+            console.log("No elements found for scroll animation.");
+            return;
+        }
+
+        const observerOptions = {
+            root: null, // Use the viewport as the root
+            rootMargin: '0px',
+            threshold: 0.1 // Trigger when 10% of the element is visible
+        };
+
+        const observerCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    // Optional: Unobserve after animation to save resources
+                    // observer.unobserve(entry.target);
+                } else {
+                    // Optional: Remove class if you want animation to repeat on scroll up
+                    // entry.target.classList.remove('is-visible');
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        elementsToAnimate.forEach(el => {
+            observer.observe(el);
+        });
+
+        console.log(`Intersection Observer set up for ${elementsToAnimate.length} elements.`);
+    }
+
+    // --- Run Initialization ---
+    updateFooterYear();
+    updateHeaderCta();
+    setupScrollAnimations();
+
+    console.log("Landing Page Initialized.");
+});
+</script>

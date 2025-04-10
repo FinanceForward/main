@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Finance Forward GAMMA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./dashboard_gamma.css">
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,dashboard,info,receipt_long,settings,menu,gavel,login,logout,account_circle,bar_chart,list"/>
+
+    <script defer src="../firestore.js" type="module"></script>
+    </head>
+<body>
+    <header class="header">
+        <button class="header__menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+            <img class="header__icon header__icon--menu" src="../src/icons/menu.png" alt="Menu">
+        </button>
+        <div class="header__title">
+            Finance Forward <span class="header__version-badge">GAMMA (Gemini Pre-Release)</span>
+        </div>
+        <div class="header__actions">
+            <a href="../add-receipt" class="header__action-link" aria-label="Add Receipt">
+                <img src="../src/icons/add.png" alt="Add Receipt" class="header__icon">
+            </a>
+            <img class="header__icon header__icon--logo" src="../src/fflogo.jpg" alt="Finance Forward Logo">
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <h1 class="sidebar__title">Finance Forward</h1>
+        <ul class="sidebar__nav-list">
+            <li class="sidebar__nav-item"><a href="../add-receipt"><img src="../src/icons/add.png" alt=""> Add Receipt</a></li>
+            <li class="sidebar__nav-item"><a href="../report"><img src="../src/icons/receipt_long.png" alt=""> Report</a></li>
+            <li class="sidebar__nav-item"><a href="../links"><img src="../src/icons/log.png" alt=""> More Links</a></li>
+            </ul>
+        <button class="sidebar__button sidebar__button--signin" id="signin-button">Sign In</button>
+        <div class="sidebar__footer">
+            <a href="../settings/" class="sidebar__footer-link"><img src="../src/icons/settings.png" alt=""> Account</a>
+            <a href="../legal/" class="sidebar__footer-link"><img src="../src/icons/gavel.png" alt=""> Legal</a>
+            <a href="../beta/dashboard/" class="sidebar__footer-link"><span>β</span> Use BETA dashboard</a>
+        </div>
+    </nav>
+
+    <main class="main-content" id="main-content">
+        <div class="loader" id="loader">
+            <div class="loader__spinner"></div>
+            <p class="loader__text">Loading Dashboard...</p>
+        </div>
+
+        <section class="dashboard dashboard--hidden" id="dashboard">
+            <div class="dashboard__card dashboard__card--total">
+                <h2 class="dashboard__card-title">Total Spent This Month</h2>
+                <p class="dashboard__card-value" aria-live="polite">
+                    <span class="currency-symbol" id="total-currency-pre">¤</span><span id="total-value">0.00</span><span class="currency-symbol" id="total-currency-post"></span>
+                </p>
+            </div>
+
+            <div class="dashboard__card dashboard__card--categories">
+                <h2 class="dashboard__card-title">Top 3 Categories</h2>
+                <ol class="dashboard__list" aria-live="polite">
+                    <li class="dashboard__list-item">
+                        <span class="dashboard__category-name" id="top-cat-1">N/A</span>:
+                        <span class="currency-symbol" id="cat1-currency-pre">¤</span><span class="dashboard__category-amount" id="top-cat-amt-1">0.00</span><span class="currency-symbol" id="cat1-currency-post"></span>
+                    </li>
+                    <li class="dashboard__list-item">
+                        <span class="dashboard__category-name" id="top-cat-2">N/A</span>:
+                        <span class="currency-symbol" id="cat2-currency-pre">¤</span><span class="dashboard__category-amount" id="top-cat-amt-2">0.00</span><span class="currency-symbol" id="cat2-currency-post"></span>
+                    </li>
+                    <li class="dashboard__list-item">
+                        <span class="dashboard__category-name" id="top-cat-3">N/A</span>:
+                        <span class="currency-symbol" id="cat3-currency-pre">¤</span><span class="dashboard__category-amount" id="top-cat-amt-3">0.00</span><span class="currency-symbol" id="cat3-currency-post"></span>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="dashboard__card dashboard__card--actions">
+                 <h2 class="dashboard__card-title">Quick Actions</h2>
+                 <div class="dashboard__actions-container">
+                    <a href="../add-receipt" class="dashboard__action-link"><img src="../src/icons/add.png" alt=""> Add Receipt</a>
+                    <a href="../report" class="dashboard__action-link"><img src="../src/icons/receipt_long.png" alt=""> View Report</a>
+                    <a href="../links" class="dashboard__action-link"><img src="../src/icons/log.png" alt=""> See More</a>
+                    <a href="../beta/dashboard" class="dashboard__action-link"><span>β</span> Use Beta dashboard</a>
+                 </div>
+            </div>
+
+             </section>
+
+        <div class="shortcuts-overlay shortcuts-overlay--hidden" id="shortcuts-overlay">
+            <div class="shortcuts-overlay__content">
+                <h2 class="shortcuts-overlay__title">Keyboard Shortcuts</h2>
+                <ol class="shortcuts-overlay__list">
+                    <li><kbd>Shift</kbd> + <kbd>R</kbd> = Add Receipt</li>
+                    <li><kbd>Shift</kbd> + <kbd>V</kbd> = View Report</li>
+                    <li><kbd>Shift</kbd> + <kbd>P</kbd> = Print Report</li>
+                    <li><kbd>Shift</kbd> + <kbd>L</kbd> = View All Pages (Links)</li>
+                    <li><kbd>Shift</kbd> + <kbd>D</kbd> = Go to Dashboard</li>
+                </ol>
+                <p class="shortcuts-overlay__note">Release <kbd>Shift</kbd> to close.</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="./dashboard_gamma.js" defer></script>
+</body>
+</html>
+
+<style>
+/* dashboard_gamma.css */
+
+/* --- Base Styles & Variables --- */
+:root {
+    /* Color Palette (From Original) */
+    --color-background: #000000;
+    --color-text: #FFFFFF;
+    --color-header-bg: #838383; /* Slightly lighter gray */
+    --color-sidebar-bg: #2F2C27; /* Dark brown-gray */
+    --color-card-bg: #2F2C27;    /* Same as sidebar */
+    --color-dashboard-bg: #1E1E1E; /* Very dark gray */
+    --color-input-bg: #3E3A34;   /* Medium brown-gray */
+    --color-primary-accent: #FF9B07; /* Orange */
+    --color-primary-accent-hover: #e68a00; /* Darker Orange */
+    --color-border-subtle: #4a4a4a; /* Added for subtle borders if needed */
+
+    /* Font */
+    --font-family-base: 'Manrope', sans-serif;
+
+    /* Spacing */
+    --space-xs: 0.25rem; /* 4px */
+    --space-sm: 0.5rem;  /* 8px */
+    --space-md: 1rem;    /* 16px */
+    --space-lg: 1.5rem;  /* 24px */
+    --space-xl: 2rem;    /* 32px */
+    --space-xxl: 3rem;   /* 48px */
+
+    /* Sizes */
+    --header-height: 60px;
+    --sidebar-width: 250px;
+    --sidebar-width-collapsed: 0px; /* Adjust if you want a collapsed icon state */
+
+    /* Transitions */
+    --transition-speed: 0.3s;
+    --transition-ease: ease;
+
+    /* Borders */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 20px; /* For buttons like original */
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px; /* Base font size */
+}
+
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.6;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color var(--transition-speed) var(--transition-ease);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block; /* Remove extra space below images */
+}
+
+ul, ol {
+    list-style: none;
+}
+
+button {
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    color: inherit;
+    padding: 0; /* Remove default padding */
+    border-radius: var(--border-radius-lg); /* Consistent button radius */
+    transition: background-color var(--transition-speed) var(--transition-ease),
+                opacity var(--transition-speed) var(--transition-ease);
+}
+
+/* --- Header --- */
+.header {
+    background-color: var(--color-header-bg);
+    color: var(--color-text);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--space-md); /* Use variables */
+    height: var(--header-height);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+.header__menu-toggle {
+    display: none; /* Hidden by default, shown in media query */
+    background: none;
+    border: none;
+    padding: var(--space-sm);
+    margin-right: var(--space-sm); /* Space between toggle and title */
+}
+
+.header__title {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.header__version-badge {
+    background-color: var(--color-sidebar-bg); /* Match sidebar */
+    color: var(--color-primary-accent);
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.8rem; /* 12.8px */
+    border-radius: var(--border-radius-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.header__action-link {
+    display: flex; /* Ensure icon is vertically centered if text added later */
+    align-items: center;
+}
+
+.header__icon {
+    width: 25px; /* Original size */
+    height: 25px; /* Original size */
+    transition: opacity var(--transition-speed) var(--transition-ease);
+}
+.header__icon:hover {
+    opacity: 0.8;
+}
+
+.header__icon--logo {
+    width: 40px; /* Original size */
+    height: 40px; /* Original size */
+    /* border-radius: 50%; Make logo circular */
+}
+
+.header__icon--menu {
+    width: 30px;
+    height: 30px;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    background-color: var(--color-sidebar-bg);
+    width: var(--sidebar-width);
+    height: 100vh;
+    position: fixed;
+    top: 0; /* Align with top */
+    left: 0;
+    padding: var(--space-lg);
+    padding-top: calc(var(--header-height) + var(--space-lg)); /* Account for header */
+    overflow-y: auto;
+    z-index: 900; /* Below header */
+    transition: transform var(--transition-speed) var(--transition-ease);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar__title {
+    font-size: 1.5rem; /* 24px */
+    margin-bottom: var(--space-xl);
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.sidebar__nav-list {
+    flex-grow: 1; /* Takes up available space */
+}
+
+.sidebar__nav-item {
+    margin-bottom: var(--space-sm);
+}
+
+.sidebar__nav-item a,
+.sidebar__footer-link {
+    color: var(--color-text);
+    padding: var(--space-sm) var(--space-md); /* More padding */
+    display: flex; /* Align icon and text */
+    align-items: center;
+    gap: var(--space-md); /* Space between icon and text */
+    font-size: 1.125rem; /* 18px, slightly smaller than original */
+    border-radius: var(--border-radius-md);
+    transition: color var(--transition-speed) var(--transition-ease),
+                background-color var(--transition-speed) var(--transition-ease);
+}
+.sidebar__nav-item a img,
+.sidebar__footer-link img,
+.sidebar__footer-link span {
+    width: 20px;
+    height: 20px;
+    opacity: 0.8; /* Slightly dim icons */
+}
+
+.sidebar__nav-item a:hover,
+.sidebar__footer-link:hover {
+    color: var(--color-primary-accent);
+    background-color: rgba(255, 255, 255, 0.05); /* Subtle hover */
+}
+.sidebar__nav-item a:hover img,
+.sidebar__footer-link:hover img {
+    opacity: 1;
+}
+
+.sidebar__button {
+    background-color: var(--color-primary-accent);
+    color: var(--color-text);
+    border: none;
+    padding: var(--space-sm) var(--space-md);
+    width: 100%;
+    margin-top: var(--space-lg);
+    text-align: center;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.sidebar__button:hover {
+    background-color: var(--color-primary-accent-hover);
+}
+
+.sidebar__button--signin {
+    /* Specific styles if needed */
+}
+
+.sidebar__footer {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border-subtle); /* Separator */
+}
+
+.sidebar__footer-link {
+    margin-top: var(--space-sm);
+    font-size: 1rem; /* Smaller footer links */
+}
+
+/* Sidebar Active State (for mobile) */
+.sidebar--active {
+    transform: translateX(0);
+}
+
+/* --- Main Content Area --- */
+.main-content {
+    margin-top: var(--header-height);
+    margin-left: var(--sidebar-width); /* Default margin for sidebar */
+    padding: var(--space-xl);
+    background-color: var(--color-dashboard-bg);
+    min-height: calc(100vh - var(--header-height));
+    transition: margin-left var(--transition-speed) var(--transition-ease);
+    position: relative; /* For loader positioning */
+}
+
+/* --- Loader --- */
+.loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent overlay */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1100; /* Above everything */
+    transition: opacity var(--transition-speed) var(--transition-ease), visibility var(--transition-speed) var(--transition-ease);
+    opacity: 1;
+    visibility: visible;
+}
+
+.loader--hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader__spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-left-color: var(--color-primary-accent);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: var(--space-md);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loader__text {
+    font-size: 1.2rem;
+    color: var(--color-text);
+}
+
+/* --- Dashboard Section --- */
+.dashboard {
+    display: grid;
+    /* Define grid columns - 2 columns on wider screens */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-xl);
+    transition: opacity var(--transition-speed) var(--transition-ease), visibility var(--transition-speed) var(--transition-ease);
+    opacity: 1;
+    visibility: visible;
+}
+
+.dashboard--hidden {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute; /* Take out of flow when hidden */
+}
+
+.dashboard__card {
+    background-color: var(--color-card-bg);
+    padding: var(--space-lg);
+    border-radius: var(--border-radius-md);
+    color: var(--color-text);
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    text-align: center;
+    min-height: 200px; /* Minimum card height */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.dashboard__card-title {
+    font-size: 1.125rem; /* 18px */
+    font-weight: 700;
+    margin-bottom: var(--space-md);
+    color: rgba(255, 255, 255, 0.8); /* Slightly less prominent title */
+}
+
+.dashboard__card-value {
+    font-size: 2.5rem; /* 40px - Make total prominent */
+    font-weight: 700;
+    color: var(--color-primary-accent); /* Highlight value */
+    line-height: 1.2;
+}
+
+/* Specific card adjustments */
+.dashboard__card--total .dashboard__card-value {
+    font-size: 3rem; /* 48px - Even more prominent */
+}
+
+.dashboard__card--categories .dashboard__list {
+    margin-top: var(--space-sm);
+}
+
+.dashboard__list {
+    text-align: left; /* Align list items left */
+    margin: 0 auto; /* Center the list block */
+    max-width: 90%; /* Prevent list from getting too wide */
+}
+
+.dashboard__list-item {
+    font-size: 1.125rem; /* 18px */
+    margin-bottom: var(--space-sm);
+    display: flex;
+    justify-content: space-between; /* Space out name and amount */
+    gap: var(--space-md);
+}
+
+.dashboard__category-name {
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Handle long category names */
+    flex-shrink: 1; /* Allow name to shrink */
+}
+
+.dashboard__category-amount {
+    font-weight: 700;
+    color: var(--color-text); /* Standard text color for amount */
+    white-space: nowrap;
+    flex-shrink: 0; /* Prevent amount from shrinking */
+}
+.currency-symbol {
+    color: rgba(255, 255, 255, 0.7); /* Dim currency symbol slightly */
+    font-size: 0.9em; /* Slightly smaller symbol */
+}
+
+/* Actions Card */
+.dashboard__card--actions {
+    justify-content: center; /* Center actions vertically */
+}
+
+.dashboard__actions-container {
+    display: flex;
+    flex-direction: column; /* Stack actions vertically */
+    gap: var(--space-md);
+    align-items: center; /* Center buttons horizontally */
+}
+
+.dashboard__action-link,
+.dashboard__card-action {
+    background-color: var(--color-primary-accent);
+    color: var(--color-text);
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--border-radius-lg); /* Match button radius */
+    font-weight: 700;
+    font-size: 1rem; /* 16px */
+    display: inline-flex; /* Use inline-flex for alignment */
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    text-align: center;
+    min-width: 150px; /* Minimum width for actions */
+    transition: background-color var(--transition-speed) var(--transition-ease);
+}
+.dashboard__action-link img,
+.dashboard__card-action img {
+    width: 18px;
+    height: 18px;
+}
+#dashboard__card-large-icon {
+    width: 36px;
+    height: 36px;
+}
+
+.dashboard__action-link:hover,
+.dashboard__card-action:hover {
+    background-color: var(--color-primary-accent-hover);
+    color: var(--color-text); /* Ensure text remains white on hover */
+}
+
+.dashboard__card-action--add-receipt {
+    margin-top: var(--space-lg); /* Space above the add receipt link in categories */
+    display: inline-block; /* Override flex settings from container */
+    width: auto; /* Fit content */
+}
+
+/* --- Shortcuts Overlay --- */
+.shortcuts-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85); /* Darker overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1200; /* Above loader */
+    padding: var(--space-xl);
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--transition-speed) var(--transition-ease), visibility var(--transition-speed) var(--transition-ease);
+}
+
+.shortcuts-overlay--hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.shortcuts-overlay__content {
+    background-color: var(--color-card-bg);
+    padding: var(--space-xl) var(--space-xxl);
+    border-radius: var(--border-radius-md);
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+}
+
+.shortcuts-overlay__title {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-lg);
+}
+
+.shortcuts-overlay__list {
+    text-align: left;
+    margin-bottom: var(--space-lg);
+}
+
+.shortcuts-overlay__list li {
+    margin-bottom: var(--space-md);
+    font-size: 1.1rem;
+}
+
+.shortcuts-overlay__list kbd {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-sm);
+    font-family: monospace;
+    font-size: 0.9em;
+    background-color: var(--color-input-bg);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--color-border-subtle);
+    margin: 0 var(--space-xs);
+}
+
+.shortcuts-overlay__note {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+.shortcuts-overlay__note kbd {
+     font-size: 0.8em;
+}
+
+
+/* --- Responsive Design --- */
+@media screen and (max-width: 817px) {
+    .header__menu-toggle {
+        display: block; /* Show hamburger menu */
+    }
+
+    .header__title {
+        /* Optionally hide full title on mobile if too long */
+        /* display: none; */
+        /* Or just hide the version badge */
+         font-size: 1.25rem; /* Slightly smaller title */
+    }
+     .header__version-badge {
+        display: none;
+     }
+
+    .sidebar {
+        transform: translateX(-100%); /* Hide sidebar off-screen */
+        z-index: 1100; /* Ensure sidebar is above main content when active */
+        padding-top: var(--space-lg); /* Reset padding top */
+        height: 100vh; /* Full height */
+        top: 0;
+    }
+
+    .sidebar--active {
+        transform: translateX(0);
+        box-shadow: 5px 0 15px rgba(0,0,0,0.2); /* Add shadow when active */
+    }
+
+    .main-content {
+        margin-left: 0; /* Remove sidebar margin */
+        padding: var(--space-lg); /* Adjust padding */
+    }
+
+    /* Adjust dashboard grid for single column */
+    .dashboard {
+        grid-template-columns: 1fr; /* Single column layout */
+        gap: var(--space-lg);
+    }
+
+    .dashboard__card {
+        min-height: auto; /* Allow cards to shrink */
+        padding: var(--space-md);
+    }
+
+    .dashboard__card-value {
+        font-size: 2rem; /* Adjust font size */
+    }
+    .dashboard__card--total .dashboard__card-value {
+        font-size: 2.5rem; /* Adjust font size */
+    }
+
+    .dashboard__list-item {
+        font-size: 1rem; /* Adjust font size */
+    }
+
+    .dashboard__actions-container {
+        /* Actions could be horizontal on mobile if space allows */
+        /* flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center; */
+    }
+     .dashboard__action-link,
+     .dashboard__card-action {
+        font-size: 0.9rem;
+        padding: var(--space-sm) var(--space-md);
+        min-width: 120px;
+     }
+
+     .dashboard__card-action--add-receipt {
+        display: block; /* Make it block to take full width potentially */
+        width: 80%;
+        margin: var(--space-lg) auto 0; /* Center it */
+     }
+}
+</style>
+
+<script>
+// dashboard_gamma.js
+
+// --- Global Variables & Configuration ---
+// Assume 'version' is defined globally or in firestore.js
+// const version = 'GAMMA 1.0'; // Example if not global
+const versionNOTES = "This is the GAMMA pre-release featuring a redesigned interface."; // Example notes
+
+// --- DOM Element Selectors ---
+const loader = document.getElementById('loader');
+const dashboardElement = document.getElementById('dashboard');
+const shortcutsOverlay = document.getElementById('shortcuts-overlay');
+const menuToggle = document.getElementById('menu-toggle');
+const sidebar = document.getElementById('sidebar');
+const mainContent = document.getElementById('main-content');
+const signInButton = document.getElementById('signin-button');
+
+// Dashboard Value Elements
+const totalValueElement = document.getElementById('total-value');
+const totalCurrencyPreElement = document.getElementById('total-currency-pre');
+const totalCurrencyPostElement = document.getElementById('total-currency-post');
+
+const topCategoryElements = [
+    document.getElementById('top-cat-1'),
+    document.getElementById('top-cat-2'),
+    document.getElementById('top-cat-3'),
+];
+const topCategoryAmountElements = [
+    document.getElementById('top-cat-amt-1'),
+    document.getElementById('top-cat-amt-2'),
+    document.getElementById('top-cat-amt-3'),
+];
+const categoryCurrencyPreElements = [
+    document.getElementById('cat1-currency-pre'),
+    document.getElementById('cat2-currency-pre'),
+    document.getElementById('cat3-currency-pre'),
+];
+const categoryCurrencyPostElements = [
+    document.getElementById('cat1-currency-post'),
+    document.getElementById('cat2-currency-post'),
+    document.getElementById('cat3-currency-post'),
+];
+
+
+// --- Utility Functions ---
+
+/**
+ * Gets a cookie value by name.
+ * @param {string} cname - The name of the cookie.
+ * @returns {string} The cookie value or an empty string if not found.
+ */
+function getCookie(cname) {
+    const name = cname + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+/**
+ * Sets the currency symbols based on user settings.
+ * @param {string} currencySetting - The currency string (e.g., "$", "€", "£*").
+ */
+function setCurrencyDisplay(currencySetting) {
+    let symbol = currencySetting || '$'; // Default to $
+    const positionAfter = symbol.includes('*');
+    symbol = symbol.replace('*', '');
+
+    // Clear all first
+    document.querySelectorAll('.currency-symbol').forEach(el => el.textContent = '');
+
+    if (positionAfter) {
+        document.querySelectorAll('[id$="-currency-post"]').forEach(el => el.textContent = ' ' + symbol);
+    } else {
+        document.querySelectorAll('[id$="-currency-pre"]').forEach(el => el.textContent = symbol);
+    }
+     console.log(`Currency set to: ${symbol} (${positionAfter ? 'After' : 'Before'})`);
+}
+
+/**
+ * Toggles the visibility of the loader.
+ * @param {boolean} show - True to show, false to hide.
+ */
+function toggleLoader(show) {
+    if (show) {
+        loader?.classList.remove('loader--hidden');
+    } else {
+        loader?.classList.add('loader--hidden');
+    }
+}
+
+/**
+ * Toggles the visibility of the main dashboard content.
+ * @param {boolean} show - True to show, false to hide.
+ */
+function toggleDashboard(show) {
+     if (show) {
+        dashboardElement?.classList.remove('dashboard--hidden');
+    } else {
+        dashboardElement?.classList.add('dashboard--hidden');
+    }
+}
+
+// --- Subscription Calculation Logic (Copied from original, consider refactoring if complex) ---
+class DateConfig {
+    static today = () => [new Date().getDate(), new Date().getMonth() + 1] // [DayOfMonth, MonthNumber]
+
+    static getWeekdaysPassed(targetDay) { // targetDay: 0=Sun, 1=Mon,...
+        const today = new Date();
+        const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
+        let count = 0;
+        // Iterate from the 1st day of the month up to today
+        for (let day = 1; day <= today.getDate(); day++) {
+            const date = new Date(currentYear, currentMonth, day);
+            if (date.getDay() === targetDay) {
+                count++;
+            }
+        }
+        return count;
+    }
+}
+
+class Sub {
+    static DOW_MAP = {'sunday':0 , 'monday':1 , 'tuesday':2 , 'wednesday':3 , 'thursday':4 , 'friday':5 , 'saturday':6};
+
+    static weekly(price, dayOfWeekName) {
+        const targetDay = Sub.DOW_MAP[dayOfWeekName.toLowerCase()];
+        if (targetDay === undefined) return 0; // Invalid day name
+        return DateConfig.getWeekdaysPassed(targetDay) * price;
+    }
+
+    static monthly(price, dayOfMonth) {
+        // Ensure dayOfMonth is a number
+        const numericDayOfMonth = parseInt(dayOfMonth, 10);
+        if (isNaN(numericDayOfMonth)) return 0;
+        return (DateConfig.today()[0] >= numericDayOfMonth ? price : 0);
+    }
+
+    static yearly(price, dateArray) { // Expects dateArray like [DayOfMonth, MonthNumber]
+        if (!Array.isArray(dateArray) || dateArray.length < 2) return 0;
+        const [dayOfMonth, monthNumber] = dateArray.map(d => parseInt(d, 10));
+         if (isNaN(dayOfMonth) || isNaN(monthNumber)) return 0;
+
+        const [todayDay, todayMonth] = DateConfig.today();
+        // Check if the month has passed or if it's the current month and the day has passed/is today
+        if (todayMonth > monthNumber || (todayMonth === monthNumber && todayDay >= dayOfMonth)) {
+             return price;
+        }
+        return 0;
+    }
+
+    static processTotal(sub) {
+        // Basic validation
+        if (!sub || typeof sub.price !== 'number' || !sub.frequency || !sub.freq_value) {
+            console.error('Invalid subscription object:', sub);
+            return 0;
+        }
+
+        try {
+            switch (sub.frequency.toLowerCase()) {
+                case 'weekly':
+                    return Sub.weekly(sub.price, sub.freq_value);
+                case 'monthly':
+                    return Sub.monthly(sub.price, sub.freq_value);
+                case 'yearly':
+                    // Assuming freq_value for yearly is an array [day, month] or string "day-month"
+                    let dateVal = sub.freq_value;
+                    if (typeof dateVal === 'string') {
+                        dateVal = dateVal.split(/[-/]/).map(Number); // Handle "DD-MM" or "DD/MM"
+                    }
+                    return Sub.yearly(sub.price, dateVal);
+                default:
+                    console.error('Unknown subscription frequency:', sub.frequency);
+                    return 0;
+            }
+        } catch (error) {
+            console.error('Error processing subscription:', sub, error);
+            return 0;
+        }
+    }
+
+    static processGrandTotal(subs) {
+        if (!Array.isArray(subs)) return 0;
+        return subs.reduce((total, sub) => total + Sub.processTotal(sub), 0);
+    }
+}
+
+
+// --- Event Listeners ---
+
+// Sidebar Toggle
+menuToggle?.addEventListener('click', () => {
+    sidebar?.classList.toggle('sidebar--active');
+    // Optional: Add overlay to main content when sidebar is open on mobile
+    // mainContent?.classList.toggle('main-content--overlay-active');
+});
+
+// Close sidebar if clicking outside of it (on mobile)
+document.addEventListener('click', (event) => {
+    if (window.innerWidth <= 817) { // Only on mobile breakpoint
+        const isClickInsideSidebar = sidebar?.contains(event.target);
+        const isClickOnMenuToggle = menuToggle?.contains(event.target);
+        if (!isClickInsideSidebar && !isClickOnMenuToggle && sidebar?.classList.contains('sidebar--active')) {
+            sidebar.classList.remove('sidebar--active');
+        }
+    }
+});
+
+
+// Shortcut Keys
+document.addEventListener('keydown', (event) => {
+    // Show shortcuts overlay on Shift press (if not already typing in an input)
+    if (event.key === 'Shift' && !event.repeat) {
+         if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+            shortcutsOverlay?.classList.remove('shortcuts-overlay--hidden');
+            // Optional: Hide dashboard content while shortcuts are shown
+            // dashboardElement?.classList.add('dashboard--hidden');
+         }
+    }
+
+    // Handle specific shortcuts only when Shift is held
+    if (event.shiftKey) {
+        // Prevent default browser behavior if necessary
+        // event.preventDefault();
+
+        switch (event.key.toUpperCase()) {
+            case 'D':
+                window.location.href = '../dashboard'; // Already here, but good practice
+                break;
+            case 'R':
+                window.location.href = '../add-receipt';
+                break;
+            case 'V':
+                window.location.href = '../report';
+                break;
+            case 'P':
+                window.location.href = '../printout'; // Assuming this page exists
+                break;
+            case 'L':
+                window.location.href = '../links';
+                break;
+        }
+    }
+});
+
+document.addEventListener('keyup', (event) => {
+    // Hide shortcuts overlay on Shift release
+    if (event.key === 'Shift') {
+        shortcutsOverlay?.classList.add('shortcuts-overlay--hidden');
+        // Optional: Show dashboard content again if it was hidden
+        // if (!loader?.classList.contains('loader--hidden')) { // Only show if not loading
+        //     dashboardElement?.classList.remove('dashboard--hidden');
+        // }
+    }
+});
+
+
+// --- Initialization and Data Fetching ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM Loaded. Initializing Dashboard...");
+    const startTime = Date.now();
+
+    // 1. Show Loader, Hide Dashboard
+    toggleLoader(true);
+    toggleDashboard(false);
+
+    // Backup timeout to hide loader if something goes wrong
+    const loaderTimeout = setTimeout(() => {
+        console.warn('Loader timeout executed. Hiding loader.');
+        toggleLoader(false);
+        toggleDashboard(true); // Show dashboard even if data failed
+    }, 8000); // Increased timeout slightly
+
+    // 2. Check Authentication
+    const userHash = getCookie('hash');
+    if (!userHash) {
+        console.log("User not authenticated. Redirecting to sign-in.");
+        window.location.href = '../sign-in';
+        return; // Stop execution
+    }
+
+    // User is likely authenticated, hide Sign In button
+    if(signInButton) signInButton.style.display = 'none';
+
+    // Refresh cookie expiry
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 7);
+    document.cookie = `hash=${userHash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`; // Added SameSite
+
+    // 3. Fetch User Data and Compute Totals
+    // Ensure DB object is available from firestore.js
+    if (typeof DB === 'undefined' || !DB.u || !DB.uCompute || !DB.uDoc) {
+        console.error('Firestore DB object not found. Ensure firestore.js is loaded correctly.');
+        toggleLoader(false); // Hide loader
+        toggleDashboard(true); // Show dashboard (maybe with an error message)
+        clearTimeout(loaderTimeout);
+        // Display an error message to the user here
+        return;
+    }
+
+    DB.u.get(userHash).then(async (user) => {
+        if (!user) {
+            console.error("Failed to fetch user data for hash:", userHash);
+            // Handle error - maybe redirect to login or show error message
+            toggleLoader(false);
+            toggleDashboard(true);
+            clearTimeout(loaderTimeout);
+            return;
+        }
+
+        console.log("User data fetched:", user);
+
+        // Check version and show notes (using global 'version' variable)
+        if (typeof version !== 'undefined' && user.version !== version) {
+            alert(`Welcome to Finance Forward ${version}!\n\n${versionNOTES}`);
+            DB.u.update(userHash, { 'version': version }).catch(err => console.error("Failed to update user version:", err));
+        }
+
+        // Initialize custom categories if they don't exist
+        user.c_categories = user.c_categories || [];
+
+        // Set Currency Display
+        setCurrencyDisplay(user.currency);
+
+        // Calculate current month string (YYYY-MM)
+        const d = new Date();
+        const currentMonthStr = d.getFullYear().toString() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+
+        try {
+            // Fetch monthly totals and subscriptions
+            const [monthlyTotals, subscriptions] = await Promise.all([
+                DB.uCompute.all(userHash, 'totals', currentMonthStr),
+                DB.uDoc.allDocs(userHash, 'subscriptions')
+            ]);
+
+            console.log("Monthly Totals Data:", monthlyTotals);
+            console.log("Subscriptions Data:", subscriptions);
+
+            // Combine monthly totals with calculated subscription costs for the current month
+            const combinedTotals = { ...monthlyTotals }; // Start with receipt totals
+            subscriptions.forEach(sub => {
+                const subCost = Sub.processTotal(sub);
+                // Add subscription cost to its category, or a general 'Subscriptions' category
+                const category = sub.category || 'Subscriptions'; // Use specified category or default
+                combinedTotals[category] = (combinedTotals[category] || 0) + subCost;
+            });
+             console.log("Combined Totals (Receipts + Subs):", combinedTotals);
+
+
+            // Calculate Grand Total
+            const grandTotal = Object.values(combinedTotals).reduce((sum, value) => sum + (typeof value === 'number' ? value : 0), 0);
+            totalValueElement.textContent = grandTotal.toFixed(2);
+
+            // Determine Top 3 Categories
+            const sortedCategories = Object.entries(combinedTotals)
+                .filter(([key, value]) => typeof value === 'number' && value > 0) // Ensure value is a positive number
+                .sort(([, a], [, b]) => b - a); // Sort descending by amount
+
+            console.log("Sorted Categories:", sortedCategories);
+
+            // Map category codes to names (including custom)
+            const categoryNameMap = {
+                "a": "Groceries", "b": "Food Out", "c": "Snacks", "d": "Kitchenware",
+                "e": "Bathroomware", "f": "Livingware", "g": "Appliances", "h": "Gardenware",
+                "j": "Pets", "k": "Health", "l": "Books", "other": "Other",
+                "Subscriptions": "Subscriptions", // Add default subscription category
+                ...(user.c_categories.reduce((acc, cat) => ({ ...acc, [cat]: cat }), {})) // Add custom categories
+            };
+
+
+            // Update Top 3 Display
+            for (let i = 0; i < 3; i++) {
+                if (sortedCategories[i]) {
+                    const [catCode, catAmount] = sortedCategories[i];
+                    const catName = categoryNameMap[catCode] || catCode; // Use mapped name or code
+                    topCategoryElements[i].textContent = catName;
+                    topCategoryAmountElements[i].textContent = catAmount.toFixed(2);
+                } else {
+                    // Handle cases with fewer than 3 categories
+                    topCategoryElements[i].textContent = "N/A";
+                    topCategoryAmountElements[i].textContent = "0.00";
+                }
+            }
+
+            // 4. Hide Loader, Show Dashboard
+            clearTimeout(loaderTimeout); // Clear the backup timeout
+            toggleLoader(false);
+            toggleDashboard(true);
+
+            const endTime = Date.now();
+            console.log(`Dashboard initialized and data loaded in ${endTime - startTime}ms`);
+
+        } catch (error) {
+            console.error("Error fetching or processing dashboard data:", error);
+            // Display error state to user
+            clearTimeout(loaderTimeout);
+            toggleLoader(false);
+            toggleDashboard(true); // Show dashboard potentially with error message display
+             totalValueElement.textContent = 'Error';
+             topCategoryElements.forEach(el => el.textContent = 'Error');
+             topCategoryAmountElements.forEach(el => el.textContent = 'N/A');
+        }
+
+    }).catch(error => {
+        console.error("Failed to get user data:", error);
+        clearTimeout(loaderTimeout);
+        toggleLoader(false);
+        // Redirect to login or show a critical error message
+         window.location.href = '../sign-in'; // Or display error on page
+    });
+});
+</script>

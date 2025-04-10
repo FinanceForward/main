@@ -1,0 +1,213 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Arial', sans-serif;
+    scroll-behavior: smooth;
+}
+
+.fancy-nav {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+.fancy-nav ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+}
+
+.fancy-nav ul li {
+    margin: 0 15px;
+}
+
+.fancy-nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.2em;
+    transition: color 0.3s ease;
+}
+
+.fancy-nav ul li a:hover {
+    color: #ff9a9e;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    margin-top: 60px;
+}
+
+.section {
+    min-height: 101vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    transition: background 0.5s ease;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.section h2 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+.section#home {
+    background-image: url('./src/fflogo.jpg') !important;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.section[data-color-theme="warm"] {
+    background: linear-gradient(45deg, rgba(255, 154, 158, 0.5), rgba(250, 208, 196, 0.5));
+    color: white;
+}
+
+.section[data-color-theme="cool"] {
+    background: linear-gradient(45deg, #4facfe, #00f2fe);
+    color: black;
+}
+
+.section[data-color-theme="bright"] {
+    background: linear-gradient(45deg, #ffecd2, #fcb69f);
+    color: black;
+}
+
+.section[data-color-theme="dark"] {
+    background: linear-gradient(45deg, #3a3a3a, #000000);
+    color: white;
+}
+
+.button {
+    padding: 10px 20px;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #FF9B07;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.button:hover {
+    background-color: #c97800;
+}
+
+.button:active {
+    background-color: #FF9B07;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+
+.button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.button:hover::before {
+    width: 200px;
+    height: 200px;
+    opacity: 1;
+}
+
+footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.roadmap {
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    flex-direction: column;
+    margin-top: 60px;
+    min-height: 100vh;
+}
+
+.roadmap h2 {
+    font-size: 3em;
+    margin-bottom: 75px;
+}
+
+.rm {
+    display: flex;
+    flex-direction: row;
+}
+
+.rm div {
+    display: flex;
+    flex-direction: column;
+    margin: 0 20px;
+    min-height: 100px;
+    width: calc(((100vw - 250px) / 3));
+    text-align: right;
+}
+
+.rmR {
+    text-align: left !important;
+    margin-left: 0 !important;
+    padding-left: 0;
+}
+
+.rmR-solid {
+    border-left: #fff solid 5px;
+    padding-left: 20px;
+}
+
+.rmR-dashed {
+    border-left: #fff dashed 5px;
+    padding-left: 20px;
+}
+
+.rm div h3 {
+    font-size: 1.7em;
+    margin-bottom: 80px;
+}
+
+.rmR-first {
+    margin-top: 40px;
+}
+
+.rm-complete {
+    color: #FF9B07;
+}
+
+@media screen and (max-width: 817px) {
+    .roadmap {
+        display: none;
+    }
+
+    .sidebar {
+        display: initial;
+    }
+}
+
+.sidebar {
+    display: none;
+}
