@@ -3,74 +3,1095 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Receipt - Finance Forward GAMMA</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=chevron_backward" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=adddashboardinforeceipt_longsettingsmenugavelloginlogoutaccount_circlebar_chartlistphoto_cameraclose"/>
     <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
-    <!-- IMPORTANT -->
+    <link rel="stylesheet" href="./add-receipt_gamma.css">
+
     <script defer src="../firestore.js" type="module"></script>
-    <script src="./manual-total.js" defer></script>
-    <!-- IMPORTANT -->
+    <script defer src="./parse.js" type="module"></script>
+
     <audio src="../src/Tink.mp3" id="continue-audio"></audio>
     <audio src="../src/Sosumi.mp3" id="fail-audio"></audio>
-    <style>
-        body {
-            font-family: 'Manrope', sans-serif;
-            background-color: black;
-        }
-
-        h1 {
-            color: white;
-            text-align: center;
-        }
-
-        li {
-            color: white;
-            margin-bottom: 10px;
-        }
-
-        .material-symbols-outlined {
-            font-family: 'Material Symbols Outlined';
-            font-size: 50px;
-            margin-top: 10px;
-            color: white;
-            text-decoration: none;
-        }
-    </style>
-    <link rel="stylesheet" href="./manual-total.css">
-    <title>Add Receipt</title>
 </head>
 <body>
-    <a href="../dashboard"><span class="material-symbols-outlined">chevron_backward</span></a>
-    <h1>Add a Receipt</h1>
-    <main class="forum">
-        <div class="form-container">
-            <div>
-                <label for="amt">Total</label>
-                <input type="number" id="amt" name="amt" placeholder="Enter Total Amount Spent On Receipt"/>
-                <br><br>
-                <label for="mot">Month</label>
-                <input type="month" id="mot" name="mot"/>
-                <br><br>
-                <label for="cat">Category</label>
-                <select id="cat" name="cat">
-                    <option disabled>Select Category</option>
-                    <option value="a">Groceries</option>
-                    <option value="b">Food Out</option>
-                    <option value="c">Snacks</option>
-                    <option value="d">Kitchenware</option>
-                    <option value="e">Bathroomware</option>
-                    <option value="f">Livingware</option>
-                    <option value="g">Appliances</option>
-                    <option value="h">Gardenware</option>
-                    <option value="j">Pets</option>
-                    <option value="k">Health</option>
-                    <option value="l">Books</option>
-                    <option value="other">OTHER</option>
-                </select>
-                <br><br>
-                <button id="go">Submit Receipt</button>
-            </div>
+    <header class="header">
+       <button class="header__menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+           <img class="header__icon header__icon--menu" src="../src/icons/menu.png" alt="Menu">
+       </button>
+       <div class="header__title">
+           Finance Forward <span class="header__version-badge">GAMMA (GEMINI PRE-RELEASE)</span>
+       </div>
+       <div class="header__actions">
+           <a href="../add-receipt" class="header__action-link" aria-label="Add Receipt">
+               <img src="../src/icons/add.png" alt="Add Receipt" class="header__icon">
+           </a>
+           <img class="header__icon header__icon--logo" src="../src/fflogo.jpg" alt="Finance Forward Logo">
+       </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+       <h1 class="sidebar__title">Finance Forward</h1>
+       <ul class="sidebar__nav-list">
+           <li class="sidebar__nav-item"><a href="../add-receipt"><img src="../src/icons/add.png" alt=""> Add Receipt</a></li>
+           <li class="sidebar__nav-item"><a href="../report"><img src="../src/icons/receipt_long.png" alt=""> Report</a></li>
+           <li class="sidebar__nav-item"><a href="../links"><img src="../src/icons/log.png" alt=""> More Links</a></li>
+       </ul>
+       <button class="sidebar__button sidebar__button--signin" id="signin-button">Sign In</button>
+       <div class="sidebar__footer">
+           <a href="../settings/" class="sidebar__footer-link"><img src="../src/icons/settings.png" alt=""> Account</a>
+           <a href="../legal/" class="sidebar__footer-link"><img src="../src/icons/gavel.png" alt=""> Legal</a>
+           <a href="../beta/dashboard/" class="sidebar__footer-link"><span>β</span> Use BETA dashboard</a>
+       </div>
+    </nav>
+
+    <main class="main-content" id="main-content">
+        <div class="form-page__container" id="form-page-container">
+            <h1 class="form-page__title">Add New Receipt</h1>
+
+            <form class="add-receipt-form" id="add-receipt-form">
+
+                <div class="form-group">
+                    <label for="receipt-amount" class="form-label">Total Amount</label>
+                    <div class="form-group__row">
+                        <input type="number" id="receipt-amount" name="amount" class="form-input form-input--amount" placeholder="Enter total amount" step="0.01" required>
+                        <input type="file" id="scan-receipt-input" accept="image/*" style="display: none;">
+                        <button type="button" id="scan-receipt-button" class="form-button form-button--scan" title="Scan receipt using camera">
+                            <span class="material-symbols-outlined">photo_camera</span>
+                            <span class="form-button__scan-text">Scan</span>
+                            <span class="form-button__scan-text--full">Scan Receipt Instead</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="receipt-month" class="form-label">Month of Purchase</label>
+                    <input type="month" id="receipt-month" name="month" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="receipt-category" class="form-label">Category</label>
+                    <select id="receipt-category" name="category" class="form-select" required style="font-weight:900">
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="a">Groceries</option>
+                        <option value="b">Food Out</option>
+                        <option value="c">Snacks</option>
+                        <option value="d">Kitchenware</option>
+                        <option value="e">Bathroomware</option>
+                        <option value="f">Livingware</option>
+                        <option value="g">Appliances</option>
+                        <option value="h">Gardenware</option>
+                        <option value="j">Pets</option>
+                        <option value="k">Health</option>
+                        <option value="l">Books</option>
+                        <option value="other">OTHER</option>
+                        </select>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" id="submit-receipt-button" class="form-button">
+                        Submit Receipt
+                    </button>
+                </div>
+            </form>
         </div>
     </main>
+
+    <div class="popup-overlay popup-overlay--hidden" id="scan-confirm-popup-overlay">
+        <div class="popup" id="scan-confirm-popup">
+            <h2 class="popup__title">Confirm Scanned Receipt</h2>
+            <div class="popup__content">
+                <div class="popup__field">
+                    <span class="popup__label">Scanned Amount:</span>
+                    <span class="popup__value" id="popup-scan-amount">N/A</span>
+                </div>
+                <div class="popup__field">
+                    <span class="popup__label">Month:</span>
+                    <span class="popup__value" id="popup-scan-month">N/A</span>
+                </div>
+                <div class="form-group">
+                    <label for="popup-scan-category" class="form-label">Category</label>
+                    <select id="popup-scan-category" name="popup-category" class="form-select" required>
+                        <option value="" disabled selected>Select Category</option>
+                        </select>
+                </div>
+            </div>
+            <div class="popup__actions popup__actions--close">
+                <button type="button" id="scan-popup-close-button" class="form-button">
+                    No, this is not correct
+                </button>
+            </div>
+            <div class="popup__actions">
+                <button type="button" id="scan-popup-submit-button" class="form-button">
+                    Submit Scanned Receipt
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="shortcuts-overlay shortcuts-overlay--hidden" id="add-receipt-shortcuts-overlay">
+        <div class="shortcuts-overlay__content">
+            <h2 class="shortcuts-overlay__title">Keyboard Shortcuts</h2>
+            <ol class="shortcuts-overlay__list">
+                <li><kbd>Shift</kbd> + <kbd>R</kbd> = Add Receipt (Current Page)</li>
+                <li><kbd>Shift</kbd> + <kbd>D</kbd> = Go to Dashboard</li>
+                <li><kbd>Shift</kbd> + <kbd>V</kbd> = View Report</li>
+                <li><kbd>Shift</kbd> + <kbd>P</kbd> = Print Report</li>
+                <li><kbd>Shift</kbd> + <kbd>L</kbd> = View All Pages (Links)</li>
+            </ol>
+            <p class="shortcuts-overlay__note">Release <kbd>Shift</kbd> to close.</p>
+        </div>
+    </div>
+
+     <div class="circle-container section-hidden" id="ocr-loading-indicator">
+        <div class="circle" id="ocr-loading-circle">Processing...</div>
+    </div>
+
+
+    <script src="./add-receipt_gamma.js" defer type="module"></script>
 </body>
 </html>
+<style>
+/* add-receipt_gamma.css */
+
+/* --- Base Styles & Variables (Consistent with Dashboard/Landing) --- */
+:root {
+   /* Color Palette */
+   --color-background: #000000;
+   --color-text: #FFFFFF;
+   --color-header-bg: #838383;
+   --color-sidebar-bg: #2F2C27;
+   --color-card-bg: #2F2C27;    /* Using card bg for form container */
+   --color-dashboard-bg: #1E1E1E;
+   --color-input-bg: #3E3A34;
+   --color-primary-accent: #FF9B07;
+   --color-primary-accent-hover: #e68a00;
+   --color-border-subtle: #4a4a4a;
+   --color-error: #f44336; /* Added for potential future validation */
+   --color-disabled: #5a5a5a; /* Added for disabled button */
+   --color-overlay-bg: rgba(0, 0, 0, 0.75); /* Overlay background */
+
+   /* Font */
+   --font-family-base: 'Manrope', sans-serif;
+
+   /* Spacing */
+   --space-xs: 0.25rem; --space-sm: 0.5rem; --space-md: 1rem;
+   --space-lg: 1.5rem; --space-xl: 2rem; --space-xxl: 3rem;
+
+   /* Sizes */
+   --header-height: 60px;
+   --sidebar-width: 250px;
+
+   /* Transitions */
+   --transition-speed: 0.3s;
+   --transition-ease: ease;
+
+   /* Borders */
+   --border-radius-sm: 4px;
+   --border-radius-md: 8px;
+   --border-radius-lg: 20px;
+}
+
+/* Reset */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; }
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--color-dashboard-bg); /* Use dashboard bg */
+    color: var(--color-text);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; transition: color var(--transition-speed) var(--transition-ease); }
+img { max-width: 100%; height: auto; display: block; }
+ul, ol { list-style: none; }
+button {
+    font-family: inherit; font-size: inherit; cursor: pointer; border: none;
+    background-color: transparent; color: inherit; padding: 0;
+    border-radius: var(--border-radius-lg);
+    transition: background-color var(--transition-speed) var(--transition-ease),
+                opacity var(--transition-speed) var(--transition-ease),
+                transform var(--transition-speed) var(--transition-ease);
+}
+label { display: block; margin-bottom: var(--space-sm); font-weight: 700; text-align: left; }
+input, select, button { font-family: inherit; font-size: 1rem; }
+
+/* --- Header (Consistent) --- */
+.header {
+   background-color: var(--color-header-bg); color: var(--color-text);
+   display: flex; justify-content: space-between; align-items: center;
+   padding: 0 var(--space-md); height: var(--header-height);
+   position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.header__menu-toggle { display: none; background: none; border: none; padding: var(--space-sm); margin-right: var(--space-sm); }
+.header__title { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: var(--space-sm); }
+.header__version-badge {
+   background-color: var(--color-sidebar-bg); color: var(--color-primary-accent);
+   padding: var(--space-xs) var(--space-sm); font-size: 0.8rem;
+   border-radius: var(--border-radius-sm); font-weight: 700; text-transform: uppercase;
+}
+.header__actions { display: flex; align-items: center; gap: var(--space-md); }
+.header__action-link { display: flex; align-items: center; }
+.header__icon { width: 25px; height: 25px; transition: opacity var(--transition-speed) var(--transition-ease); }
+.header__icon:hover { opacity: 0.8; }
+.header__icon--logo { width: 40px; height: 40px; }
+.header__icon--menu { width: 30px; height: 30px; }
+
+/* --- Sidebar (Consistent) --- */
+.sidebar {
+   background-color: var(--color-sidebar-bg); width: var(--sidebar-width);
+   height: 100vh; position: fixed; top: 0; left: 0;
+   padding: var(--space-lg); padding-top: calc(var(--header-height) + var(--space-lg));
+   overflow-y: auto; z-index: 900; transition: transform var(--transition-speed) var(--transition-ease);
+   display: flex; flex-direction: column;
+}
+.sidebar__title { font-size: 1.5rem; margin-bottom: var(--space-xl); font-weight: 700; color: var(--color-text); }
+.sidebar__nav-list { flex-grow: 1; }
+.sidebar__nav-item { margin-bottom: var(--space-sm); }
+.sidebar__nav-item a, .sidebar__footer-link {
+   color: var(--color-text); padding: var(--space-sm) var(--space-md);
+   display: flex; align-items: center; gap: var(--space-md);
+   font-size: 1.125rem; border-radius: var(--border-radius-md);
+   transition: color var(--transition-speed) var(--transition-ease), background-color var(--transition-speed) var(--transition-ease);
+}
+.sidebar__nav-item a img, .sidebar__footer-link img, .sidebar__footer-link span {
+   width: 20px; height: 20px; opacity: 0.8; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
+}
+.sidebar__nav-item a:hover, .sidebar__footer-link:hover {
+   color: var(--color-primary-accent); background-color: rgba(255, 255, 255, 0.05);
+}
+.sidebar__nav-item a:hover img, .sidebar__footer-link:hover img, .sidebar__footer-link:hover span { opacity: 1; }
+.sidebar__button {
+   background-color: var(--color-primary-accent); color: var(--color-text); border: none;
+   padding: var(--space-sm) var(--space-md); width: 100%; margin-top: var(--space-lg);
+   text-align: center; font-weight: 700; font-size: 1rem;
+}
+.sidebar__button:hover { background-color: var(--color-primary-accent-hover); }
+.sidebar__footer { margin-top: var(--space-xl); padding-top: var(--space-lg); border-top: 1px solid var(--color-border-subtle); }
+.sidebar__footer-link { margin-top: var(--space-sm); font-size: 1rem; }
+.sidebar--active { transform: translateX(0); }
+
+/* --- Main Content Area --- */
+.main-content {
+   margin-top: var(--header-height);
+   margin-left: var(--sidebar-width);
+   padding: var(--space-xl);
+   background-color: var(--color-dashboard-bg);
+   min-height: calc(100vh - var(--header-height));
+   transition: margin-left var(--transition-speed) var(--transition-ease);
+   display: flex; /* Use flex to center form container */
+   justify-content: center;
+   align-items: flex-start; /* Align to top */
+   padding-top: var(--space-xxl); /* Add more padding at the top */
+}
+
+/* --- Form Page Specific Styles --- */
+.form-page__container {
+    background-color: var(--color-card-bg); /* Use card background */
+    padding: var(--space-xl);
+    border-radius: var(--border-radius-md);
+    width: 100%;
+    max-width: 500px; /* Limit form width */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    /* NEW: Ensure container is visible by default */
+    display: block;
+    transition: opacity 0.3s ease; /* Add transition for hiding/showing */
+}
+.form-page__container--hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+.form-page__title {
+    color: var(--color-text);
+    margin-bottom: var(--space-xl);
+    font-size: 1.75rem; /* 28px */
+}
+
+.add-receipt-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg); /* Space between form groups */
+}
+
+.form-group {
+    width: 100%;
+}
+
+.form-group__row {
+    display: flex;
+    align-items: flex-end; /* Align items to bottom */
+    gap: var(--space-sm);
+}
+
+.form-label {
+    color: var(--color-text-muted, #a0a0a0); /* Use muted color */
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--space-xs); /* Reduced margin for row layout */
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: var(--space-md); /* 16px padding */
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--border-radius-sm); /* Smaller radius for inputs */
+    color: var(--color-text);
+    background-color: var(--color-input-bg);
+    font-size: 1rem;
+    transition: border-color var(--transition-speed) var(--transition-ease), box-shadow var(--transition-speed) var(--transition-ease);
+}
+
+.form-input--amount {
+    flex-grow: 1;
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--color-primary-accent);
+    box-shadow: 0 0 0 3px rgba(255, 155, 7, 0.3); /* Focus ring */
+}
+
+.form-input::placeholder {
+    color: var(--color-text-muted, #777);
+    opacity: 0.8;
+}
+
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)' width='16' height='16' fill='%23a0a0a0' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--space-md) center;
+    background-size: 1em;
+    padding-right: calc(var(--space-md) * 2.5);
+}
+.form-select option[disabled] { color: #777; }
+
+
+.form-button {
+    width: 100%;
+    padding: var(--space-md) var(--space-lg);
+    background-color: var(--color-primary-accent);
+    color: var(--color-background); /* Dark text on orange */
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: none;
+    cursor: pointer;
+    border-radius: var(--border-radius-sm); /* Match input radius */
+    display: inline-flex; /* Align icon and text */
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+}
+
+.form-button:hover:not(:disabled) {
+    background-color: var(--color-primary-accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 155, 7, 0.3);
+}
+.form-button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.form-button:disabled,
+.form-button--loading {
+    background-color: var(--color-disabled);
+    color: rgba(255, 255, 255, 0.7);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.form-button--scan {
+    flex-shrink: 0; width: auto; padding: var(--space-md);
+    font-size: 0.9rem; background-color: var(--color-primary-accent);
+    color: var(--color-background); border-radius: var(--border-radius-sm);
+}
+.form-button--scan .material-symbols-outlined { font-size: 1.2em; margin-right: var(--space-xs); }
+.form-button__scan-text--full { display: inline; }
+.form-button__scan-text { display: none; }
+
+/* --- NEW: Scan Confirmation Popup Styles --- */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-overlay-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1300; /* Above shortcuts */
+    padding: var(--space-md);
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
+}
+.popup-overlay--hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.popup {
+    background-color: var(--color-card-bg);
+    padding: var(--space-xl);
+    border-radius: var(--border-radius-md);
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    position: relative; /* For close button positioning */
+    text-align: left; /* Align popup content left */
+}
+
+.popup__close-button {
+    position: absolute;
+    top: var(--space-sm);
+    right: var(--space-sm);
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    padding: var(--space-xs);
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.popup__close-button:hover {
+    color: var(--color-text);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.popup__close-button .material-symbols-outlined {
+    font-size: 1.5rem; /* Adjust icon size */
+}
+
+.popup__title {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-lg);
+    text-align: center;
+    color: var(--color-text);
+}
+
+.popup__content {
+    margin-bottom: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.popup__field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.popup__label {
+    font-weight: 700;
+    color: var(--color-text-muted);
+    margin-right: var(--space-md);
+}
+
+.popup__value {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-primary-accent);
+}
+
+/* Use form styles within popup */
+.popup .form-group { margin-bottom: 0; } /* Remove extra margin if needed */
+.popup .form-label { margin-bottom: var(--space-xs); }
+.popup .form-select { margin-top: var(--space-xs); }
+
+.popup__actions {
+    text-align: right; /* Align button right */
+}
+.popup__actions .form-button {
+    width: auto; /* Don't force full width */
+    padding: var(--space-sm) var(--space-lg);
+    font-size: 1rem;
+}
+
+.popup__actions--close {
+    text-align: left; /* Align button left */
+    margin-bottom: 10px; /* Space between close and submit button */
+}
+
+.popup__actions--close .form-button {
+    width: auto; /* Don't force full width */
+    padding: var(--space-sm) var(--space-lg);
+    background-color: var(--color-error);
+    font-size: 1rem;
+}
+
+.popup__actions--close .form-button:hover {
+    background-color: var(--color-header-bg);
+}
+
+/* --- NEW: Shortcuts Overlay Styles (Copied from dashboard) --- */
+.shortcuts-overlay {
+   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+   background-color: rgba(0, 0, 0, 0.85); display: flex;
+   justify-content: center; align-items: center; z-index: 1200;
+   padding: var(--space-xl); opacity: 1; visibility: visible;
+   transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
+}
+.shortcuts-overlay--hidden { opacity: 0; visibility: hidden; }
+.shortcuts-overlay__content {
+   background-color: var(--color-card-bg); padding: var(--space-xl) var(--space-xxl);
+   border-radius: var(--border-radius-md); max-width: 500px; width: 90%; text-align: center;
+}
+.shortcuts-overlay__title { font-size: 1.5rem; margin-bottom: var(--space-lg); }
+.shortcuts-overlay__list { text-align: left; margin-bottom: var(--space-lg); }
+.shortcuts-overlay__list li { margin-bottom: var(--space-md); font-size: 1.1rem; }
+.shortcuts-overlay__list kbd {
+   display: inline-block; padding: var(--space-xs) var(--space-sm); font-family: monospace;
+   font-size: 0.9em; background-color: var(--color-input-bg);
+   border-radius: var(--border-radius-sm); border: 1px solid var(--color-border-subtle);
+   margin: 0 var(--space-xs);
+}
+.shortcuts-overlay__note { font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); }
+.shortcuts-overlay__note kbd { font-size: 0.8em; }
+
+/* --- NEW: OCR Loading Indicator Styles --- */
+.circle-container {
+    position: fixed; /* Cover the whole screen */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-overlay-bg); /* Use overlay background */
+    z-index: 1400; /* Highest z-index */
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
+}
+.section-hidden { /* Use this class to hide/show */
+    opacity: 0;
+    visibility: hidden;
+}
+.circle {
+    width: 10rem; height: 10rem;
+    text-align: center; align-items: center; display: flex; justify-content: center;
+    font-size: 1.2rem; /* Adjusted font size */
+    color: var(--color-background); /* Dark text on orange */
+    font-weight: 700;
+    background-color: var(--color-primary-accent);
+    border-radius: 50%;
+    animation-name: dilate;
+    animation-duration: 2s; /* Slightly faster */
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+@keyframes dilate {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; } /* Smaller scale */
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+
+/* --- Responsive Design --- */
+@media screen and (max-width: 817px) {
+   .header__menu-toggle { display: block; }
+   .header__title { font-size: 1.25rem; }
+   .header__version-badge { display: none; }
+   .sidebar { transform: translateX(-100%); z-index: 1100; padding-top: var(--space-lg); height: 100vh; top: 0; }
+   .sidebar--active { transform: translateX(0); box-shadow: 5px 0 15px rgba(0,0,0,0.2); }
+   .main-content { margin-left: 0; padding: var(--space-lg); padding-top: var(--space-xl); align-items: center; /* Center vertically on mobile */}
+   .form-page__container { max-width: 90%; padding: var(--space-lg); }
+   .form-page__title { font-size: 1.5rem; }
+
+   /* Adjust scan button text for smaller screens */
+   .form-button__scan-text--full { display: none; }
+   .form-button__scan-text { display: inline; }
+   .form-button--scan { padding: var(--space-md) var(--space-sm); }
+
+   /* Popup adjustments */
+   .popup { max-width: 90%; padding: var(--space-lg); }
+   .popup__title { font-size: 1.3rem; }
+   .popup__field { flex-direction: column; align-items: flex-start; gap: var(--space-xs); }
+   .popup__label { margin-bottom: var(--space-xs); }
+   .popup__value { font-size: 1rem; }
+   .popup__actions { text-align: center; } /* Center button on mobile */
+   .popup__actions .form-button { width: 100%; } /* Full width button */
+}
+</style>
+<script>
+// add-receipt_gamma.js
+
+// --- Utility function to get a cookie value by name ---
+function getCookie(cname) {
+    const name = cname + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function setDefaultMonth() {
+    const today = new Date();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const year = today.getFullYear();
+    monthInput.value = `${year}-${month}`;
+}
+
+// --- DOM Element Selectors ---
+const menuToggle = document.getElementById('menu-toggle');
+const sidebar = document.getElementById('sidebar');
+const signInButton = document.getElementById('signin-button'); // Sidebar sign-in button
+const addReceiptForm = document.getElementById('add-receipt-form');
+const amountInput = document.getElementById('receipt-amount');
+const monthInput = document.getElementById('receipt-month');
+const categorySelect = document.getElementById('receipt-category');
+const submitButton = document.getElementById('submit-receipt-button');
+const continueAudio = document.getElementById('continue-audio');
+const failAudio = document.getElementById('fail-audio');
+const scanReceiptButton = document.getElementById('scan-receipt-button');
+const scanReceiptInput = document.getElementById('scan-receipt-input');
+// NEW: Popup Selectors
+const scanConfirmPopupOverlay = document.getElementById('scan-confirm-popup-overlay');
+const scanConfirmPopup = document.getElementById('scan-confirm-popup');
+const scanPopupCloseButton = document.getElementById('scan-popup-close-button');
+const popupScanAmount = document.getElementById('popup-scan-amount');
+const popupScanMonth = document.getElementById('popup-scan-month');
+const popupScanCategory = document.getElementById('popup-scan-category');
+const popupScanSubmitButton = document.getElementById('scan-popup-submit-button');
+// NEW: Shortcuts Overlay Selector
+const shortcutsOverlay = document.getElementById('add-receipt-shortcuts-overlay');
+// NEW: OCR Loading Indicator Selector
+const ocrLoadingIndicator = document.getElementById('ocr-loading-indicator');
+const formContainer = document.getElementById('form-page-container'); // Need this to hide form during OCR
+
+
+// --- Global State ---
+let fetchedCustomCategories = []; // Store fetched categories for popup use
+let scannedReceiptData = { amount: null, month: null }; // Store data between scan and popup submit
+
+// --- Sidebar Logic ---
+menuToggle?.addEventListener('click', () => {
+    sidebar?.classList.toggle('sidebar--active');
+});
+document.addEventListener('click', (event) => {
+    if (window.innerWidth <= 817) {
+        const isClickInsideSidebar = sidebar?.contains(event.target);
+        const isClickOnMenuToggle = menuToggle?.contains(event.target);
+        if (!isClickInsideSidebar && !isClickOnMenuToggle && sidebar?.classList.contains('sidebar--active')) {
+            sidebar.classList.remove('sidebar--active');
+        }
+    }
+});
+
+// --- Shortcut Keys Logic ---
+document.addEventListener('keydown', (event) => {
+    // Show shortcuts overlay on Shift press (if not already typing in an input/select)
+    if (event.key === 'Shift' && !event.repeat) {
+         if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT' && document.activeElement.tagName !== 'TEXTAREA') {
+            shortcutsOverlay?.classList.remove('shortcuts-overlay--hidden');
+         }
+    }
+
+    // Handle specific shortcuts only when Shift is held AND not focused on input/select
+    if (event.shiftKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT') {
+        switch (event.key.toUpperCase()) {
+            case 'D': window.location.href = '../dashboard'; break;
+            case 'R': window.location.href = '../add-receipt'; break;
+            case 'V': window.location.href = '../report'; break;
+            case 'P': window.location.href = '../printout'; break;
+            case 'L': window.location.href = '../links'; break;
+        }
+    }
+});
+document.addEventListener('keyup', (event) => {
+    // Hide shortcuts overlay on Shift release
+    if (event.key === 'Shift') {
+        shortcutsOverlay?.classList.add('shortcuts-overlay--hidden');
+    }
+});
+
+
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log("Add Receipt DOM Loaded. Initializing...");
+    const userHash = checkAuthAndSetupUI();
+    if (!userHash) return; // Stop if not authenticated
+
+    await populateCategoryDropdown(categorySelect, userHash, true); // Populate main dropdown
+    setDefaultMonth();
+    addEventListeners(userHash); // Add all event listeners
+
+    console.log("Add Receipt Page Initialized.");
+});
+
+/**
+ * Checks authentication, updates UI accordingly, refreshes cookie.
+ * @returns {string|null} User hash if authenticated, null otherwise.
+ */
+function checkAuthAndSetupUI() {
+    const userHash = getCookie('hash');
+    if (!userHash) {
+        console.log("User not authenticated. Redirecting to sign-in.");
+        window.location.href = '../sign-in';
+        return null;
+    } else {
+        if (signInButton) signInButton.style.display = 'none';
+        const expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + 7);
+        document.cookie = `hash=${userHash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`;
+        return userHash;
+    }
+}
+
+/**
+ * Adds all necessary event listeners.
+ * @param {string} userHash - The user's authentication hash.
+ */
+function addEventListeners(userHash) {
+    addReceiptForm?.addEventListener('submit', (e) => handleFormSubmit(e, userHash));
+    categorySelect?.addEventListener('change', handleCategoryChange);
+    scanReceiptButton?.addEventListener('click', scanReceipt);
+    scanReceiptInput?.addEventListener('change', (e) => handleFileSelect(e, userHash));
+    // Popup listeners
+    scanPopupCloseButton?.addEventListener('click', hideScanConfirmPopup);
+    popupScanSubmitButton?.addEventListener('click', () => handlePopupSubmit(userHash));
+}
+
+
+// --- Category Logic ---
+/**
+ * Fetches categories and populates a given select dropdown.
+ * Stores fetched custom categories globally.
+ * @param {HTMLSelectElement} selectElement - The dropdown element to populate.
+ * @param {string} userHash - The user's authentication hash.
+ * @param {boolean} includeManageOption - Whether to include the 'Manage Categories' option.
+ */
+async function populateCategoryDropdown(selectElement, userHash, includeManageOption = false) {
+    if (!selectElement) return;
+    // Clear existing options except the default disabled one
+    while (selectElement.options.length > 1) {
+        selectElement.remove(1);
+    }
+
+    // Ensure DB object is available
+    if (typeof DB === 'undefined' || !DB.uCompute) {
+        console.error('Firestore DB object or DB.uCompute not found. Cannot populate categories.');
+        // Optionally disable the dropdown or show an error option
+        const errorOption = new Option('Error loading categories', '');
+        errorOption.disabled = true;
+        selectElement.appendChild(errorOption);
+        return;
+    }
+
+    try {
+        // Add default options first (if not already present in HTML)
+        const defaultCategories = {
+            "a": "Groceries", "b": "Food Out", "c": "Snacks", "d": "Kitchenware",
+            "e": "Bathroomware", "f": "Livingware", "g": "Appliances", "h": "Gardenware",
+            "j": "Pets", "k": "Health", "l": "Books", "other": "OTHER"
+        };
+        for (const [value, text] of Object.entries(defaultCategories)) {
+             if (!selectElement.querySelector(`option[value="${value}"]`)) {
+                 selectElement.appendChild(new Option(text, value));
+             }
+        }
+
+
+        // Fetch and add custom categories only if not already fetched
+        if (fetchedCustomCategories.length === 0) {
+            const customCategoriesData = await DB.uCompute.all(userHash, 'other', 'categories');
+            fetchedCustomCategories = Object.keys(customCategoriesData || {});
+            console.log("Fetched custom categories:", fetchedCustomCategories);
+        }
+
+        fetchedCustomCategories.forEach(category => {
+            if (!selectElement.querySelector(`option[value="${category}"]`)) {
+                selectElement.appendChild(new Option(category, category));
+            }
+        });
+
+        // Add the "Manage Categories" option if requested
+        if (includeManageOption) {
+            const manageOption = new Option('Manage Categories +', 'category_manager');
+            manageOption.style.fontStyle = 'italic';
+            manageOption.style.marginTop = '5px';
+            selectElement.appendChild(manageOption);
+        }
+
+    } catch (error) {
+        console.error('Error fetching or processing categories:', error);
+        const errorOption = new Option('Error loading categories', '');
+        errorOption.disabled = true;
+        selectElement.appendChild(errorOption);
+    }
+}
+
+/** Handles redirecting when 'Manage Categories' is selected */
+function handleCategoryChange(event) {
+     if (event.target.value === 'category_manager') {
+        console.log("Redirecting to Category Manager...");
+        window.location.href = '../category_manager'; // Adjust path if needed
+    }
+}
+
+// --- Form Submission Logic ---
+/**
+ * Handles the main form submission event.
+ * @param {Event} event - The form submission event.
+ * @param {string} userHash - The user's authentication hash.
+ */
+async function handleFormSubmit(event, userHash) {
+    event.preventDefault();
+    console.log("Main form submit triggered.");
+
+    const total = amountInput.value.trim();
+    const month = monthInput.value.trim();
+    const category = categorySelect.value;
+
+    // Validation
+    if (!total || !month || !category || category === "" || category === "category_manager") {
+        console.error("Validation failed: Missing total, month, or valid category.");
+        failAudio?.play();
+        alert("Please fill in all fields: Total, Month, and select a valid Category.");
+        return;
+    }
+    const numericTotal = Number(total);
+    if (isNaN(numericTotal) || numericTotal <= 0) {
+         console.error("Validation failed: Invalid total amount.");
+         failAudio?.play();
+         alert("Please enter a valid positive number for the total amount.");
+         return;
+    }
+
+    // Disable button and proceed with submission
+    setSubmitButtonState(submitButton, true, "Submitting...");
+    await submitReceiptData(numericTotal, month, category, userHash, submitButton);
+}
+
+/**
+ * Handles the scan confirmation popup submission.
+ * @param {string} userHash - The user's authentication hash.
+ */
+async function handlePopupSubmit(userHash) {
+    console.log("Popup submit triggered.");
+
+    const amount = scannedReceiptData.amount; // Get amount from stored data
+    const month = scannedReceiptData.month; // Get month from stored data
+    const category = popupScanCategory.value;
+
+    // Validation
+     if (!amount || !month || !category || category === "") {
+        console.error("Validation failed: Missing amount, month, or category from popup.");
+        failAudio?.play();
+        alert("Please select a category.");
+        return;
+    }
+     if (isNaN(amount) || amount <= 0) {
+         console.error("Validation failed: Invalid amount stored from scan.");
+         failAudio?.play();
+         alert("Invalid scanned amount. Please try scanning again or enter manually.");
+         hideScanConfirmPopup();
+         return;
+     }
+
+    // Disable button and proceed with submission
+    setSubmitButtonState(popupScanSubmitButton, true, "Submitting...");
+    await submitReceiptData(amount, month, category, userHash, popupScanSubmitButton);
+    hideScanConfirmPopup(); // Hide popup after attempting submission
+}
+
+
+/**
+ * Core logic to submit receipt data to the database.
+ * @param {number} amount - The numeric amount of the receipt.
+ * @param {string} month - The month string (YYYY-MM).
+ * @param {string} category - The selected category value.
+ * @param {string} userHash - The user's authentication hash.
+ * @param {HTMLButtonElement} buttonElement - The button that triggered the submission (for state updates).
+ */
+async function submitReceiptData(amount, month, category, userHash, buttonElement) {
+     try {
+        console.log(`Submitting receipt data: Amount=${amount}, Month=${month}, Category=${category}`);
+
+        // --- Database Operations ---
+        setSubmitButtonState(buttonElement, true, "Calculating...");
+        let currentTotal = await DB.uCompute.get(userHash, 'totals', month, category);
+        currentTotal = (currentTotal === null || typeof currentTotal !== 'number') ? 0 : currentTotal;
+        console.log(`Current total for ${category}/${month}: ${currentTotal}`);
+
+        const newTotal = currentTotal + amount;
+        console.log(`New total for ${category}/${month}: ${newTotal}`);
+
+        setSubmitButtonState(buttonElement, true, "Updating Total...");
+        await DB.uCompute.add(userHash, 'totals', month, category, newTotal);
+        console.log("Total updated successfully.");
+
+        setSubmitButtonState(buttonElement, true, "Saving Receipt...");
+        const receiptID = '#' + Math.random().toString(36).substring(2, 10).padEnd(8, '0');
+        await DB.uCompute.add(userHash, 'receipts', month, category + receiptID, amount);
+        console.log(`Receipt ${receiptID} saved successfully.`);
+        // --- End Database Operations ---
+
+        // Success Feedback
+        setSubmitButtonState(buttonElement, true, "Done!");
+        continueAudio?.play();
+
+        // Redirect after audio finishes
+        const redirectDelay = continueAudio?.duration ? (continueAudio.duration * 1000 + 100) : 500;
+        setTimeout(() => {
+            console.log("Redirecting to dashboard...");
+            window.location.href = '../dashboard';
+        }, redirectDelay);
+
+    } catch (error) {
+        console.error('Error submitting receipt data:', error);
+        failAudio?.play();
+        alert("An error occurred while submitting the receipt. Please try again.");
+        setSubmitButtonState(buttonElement, false); // Re-enable button on error
+    }
+}
+
+
+/**
+ * Sets the state of a submit button (text and disabled status).
+ * @param {HTMLButtonElement} buttonElement - The button element.
+ * @param {boolean} isLoading - Whether the button should be in a loading/disabled state.
+ * @param {string} [text] - The text to display. Defaults based on button ID.
+ */
+function setSubmitButtonState(buttonElement, isLoading, text) {
+    if (!buttonElement) return;
+
+    let defaultText = 'Submit Receipt';
+    if (buttonElement.id === 'scan-popup-submit-button') {
+        defaultText = 'Submit Scanned Receipt';
+    }
+
+    buttonElement.disabled = isLoading;
+    buttonElement.textContent = isLoading ? text : defaultText; // Use provided text or default
+
+    if (isLoading) {
+        buttonElement.classList.add('form-button--loading');
+    } else {
+        buttonElement.classList.remove('form-button--loading');
+    }
+}
+
+
+// --- Scan Receipt Functionality ---
+/** Triggers the hidden file input */
+function scanReceipt() {
+    console.log('Scan Receipt button clicked. Triggering file input.');
+    scanReceiptInput?.click();
+}
+
+/** Handles file selection, calls OCR, and shows popup */
+async function handleFileSelect(event, userHash) {
+    const files = event.target.files;
+    if (!files || files.length === 0) {
+        console.log('No file selected or selection cancelled.');
+        event.target.value = null; // Reset input
+        return;
+    }
+
+    const file = files[0];
+    console.log('File selected for scanning:', file.name, file.type);
+
+    // Show loading indicator, hide form
+    ocrLoadingIndicator?.classList.remove('section-hidden');
+    formContainer?.classList.add('form-page__container--hidden');
+
+
+    try {
+        // --- Call OCR ---
+        // Ensure OCRIMAGE is available (imported from parse.js)
+        if (typeof OCRIMAGE !== 'function' || typeof getProgressCode !== 'function') {
+             throw new Error("OCR functions (OCRIMAGE, getProgressCode) not found. Ensure parse.js is loaded and exports them.");
+        }
+        const ocrResult = await OCRIMAGE(event.target); // Pass the input element
+        // --- Check OCR Status ---
+        // Assuming getProgressCode() returns 600 on success as per user's previous code
+        if (getProgressCode() !== 600) {
+            throw new Error(`OCR failed or did not complete successfully. Status: ${getProgressCode()}`);
+        }
+
+        console.log('OCR Result:', ocrResult);
+        const scannedAmount = Number(ocrResult);
+        if (isNaN(scannedAmount) || scannedAmount <= 0) {
+             throw new Error(`Invalid amount returned from OCR: ${ocrResult}`);
+        }
+
+        // Store data and show popup
+        scannedReceiptData.amount = scannedAmount;
+        scannedReceiptData.month = monthInput.value || getDefaultMonth(); // Use current input or default
+        showScanConfirmPopup(userHash);
+
+    } catch (error) {
+        console.error('Error during file handling or OCR:', error);
+        failAudio?.play();
+        alert(`Failed to process receipt image: ${error.message || 'Unknown error'}`);
+    } finally {
+        // Hide loading indicator, show form again
+        ocrLoadingIndicator?.classList.add('section-hidden');
+        formContainer?.classList.remove('form-page__container--hidden');
+        event.target.value = null; // Reset file input
+    }
+}
+
+/** Gets the default month string (YYYY-MM) */
+function getDefaultMonth() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    return `${year}-${month}`;
+}
+
+
+/** Populates and shows the scan confirmation popup */
+async function showScanConfirmPopup(userHash) {
+    if (!scanConfirmPopupOverlay || !popupScanAmount || !popupScanMonth || !popupScanCategory) {
+        console.error("Popup elements not found.");
+        return;
+    }
+
+    // Populate popup fields
+    popupScanAmount.textContent = scannedReceiptData.amount?.toFixed(2) || 'Error';
+    popupScanMonth.textContent = scannedReceiptData.month || 'Error';
+
+    // Populate category dropdown (excluding 'Manage Categories')
+    await populateCategoryDropdown(popupScanCategory, userHash, false);
+
+    // Show the popup
+    scanConfirmPopupOverlay.classList.remove('popup-overlay--hidden');
+    console.log("Scan confirmation popup shown.");
+}
+
+/** Hides the scan confirmation popup */
+function hideScanConfirmPopup() {
+    scanConfirmPopupOverlay?.classList.add('popup-overlay--hidden');
+    // Reset popup submit button state just in case
+    setSubmitButtonState(popupScanSubmitButton, false);
+    console.log("Scan confirmation popup hidden.");
+}
+
+// --- Set Default Month on Load ---
+setDefaultMonth(); // Also called in DOMContentLoaded, but safe to call here too
+</script>
