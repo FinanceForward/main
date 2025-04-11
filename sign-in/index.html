@@ -3,62 +3,702 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Forward</title>
-    <link rel="stylesheet" href="./sign-in.css">
-    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <title>Sign In / Sign Up - Finance Forward GAMMA</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Scripts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=visibility,visibility_off"/>
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <link rel="stylesheet" href="./signin_gamma.css">
+
     <script defer src="../firestore.js" type="module"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,dashboard,info,receipt_long,settings"/>
-</head>
+    </head>
 <body>
-    <main class="forum">
-        <div id = "sign-in" class="form-container">
-            <h1>Welcome Back! <br> Sign In</h1>
-            <br><br>
-            <input type="email" id="email" name="email" placeholder="Enter Email"/>
-            <br><br>
-            <input type="password" id="pass" name="password" placeholder="Enter Password"/>
-            <br><br>
-            <button class="go" id="signin-btn">Sign In!</button>
-            <p id="si-errs"></p>
-            <br><br><br><br>
-            <a onclick="document.getElementById('sign-in').hidden = true; document.getElementById('sign-up').hidden = false" class="swt">SIGN UP INSTEAD</a>
-        </div>
-        <div id = "sign-up" class="form-container" hidden>
-            <h1>Welcome! <br> Sign Up</h1>
-            <br><br>
-            <input type="email" id="email_up" name="email" placeholder="Enter Email"/>
-            <br><br>
-            <input type="password" id="pass_up" name="password" placeholder="Enter Password"/>
-            <br><br>
-            <input type="password" id="pass2_up" name="password" placeholder="Re-enter Password"/>
-            <br><br>
-            <select id="currency" name="currency">
-                <option value="$">USD ($)</option>
-                <option value="€">EUR (€)</option>
-                <option value="£">GBP (£)</option>
-                <option value="¥">JPY (¥)</option>
-                <option value="¥">CNY (¥)</option>
-                <option value="₹">INR (₹)</option>
-                <option value="$">AUD ($)</option>
-                <option value="CAN$">CAN (CAN$)</option>
-                <option value="Fr.*">CHF (Fr.)</option>
-                <option value="₽">RUB (₽)</option>
-                <option value="R$">BRL (R$)</option>
-                <option value="Z$">ZWD (Z$)</option>
-                <option value="₱">PHP (₱)</option>
-                <option value="﷼*">SAR (﷼)</option>
-                <option value="₪">ILS (₪)</option>
-                <option value="₩">KRW (₩)</option>
-            </select>
-            <br><br>
-            <button class="go" id="signup-btn">Sign Up!</button>
-            <p id="su-errs"></p>
-            <br><br><br><br>
-            <a onclick="document.getElementById('sign-in').hidden = false; document.getElementById('sign-up').hidden = true" class="swt">SIGN IN INSTEAD</a>
+    <header class="minimal-header">
+        <a href="../" class="minimal-header__brand" aria-label="Finance Forward Home">
+             <img class="minimal-header__logo" src="../src/fflogo.jpg" alt="Finance Forward Logo">
+             <span class="minimal-header__title">Finance Forward <span class="minimal-header__version-badge">GAMMA (GEMINI PRE-RELEASE)</span></span>
+        </a>
+    </header>
+
+    <main class="auth-page">
+        <div class="auth-container" id="auth-container">
+
+            <div class="auth-form-wrapper" id="signin-wrapper">
+                <h1 class="auth-title">Welcome Back!</h1>
+                <p class="auth-subtitle">Sign in to your account</p>
+                <form class="auth-form" id="signin-form">
+                    <div class="form-group">
+                        <label for="signin-email" class="form-label">Email</label>
+                        <input type="email" id="signin-email" name="email" class="form-input" placeholder="Enter your email" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signin-password" class="form-label">Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="signin-password" name="password" class="form-input form-input--password" placeholder="Enter your password" required autocomplete="current-password">
+                            <button type="button" class="password-toggle-button" aria-label="Show password">
+                                <span class="material-symbols-outlined">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="form-error form-error--hidden" id="signin-error"></p>
+                    <button type="submit" class="form-button form-button--large" id="signin-button">
+                        <span class="form-button__text">Sign In</span>
+                        <span class="form-button__loader"></span>
+                    </button>
+                </form>
+                <p class="auth-toggle">
+                    Don't have an account? <button type="button" class="auth-toggle-link" id="show-signup-link">Sign Up Instead</button>
+                </p>
+            </div>
+
+            <div class="auth-form-wrapper auth-form-wrapper--hidden" id="signup-wrapper">
+                <h1 class="auth-title">Create Account</h1>
+                 <p class="auth-subtitle">Get started with Finance Forward</p>
+                <form class="auth-form" id="signup-form">
+                    <div class="form-group">
+                        <label for="signup-email" class="form-label">Email</label>
+                        <input type="email" id="signup-email" name="email" class="form-input" placeholder="Enter your email" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password" class="form-label">Password</label>
+                         <div class="password-input-wrapper">
+                            <input type="password" id="signup-password" name="password" class="form-input form-input--password" placeholder="Create a password" required autocomplete="new-password">
+                            <button type="button" class="password-toggle-button" aria-label="Show password">
+                                <span class="material-symbols-outlined">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password-confirm" class="form-label">Confirm Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="signup-password-confirm" name="password-confirm" class="form-input form-input--password" placeholder="Re-enter password" required autocomplete="new-password">
+                            <button type="button" class="password-toggle-button" aria-label="Show password">
+                                <span class="material-symbols-outlined">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+                     <div class="form-group">
+                        <label for="signup-currency" class="form-label">Default Currency</label>
+                        <select id="signup-currency" name="currency" class="form-select" required>
+                            <option value="$" selected>USD ($)</option>
+                            <option value="€">EUR (€)</option>
+                            <option value="£">GBP (£)</option>
+                            <option value="¥">JPY (¥)</option>
+                            <option value="¥">CNY (¥)</option>
+                            <option value="₹">INR (₹)</option>
+                            <option value="$">AUD ($)</option>
+                            <option value="CAN$">CAN (CAN$)</option>
+                            <option value="Fr.*">CHF (Fr.)</option>
+                            <option value="₽">RUB (₽)</option>
+                            <option value="R$">BRL (R$)</option>
+                            <option value="Z$">ZWD (Z$)</option>
+                            <option value="₱">PHP (₱)</option>
+                            <option value="﷼*">SAR (﷼)</option>
+                            <option value="₪">ILS (₪)</option>
+                            <option value="₩">KRW (₩)</option>
+                        </select>
+                    </div>
+                    <p class="form-error form-error--hidden" id="signup-error"></p>
+                    <button type="submit" class="form-button form-button--large" id="signup-button">
+                         <span class="form-button__text">Sign Up</span>
+                         <span class="form-button__loader"></span>
+                    </button>
+                </form>
+                 <p class="auth-toggle">
+                    Already have an account? <button type="button" class="auth-toggle-link" id="show-signin-link">Sign In Instead</button>
+                </p>
+            </div>
+
         </div>
     </main>
+
+    <script src="./signin_gamma.js" defer type="module"></script>
 </body>
-<script src="./sign-in.js" defer></script>
 </html>
+<style>
+/* signin_gamma.css */
+
+/* --- Base Styles & Variables --- */
+:root {
+   /* Color Palette */
+   --color-background: #000000;
+   --color-text: #FFFFFF;
+   --color-text-muted: #a0a0a0;
+   --color-header-bg: #1a1a1a; /* Darker header */
+   --color-card-bg: #2F2C27;
+   --color-dashboard-bg: #1E1E1E;
+   --color-input-bg: #3E3A34;
+   --color-primary-accent: #FF9B07;
+   --color-primary-accent-hover: #e68a00;
+   --color-border-subtle: #4a4a4a;
+   --color-error: #f44336;
+   --color-disabled: #5a5a5a;
+
+   /* Font */
+   --font-family-base: 'Manrope', sans-serif;
+
+   /* Spacing */
+   --space-xs: 0.25rem; --space-sm: 0.5rem; --space-md: 1rem;
+   --space-lg: 1.5rem; --space-xl: 2rem; --space-xxl: 3rem;
+
+   /* Sizes */
+   --container-width: 500px; /* Increased width */
+   --input-height: 56px; /* Increased height */
+   --button-height: 56px; /* Increased height */
+   --password-toggle-button-size: 40px; /* Size of the toggle button area */
+
+   /* Transitions & Animations */
+   --transition-speed: 0.4s; /* Slightly slower for smoother effect */
+   --transition-ease: cubic-bezier(0.25, 0.1, 0.25, 1); /* Smoother ease */
+
+   /* Borders */
+   --border-radius-sm: 4px;
+   --border-radius-md: 8px;
+   --border-radius-lg: 28px; /* Larger radius for buttons */
+}
+
+/* Reset */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; }
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--color-dashboard-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; transition: color var(--transition-speed) var(--transition-ease); }
+img { max-width: 100%; height: auto; display: block; }
+button {
+    font-family: inherit; font-size: inherit; cursor: pointer; border: none;
+    background-color: transparent; color: inherit; padding: 0;
+    border-radius: var(--border-radius-lg);
+    transition: background-color var(--transition-speed) var(--transition-ease),
+                opacity var(--transition-speed) var(--transition-ease),
+                transform var(--transition-speed) var(--transition-ease);
+}
+label { display: block; margin-bottom: var(--space-sm); font-weight: 700; text-align: left; }
+input, select, button { font-family: inherit; font-size: 1rem; }
+
+/* --- Minimal Header --- */
+.minimal-header {
+    background-color: var(--color-header-bg);
+    padding: var(--space-sm) var(--space-lg);
+    display: flex;
+    justify-content: center; /* Center brand */
+    align-items: center;
+    border-bottom: 1px solid var(--color-border-subtle);
+}
+.minimal-header__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--color-text);
+}
+.minimal-header__brand:hover { color: var(--color-text); }
+.minimal-header__logo { width: 35px; height: 35px; }
+.minimal-header__title { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: var(--space-sm); }
+.minimal-header__version-badge {
+    background-color: var(--color-card-bg); color: var(--color-primary-accent);
+    padding: 2px var(--space-sm); font-size: 0.65rem; border-radius: var(--border-radius-sm);
+    font-weight: 700; text-transform: uppercase; margin-left: var(--space-xs); white-space: nowrap;
+}
+
+/* --- Auth Page Layout --- */
+.auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 60px); /* Adjust based on minimal header height */
+    padding: var(--space-xl);
+}
+
+/* --- Auth Container --- */
+.auth-container {
+    background-color: var(--color-card-bg);
+    padding: var(--space-xl) var(--space-xxl); /* Increased padding */
+    border-radius: var(--border-radius-md);
+    width: 100%;
+    max-width: var(--container-width); /* Increased max-width */
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    position: relative; /* Needed for absolute positioning of forms */
+    overflow: hidden; /* Hide overflow during transitions */
+    /* Animation */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInContainer 0.6s var(--transition-ease) forwards;
+}
+
+@keyframes fadeInContainer {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.auth-title {
+    color: var(--color-text);
+    margin-bottom: var(--space-sm);
+    font-size: 2rem; /* Bigger title */
+    font-weight: 700;
+}
+.auth-subtitle {
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xl);
+    font-size: 1.1rem; /* Bigger subtitle */
+}
+
+/* --- Form Wrapper & Transitions --- */
+.auth-form-wrapper {
+    width: 100%;
+    transition: opacity var(--transition-speed) var(--transition-ease),
+                transform var(--transition-speed) var(--transition-ease);
+}
+
+.auth-form-wrapper--hidden {
+    display: none; /* Simple hide/show */
+}
+
+/* --- Form Styles --- */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.form-group {
+    width: 100%;
+    text-align: left; /* Align labels left */
+}
+
+.form-label {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-bottom: var(--space-xs);
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 0 var(--space-lg); /* Padding left/right */
+    height: var(--input-height); /* Increased height */
+    line-height: var(--input-height); /* Vertically center text */
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--border-radius-md); /* Slightly larger radius */
+    color: var(--color-text);
+    background-color: var(--color-input-bg);
+    font-size: 1.1rem; /* Bigger font */
+    transition: border-color var(--transition-speed) var(--transition-ease), box-shadow var(--transition-speed) var(--transition-ease);
+}
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--color-primary-accent);
+    box-shadow: 0 0 0 3px rgba(255, 155, 7, 0.3);
+}
+.form-input::placeholder { color: var(--color-text-muted); opacity: 0.8; }
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)' width='16' height='16' fill='%23a0a0a0' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--space-md) center;
+    background-size: 1em;
+    padding-right: calc(var(--space-md) * 3); /* Increased padding for select arrow */
+}
+.form-select option { background-color: var(--color-input-bg); color: var(--color-text); }
+.form-select option[disabled] { color: #777; }
+
+
+/* --- NEW: Password Input Wrapper & Toggle Button --- */
+.password-input-wrapper {
+    position: relative; /* Needed for absolute positioning of button */
+}
+
+.form-input--password {
+    /* Add padding to the right to avoid text overlapping the button */
+    padding-right: calc(var(--password-toggle-button-size) + var(--space-sm));
+}
+
+.password-toggle-button {
+    position: absolute;
+    top: 50%;
+    right: 0; /* Position inside the wrapper */
+    transform: translateY(-50%);
+    width: var(--password-toggle-button-size);
+    height: 100%; /* Match input height */
+    background: transparent;
+    border: none;
+    padding: 0 var(--space-sm); /* Padding around icon */
+    margin: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; /* Rounded corners only on right */
+}
+.password-toggle-button:hover,
+.password-toggle-button:focus {
+    color: var(--color-text);
+    background-color: rgba(255, 255, 255, 0.05); /* Subtle hover */
+    outline: none;
+}
+.password-toggle-button .material-symbols-outlined {
+    font-size: 1.5rem; /* Adjust icon size */
+    font-variation-settings: /* Adjust fill/weight if needed */
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+}
+
+/* --- Error Message --- */
+.form-error {
+    color: var(--color-error);
+    font-size: 0.9rem;
+    min-height: 1.2em; /* Reserve space */
+    margin-top: var(--space-xs);
+    text-align: center;
+    opacity: 1;
+    transition: opacity var(--transition-speed) ease;
+}
+.form-error--hidden {
+    opacity: 0;
+}
+
+/* --- Submit Button --- */
+.form-button {
+    width: 100%;
+    height: var(--button-height); /* Increased height */
+    background-color: var(--color-primary-accent);
+    color: var(--color-background);
+    font-weight: 700;
+    font-size: 1.2rem; /* Bigger font */
+    border: none;
+    cursor: pointer;
+    border-radius: var(--border-radius-lg); /* Larger radius */
+    display: flex; /* Use flex for loader */
+    align-items: center;
+    justify-content: center;
+    position: relative; /* For loader positioning */
+}
+.form-button:hover:not(:disabled) {
+    background-color: var(--color-primary-accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 155, 7, 0.3);
+}
+.form-button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: none;
+}
+.form-button:disabled {
+    background-color: var(--color-disabled);
+    color: rgba(255, 255, 255, 0.7);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Button Loader Animation */
+.form-button__text {
+    transition: opacity 0.2s ease;
+}
+.form-button__loader {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(0, 0, 0, 0.3); /* Loader color based on button text color */
+    border-left-color: var(--color-background);
+    border-radius: 50%;
+    opacity: 0;
+    visibility: hidden;
+    animation: spin 0.8s linear infinite;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+.form-button--loading .form-button__text {
+    opacity: 0;
+    visibility: hidden;
+}
+.form-button--loading .form-button__loader {
+    opacity: 1;
+    visibility: visible;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+
+/* --- Auth Toggle Link --- */
+.auth-toggle {
+    margin-top: var(--space-xl);
+    font-size: 0.95rem; /* Slightly bigger */
+    color: var(--color-text-muted);
+}
+.auth-toggle-link {
+    color: var(--color-primary-accent);
+    font-weight: 700;
+    background: none;
+    border: none;
+    padding: 0;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.auth-toggle-link:hover {
+    color: var(--color-primary-accent-hover);
+}
+
+
+/* --- Responsive Design --- */
+@media screen and (max-width: 600px) {
+    .auth-page { padding: var(--space-lg); }
+    .auth-container { padding: var(--space-lg) var(--space-xl); max-width: 100%; }
+    .auth-title { font-size: 1.75rem; }
+    .auth-subtitle { font-size: 1rem; }
+    .form-input, .form-select, .form-button { font-size: 1rem; height: 50px; line-height: 50px; }
+    .form-button { font-size: 1.1rem; }
+    .minimal-header__title { font-size: 1rem; }
+    .minimal-header__logo { width: 30px; height: 30px; }
+    .form-input--password { padding-right: calc(var(--password-toggle-button-size) + var(--space-xs)); } /* Adjust padding on mobile */
+}
+</style>
+<script>
+// signin_gamma.js
+
+// --- Utility Functions ---
+/** Gets a cookie value by name */
+function getCookie(cname) {
+    const name = cname + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') { c = c.substring(1); }
+        if (c.indexOf(name) === 0) { return c.substring(name.length, c.length); }
+    }
+    return "";
+}
+
+/** Hashes a message using SHA-256 */
+async function sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+}
+
+/** Creates the user hash */
+async function createUserHash(email, pass) {
+    // Simple concatenation - consider adding a salt or more robust method in production
+    return sha256(email + pass);
+}
+
+// --- DOM Element Selectors ---
+const authContainer = document.getElementById('auth-container');
+const signinWrapper = document.getElementById('signin-wrapper');
+const signupWrapper = document.getElementById('signup-wrapper');
+const showSignupLink = document.getElementById('show-signup-link');
+const showSigninLink = document.getElementById('show-signin-link');
+// Sign In Form
+const signinForm = document.getElementById('signin-form');
+const signinEmailInput = document.getElementById('signin-email');
+const signinPasswordInput = document.getElementById('signin-password');
+const signinError = document.getElementById('signin-error');
+const signinButton = document.getElementById('signin-button');
+// Sign Up Form
+const signupForm = document.getElementById('signup-form');
+const signupEmailInput = document.getElementById('signup-email');
+const signupPasswordInput = document.getElementById('signup-password');
+const signupPasswordConfirmInput = document.getElementById('signup-password-confirm');
+const signupCurrencySelect = document.getElementById('signup-currency');
+const signupError = document.getElementById('signup-error');
+const signupButton = document.getElementById('signup-button');
+// NEW: Password Toggle Buttons
+const passwordToggleButtons = document.querySelectorAll('.password-toggle-button');
+
+
+// --- Event Listeners ---
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Sign In/Up DOM Loaded.");
+
+    // Toggle listeners
+    showSignupLink?.addEventListener('click', showSignupForm);
+    showSigninLink?.addEventListener('click', showSigninForm);
+
+    // Form submission listeners
+    signinForm?.addEventListener('submit', handleSigninSubmit);
+    signupForm?.addEventListener('submit', handleSignupSubmit);
+
+    // NEW: Password Toggle Listeners
+    passwordToggleButtons.forEach(button => {
+        button.addEventListener('click', togglePasswordVisibility);
+    });
+
+    // Check if already logged in on load
+    if (getCookie('hash')) {
+        console.log("User already logged in, redirecting to dashboard...");
+        window.location.href = '../dashboard';
+    }
+});
+
+// --- Form Toggle Logic ---
+function showSignupForm() {
+    console.log("Switching to Sign Up form");
+    signinWrapper?.classList.add('auth-form-wrapper--hidden');
+    signupWrapper?.classList.remove('auth-form-wrapper--hidden');
+    clearErrors(); // Clear errors when switching forms
+}
+
+function showSigninForm() {
+    console.log("Switching to Sign In form");
+    signupWrapper?.classList.add('auth-form-wrapper--hidden');
+    signinWrapper?.classList.remove('auth-form-wrapper--hidden');
+    clearErrors(); // Clear errors when switching forms
+}
+
+// --- NEW: Password Visibility Toggle ---
+function togglePasswordVisibility(event) {
+    const button = event.currentTarget;
+    // Find the password input field within the same wrapper
+    const wrapper = button.closest('.password-input-wrapper');
+    const passwordInput = wrapper?.querySelector('.form-input--password');
+    const icon = button.querySelector('.material-symbols-outlined');
+
+    if (!passwordInput || !icon) return;
+
+    // Toggle the input type
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.textContent = 'visibility_off'; // Change icon to 'eye closed'
+        button.setAttribute('aria-label', 'Hide password');
+    } else {
+        passwordInput.type = 'password';
+        icon.textContent = 'visibility'; // Change icon back to 'eye open'
+        button.setAttribute('aria-label', 'Show password');
+    }
+}
+
+
+// --- Error Handling ---
+/** Displays an error message */
+function displayError(element, message, isError = true) {
+    if (!element) return;
+    element.textContent = message;
+    element.style.color = isError ? 'var(--color-error)' : 'var(--color-text-muted)';
+    element.classList.remove('form-error--hidden');
+}
+
+/** Clears both error messages */
+function clearErrors() {
+    if(signinError) {
+        signinError.textContent = '';
+        signinError.classList.add('form-error--hidden');
+    }
+     if(signupError) {
+        signupError.textContent = '';
+        signupError.classList.add('form-error--hidden');
+    }
+}
+
+/** Sets the loading state of a button */
+function setButtonLoading(button, isLoading) {
+    if (!button) return;
+    if (isLoading) {
+        button.disabled = true;
+        button.classList.add('form-button--loading');
+    } else {
+        button.disabled = false;
+        button.classList.remove('form-button--loading');
+    }
+}
+
+// --- Sign In Logic ---
+async function handleSigninSubmit(event) {
+    event.preventDefault();
+    clearErrors();
+    setButtonLoading(signinButton, true);
+    displayError(signinError, "Checking credentials...", false);
+
+    const email = signinEmailInput.value.trim();
+    const pass = signinPasswordInput.value;
+
+    if (!email || !pass) {
+        displayError(signinError, "Email and Password are required.");
+        setButtonLoading(signinButton, false);
+        return;
+    }
+
+    try {
+        const hash = await createUserHash(email, pass);
+        console.log("Attempting sign in with hash:", hash);
+        if (typeof DB === 'undefined' || !DB.u) throw new Error("Database connection not available.");
+
+        const exists = await DB.u.exists(hash);
+
+        if (!exists) {
+            displayError(signinError, "Account not found or incorrect password.");
+            setButtonLoading(signinButton, false);
+        } else {
+            console.log("Account found:", hash);
+            displayError(signinError, "Sign in successful! Redirecting...", false);
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + 7);
+            document.cookie = `hash=${hash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`;
+            setTimeout(() => { window.location.href = '../dashboard'; }, 1000);
+        }
+    } catch (error) {
+        console.error("Sign in error:", error);
+        displayError(signinError, `Sign in failed: ${error.message || 'Please try again.'}`);
+        setButtonLoading(signinButton, false);
+    }
+}
+
+// --- Sign Up Logic ---
+async function handleSignupSubmit(event) {
+    event.preventDefault();
+    clearErrors();
+    setButtonLoading(signupButton, true);
+    displayError(signupError, "Creating account...", false);
+
+    const email = signupEmailInput.value.trim();
+    const pass = signupPasswordInput.value;
+    const passConfirm = signupPasswordConfirmInput.value;
+    const currency = signupCurrencySelect.value;
+
+    if (!email || !pass || !passConfirm || !currency) {
+        displayError(signupError, "All fields are required.");
+        setButtonLoading(signupButton, false);
+        return;
+    }
+    if (pass !== passConfirm) {
+        displayError(signupError, "Passwords do not match.");
+        setButtonLoading(signupButton, false);
+        return;
+    }
+
+    try {
+        const hash = await createUserHash(email, pass);
+        console.log("Attempting sign up with hash:", hash);
+        if (typeof DB === 'undefined' || !DB.u) throw new Error("Database connection not available.");
+
+        const exists = await DB.u.exists(hash);
+
+        if (exists) {
+            displayError(signupError, "An account with this email already exists.");
+            setButtonLoading(signupButton, false);
+        } else {
+            await DB.u.create(hash);
+            console.log("Account created:", hash);
+            await DB.u.update(hash, { 'currency': currency });
+            console.log("Currency set:", currency);
+            displayError(signupError, "Account created! Logging you in...", false);
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + 7);
+            document.cookie = `hash=${hash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`;
+            setTimeout(() => { window.location.href = '../dashboard'; }, 1500);
+        }
+    } catch (error) {
+        console.error("Sign up error:", error);
+        displayError(signupError, `Sign up failed: ${error.message || 'Please try again.'}`);
+        setButtonLoading(signupButton, false);
+    }
+}
+</script>
