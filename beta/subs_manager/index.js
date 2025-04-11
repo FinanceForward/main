@@ -101,6 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function renderSubscriptions() {
         let subscriptions = await DB.uDoc.allDocs(getCookie('hash'), 'subscriptions')
+        console.log(JSON.stringify(subscriptions))
         subList.innerHTML = '';
         subscriptions.forEach(sub => {
             const li = document.createElement('li');
