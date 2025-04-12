@@ -481,6 +481,116 @@ class Sub {
             }
         } catch (error) { console.error('Error processing sub:', sub, error); return 0; }
     }
+    static calculateSubscriptionTotalForMonth(subscription, monthString) {
+        // --- Helper Functions ---
+        /**
+         * Helper functions for date calculations specific to a target month.
+         */
+        const getMonthDetails = (monthString) => {
+            if (!monthString || !/^\d{4}-\d{2}$/.test(monthString)) {
+                console.error("Invalid month string format. Use YYYY-MM.");
+                return null;
+            }
+            const [year, month] = monthString.split('-').map(Number);
+            // JavaScript months are 0-indexed (0=Jan, 11=Dec)
+            const monthIndex = month - 1;
+            if (month < 1 || month > 12 || year < 1970) {
+                console.error("Invalid year or month value.");
+                return null;
+            }
+            // Get the number of days in the specified month
+            // Setting day to 0 in the next month gives the last day of the target month
+            const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+            return { year, monthIndex, daysInMonth };
+        };
+
+        /**
+         * Counts the occurrences of a specific weekday within a given month.
+         * @param {number} year - The full year.
+         * @param {number} monthIndex - The month index (0-11).
+         * @param {number} targetDay - The target weekday (0=Sun, 1=Mon,... 6=Sat).
+         * @param {number} daysInMonth - Total days in the month.
+         * @returns {number} The number of times the targetDay occurs in the month.
+         */
+        const countWeekdaysInMonth = (year, monthIndex, targetDay, daysInMonth) => {
+            let count = 0;
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, monthIndex, day);
+                if (date.getDay() === targetDay) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        // --- Basic Validation ---
+        if (!subscription || typeof subscription.price !== 'number' || !subscription.frequency || !subscription.freq_value) {
+            console.error('Invalid subscription object provided:', subscription);
+            return 0;
+        }
+        if (subscription.price <= 0) {
+            return 0; // No cost if price is zero or negative
+        }
+
+        const monthDetails = getMonthDetails(monthString);
+        if (!monthDetails) {
+            return 0; // Invalid month string format
+        }
+        const { year, monthIndex, daysInMonth } = monthDetails;
+
+        // --- Calculation Logic based on frequency ---
+        try {
+            switch (subscription.frequency.toLowerCase()) {
+                case 'weekly':
+                    const dayName = subscription.freq_value.toLowerCase();
+                    const DOW_MAP = {'sunday':0 , 'monday':1 , 'tuesday':2 , 'wednesday':3 , 'thursday':4 , 'friday':5 , 'saturday':6};
+                    const targetDay = DOW_MAP[dayName];
+                    if (targetDay === undefined) {
+                        console.error(`Invalid day name for weekly subscription: ${subscription.freq_value}`);
+                        return 0;
+                    }
+                    const occurrences = countWeekdaysInMonth(year, monthIndex, targetDay, daysInMonth);
+                    return occurrences * subscription.price;
+
+                case 'monthly':
+                    // A monthly subscription applies its full price for the month it's active in.
+                    // The specific day (freq_value) might determine *when* it's paid, but for a monthly
+                    // total report, the cost applies to the month.
+                    // More complex logic could be added if it only applies *after* the day, but usually not needed for reporting.
+                    return subscription.price;
+
+                case 'yearly':
+                    // Check if the subscription's month matches the target month.
+                    let yearlyData = subscription.freq_value;
+                    if (typeof yearlyData === 'string') {
+                        yearlyData = yearlyData.split(/[-/]/).map(Number); // Handle "DD-MM" or "DD/MM"
+                    }
+                    if (!Array.isArray(yearlyData) || yearlyData.length < 2) {
+                        console.error(`Invalid freq_value for yearly subscription: ${subscription.freq_value}`);
+                        return 0;
+                    }
+                    const [, subscriptionMonthNumber] = yearlyData.map(d => parseInt(d, 10));
+                    if (isNaN(subscriptionMonthNumber)) {
+                        console.error(`Invalid month number in yearly subscription freq_value: ${subscription.freq_value}`);
+                        return 0;
+                    }
+
+                    // Compare target month index (0-11) with subscription month number (1-12)
+                    if ((monthIndex + 1) === subscriptionMonthNumber) {
+                        return subscription.price; // Applies in this month
+                    } else {
+                        return 0; // Does not apply in this month
+                    }
+
+                default:
+                    console.error(`Unknown subscription frequency: ${subscription.frequency}`);
+                    return 0;
+            }
+        } catch (error) {
+            console.error('Error processing subscription for month:', subscription, monthString, error);
+            return 0;
+        }
+    }
 }
 
 // --- Initialization ---
@@ -589,14 +699,27 @@ async function loadReportData(userHash) {
     }
 
     try {
+        
+        
         // Fetch user data (for currency) and report data concurrently
         const [user, totals, subscriptions] = await Promise.all([
             DB.u.get(userHash),
             DB.uCompute.all(hash, 'totals', selectedMonth),
             DB.uDoc.allDocs(hash, 'subscriptions')
         ]);
-
+        
         if (!user) throw new Error("User data not found.");
+
+        console.log(
+            // (await DB.uDoc.allDocs(hash, 'subscriptions'))
+            subscriptions
+                .reduce(
+                    (p, sub) => 
+                    p+((selectedMonth == new Date().toISOString().slice(0, 7))?
+                        Sub.processTotal(sub) :
+                        Sub.calculateSubscriptionTotalForMonth(sub, selectedMonth))
+                , 0)
+        );
 
         // Determine currency formatting
         const currencySymbol = user.currency?.replace('*', '') || '$';
@@ -620,18 +743,14 @@ async function loadReportData(userHash) {
         let subscriptionsTotal = 0;
         const processedSubscriptions = [];
         subscriptions.forEach(sub => {
-            // IMPORTANT: Subscription processing needs context of the *selected* month,
-            // not necessarily the *current* month as the original Sub class did.
-            // We'll simplify here and just display the subscription name/base price,
-            // as accurately calculating the cost *for a past month* is complex.
-            // A better approach would store historical subscription costs per month.
-            // For now, list them but don't include in grand total unless logic is adjusted.
-            // const subCostForMonth = Sub.processTotal(sub); // This calculates for CURRENT month
-            // subscriptionsTotal += subCostForMonth;
-             processedSubscriptions.push({
-                 name: sub.name || 'Unnamed Subscription',
-                 amount: Sub.processTotal(sub) // Display base price for simplicity
-             });
+            let subCostForMonth = Sub.calculateSubscriptionTotalForMonth(sub, selectedMonth)
+            if (selectedMonth == new Date().toISOString().slice(0, 7)) subCostForMonth = Sub.processTotal(sub);
+            subscriptionsTotal += subCostForMonth;
+            processedSubscriptions.push({
+                name: sub.name || 'Unnamed Subscription',
+                amount: subCostForMonth,
+                frequency: sub.frequency || 'Unknown',
+            });
         });
         console.log("Processed Subscriptions:", processedSubscriptions);
 
@@ -649,8 +768,9 @@ async function loadReportData(userHash) {
         });
          // Add subscriptions
         processedSubscriptions.forEach(sub => {
+            console.log(sub)
             reportItems.push({
-                name: `${sub.name} (Subscription)`,
+                name: `${sub.name} (${sub.frequency.charAt(0).toUpperCase() + sub.frequency.substring(1).toLowerCase()} Subscription)`,
                 amount: sub.amount
             });
         });
@@ -660,8 +780,7 @@ async function loadReportData(userHash) {
         console.log("Report Items:", reportItems);
 
         // Calculate Grand Total (only based on fetched 'totals' for now)
-        const grandTotal = Object.values(processedTotals)
-                                .reduce((sum, value) => sum + (typeof value === 'number' ? value : 0), 0);
+        const grandTotal =  Object.values(processedTotals).reduce((sum, value) => sum + (typeof value === 'number' ? value : 0), 0) + subscriptionsTotal
 
         // Display data
         displayReportData(reportItems, grandTotal, formatCurrency);
