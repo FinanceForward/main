@@ -3,64 +3,905 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Receipts - Finance Forward GAMMA</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=chevron_backward" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=adddashboardinforeceipt_longsettingsmenugavelloginlogoutaccount_circlebar_chartlistdeletewarningclosecalendar_month"/>
     <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
-    <style>
-        * {
-            font-family: 'Manrope', sans-serif;
-            background-color: black;
-        }
+    <link rel="stylesheet" href="./view-receipts_gamma.css">
 
-        h1 {
-            color: white;
-            text-align: center;
-        }
-
-        li {
-            color: white;
-            margin-bottom: 10px;
-        }
-
-        .material-symbols-outlined {
-            font-family: 'Material Symbols Outlined';
-            font-size: 50px;
-            margin-top: 10px;
-            color: white;
-            text-decoration: none;
-        }
-
-        small {
-            font-size: 8px;
-        }
-
-        button {
-            color: white
-        }
-
-        .rrbtn {
-            padding: 10px 20px;
-            background-color: #ff4500;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-        .rrbtn:hover {
-            background-color: #FF9B07;
-        }
-    </style>
-    <title>Receipts</title>
-    <!-- IMPORTANT -->
     <script defer src="../firestore.js" type="module"></script>
-    <!-- IMPORTANT -->
+    <audio src="../src/Tink.mp3" id="success-audio"></audio> <audio src="../src/Sosumi.mp3" id="fail-audio"></audio>
+
 </head>
 <body>
-    <a href="../dashboard"><span class="material-symbols-outlined">chevron_backward</span></a>
-    <h1>Receipts</h1>
-    <ul><h1>PLEASE WAIT AS YOUR RECEIPTS LOAD... Note: we will only load the receipts of this month</h1></ul>
+    <header class="header">
+       <button class="header__menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+           <img class="header__icon header__icon--menu" src="../src/icons/menu.png" alt="Menu">
+       </button>
+       <div class="header__title">
+           Finance Forward <span class="header__version-badge">GAMMA (GEMINI PRE-RELEASE)</span>
+       </div>
+       <div class="header__actions">
+           <a href="../add-receipt" class="header__action-link" aria-label="Add Receipt">
+               <img src="../src/icons/add.png" alt="Add Receipt" class="header__icon">
+           </a>
+           <img class="header__icon header__icon--logo" src="../src/fflogo.jpg" alt="Finance Forward Logo">
+       </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+       <h1 class="sidebar__title">Finance Forward</h1>
+       <ul class="sidebar__nav-list">
+           <li class="sidebar__nav-item"><a href="../add-receipt"><img src="../src/icons/add.png" alt=""> Add Receipt</a></li>
+           <li class="sidebar__nav-item"><a href="../report"><img src="../src/icons/receipt_long.png" alt=""> Report</a></li>
+           <li class="sidebar__nav-item"><a href="../links"><img src="../src/icons/log.png" alt=""> More Links</a></li>
+       </ul>
+       <button class="sidebar__button sidebar__button--signin" id="signin-button">Sign In</button>
+       <div class="sidebar__footer">
+           <a href="../settings/" class="sidebar__footer-link"><img src="../src/icons/settings.png" alt=""> Account</a>
+           <a href="../legal/" class="sidebar__footer-link"><img src="../src/icons/gavel.png" alt=""> Legal</a>
+           <a href="../beta/dashboard/" class="sidebar__footer-link"><span>β</span> Use BETA dashboard</a>
+       </div>
+    </nav>
+
+    <main class="main-content" id="main-content">
+        <h1 class="page-title">View Receipts</h1>
+
+        <div class="month-selector">
+            <label for="month-input" class="form-label">
+                <span class="material-symbols-outlined">calendar_month</span> Select Month:
+            </label>
+            <input type="month" id="month-input" name="month" class="form-input">
+        </div>
+
+        <div class="loading-indicator loading-indicator--hidden" id="loading-indicator">
+            <div class="loading-indicator__spinner"></div>
+            <span>Loading receipts...</span>
+        </div>
+
+        <div class="receipts-list" id="receipts-list">
+            </div>
+
+        <p class="empty-message empty-message--hidden" id="empty-message">
+            No receipts found for the selected month.
+        </p>
+
+    </main>
+
+    <div class="popup-overlay popup-overlay--hidden" id="confirmation-overlay">
+        <div class="popup" id="confirmation-popup">
+            <button class="popup__close-button" id="confirmation-cancel-button" aria-label="Close">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h2 class="popup__title" id="confirmation-title">
+                 <span class="material-symbols-outlined">warning</span> Confirmation
+            </h2>
+            <div class="popup__content">
+                <p id="confirmation-message">Are you sure?</p>
+                <div id="confirmation-details" class="confirmation-details"></div>
+            </div>
+            <div class="popup__actions">
+                 <button type="button" class="form-button form-button--secondary" id="confirmation-cancel-button-alt">Cancel</button>
+                 <button type="button" class="form-button form-button--danger" id="confirmation-proceed-button">
+                    <span class="form-button__text">Proceed</span>
+                    <span class="form-button__loader"></span>
+                 </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./view-receipts_gamma.js" defer type="module"></script>
 </body>
-<script src="./index.js" defer></script>
 </html>
+<style>
+/* view-receipts_gamma.css */
+
+/* --- Base Styles & Variables (Consistent) --- */
+:root {
+   /* Color Palette */
+   --color-background: #000000;
+   --color-text: #FFFFFF;
+   --color-text-muted: #a0a0a0;
+   --color-header-bg: #838383;
+   --color-sidebar-bg: #2F2C27;
+   --color-card-bg: #2F2C27;
+   --color-dashboard-bg: #1E1E1E;
+   --color-input-bg: #3E3A34;
+   --color-primary-accent: #FF9B07;
+   --color-primary-accent-hover: #e68a00;
+   --color-border-subtle: #4a4a4a;
+   --color-danger: #f44336;
+   --color-danger-hover: #da190b;
+   --color-disabled: #5a5a5a;
+   --color-overlay-bg: rgba(0, 0, 0, 0.75);
+
+   /* Font */
+   --font-family-base: 'Manrope', sans-serif;
+
+   /* Spacing */
+   --space-xs: 0.25rem; --space-sm: 0.5rem; --space-md: 1rem;
+   --space-lg: 1.5rem; --space-xl: 2rem; --space-xxl: 3rem;
+
+   /* Sizes */
+   --header-height: 60px;
+   --sidebar-width: 250px;
+   --input-height: 48px;
+   --button-height: 40px; /* Smaller buttons for remove */
+
+   /* Transitions */
+   --transition-speed: 0.3s;
+   --transition-ease: ease;
+
+   /* Borders */
+   --border-radius-sm: 4px;
+   --border-radius-md: 8px;
+   --border-radius-lg: 20px;
+}
+
+/* Reset */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; }
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--color-dashboard-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; transition: color var(--transition-speed) var(--transition-ease); }
+img { max-width: 100%; height: auto; display: block; }
+button {
+    font-family: inherit; font-size: inherit; cursor: pointer; border: none;
+    background-color: transparent; color: inherit; padding: 0;
+    border-radius: var(--border-radius-lg);
+    transition: background-color var(--transition-speed) var(--transition-ease),
+                opacity var(--transition-speed) var(--transition-ease),
+                transform var(--transition-speed) var(--transition-ease);
+}
+label { display: block; margin-bottom: var(--space-sm); font-weight: 700; text-align: left; }
+input, select, button { font-family: inherit; font-size: 1rem; }
+
+/* --- Header (Consistent) --- */
+.header {
+   background-color: var(--color-header-bg); color: var(--color-text);
+   display: flex; justify-content: space-between; align-items: center;
+   padding: 0 var(--space-md); height: var(--header-height);
+   position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.header__menu-toggle { display: none; background: none; border: none; padding: var(--space-sm); margin-right: var(--space-sm); }
+.header__title { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: var(--space-sm); }
+.header__version-badge {
+   background-color: var(--color-sidebar-bg); color: var(--color-primary-accent);
+   padding: var(--space-xs) var(--space-sm); font-size: 0.8rem;
+   border-radius: var(--border-radius-sm); font-weight: 700; text-transform: uppercase;
+}
+.header__actions { display: flex; align-items: center; gap: var(--space-md); }
+.header__action-link { display: flex; align-items: center; }
+.header__icon { width: 25px; height: 25px; transition: opacity var(--transition-speed) var(--transition-ease); }
+.header__icon:hover { opacity: 0.8; }
+.header__icon--logo { width: 40px; height: 40px; }
+.header__icon--menu { width: 30px; height: 30px; }
+
+/* --- Sidebar (Consistent) --- */
+.sidebar {
+   background-color: var(--color-sidebar-bg); width: var(--sidebar-width);
+   height: 100vh; position: fixed; top: 0; left: 0;
+   padding: var(--space-lg); padding-top: calc(var(--header-height) + var(--space-lg));
+   overflow-y: auto; z-index: 900; transition: transform var(--transition-speed) var(--transition-ease);
+   display: flex; flex-direction: column;
+}
+.sidebar__title { font-size: 1.5rem; margin-bottom: var(--space-xl); font-weight: 700; color: var(--color-text); }
+.sidebar__nav-list { flex-grow: 1; }
+.sidebar__nav-item { margin-bottom: var(--space-sm); }
+li::marker { content: ''; }
+.sidebar__nav-item a, .sidebar__footer-link {
+   color: var(--color-text); padding: var(--space-sm) var(--space-md);
+   display: flex; align-items: center; gap: var(--space-md);
+   font-size: 1.125rem; border-radius: var(--border-radius-md);
+   transition: color var(--transition-speed) var(--transition-ease), background-color var(--transition-speed) var(--transition-ease);
+}
+.sidebar__nav-item a img, .sidebar__footer-link img, .sidebar__footer-link span {
+   width: 20px; height: 20px; opacity: 0.8; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
+}
+.sidebar__nav-item a:hover, .sidebar__footer-link:hover {
+   color: var(--color-primary-accent); background-color: rgba(255, 255, 255, 0.05);
+}
+.sidebar__nav-item a:hover img, .sidebar__footer-link:hover img, .sidebar__footer-link:hover span { opacity: 1; }
+.sidebar__button {
+   background-color: var(--color-primary-accent); color: var(--color-text); border: none;
+   padding: var(--space-sm) var(--space-md); width: 100%; margin-top: var(--space-lg);
+   text-align: center; font-weight: 700; font-size: 1rem;
+}
+.sidebar__button:hover { background-color: var(--color-primary-accent-hover); }
+.sidebar__footer { margin-top: var(--space-xl); padding-top: var(--space-lg); border-top: 1px solid var(--color-border-subtle); }
+.sidebar__footer-link { margin-top: var(--space-sm); font-size: 1rem; }
+.sidebar--active { transform: translateX(0); }
+
+/* --- Main Content Area --- */
+.main-content {
+   margin-top: var(--header-height);
+   margin-left: var(--sidebar-width);
+   padding: var(--space-xl);
+   background-color: var(--color-dashboard-bg);
+   min-height: calc(100vh - var(--header-height));
+   transition: margin-left var(--transition-speed) var(--transition-ease);
+}
+
+.page-title {
+    font-size: 2rem;
+    margin-bottom: var(--space-xl);
+    color: var(--color-text);
+}
+
+/* --- Month Selector --- */
+.month-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+    background-color: var(--color-card-bg);
+    padding: var(--space-md);
+    border-radius: var(--border-radius-md);
+    max-width: 400px; /* Limit width */
+}
+.form-label {
+    color: var(--color-text-muted);
+    font-size: 1rem;
+    margin-bottom: 0; /* Remove bottom margin */
+    display: inline-flex; /* Align icon */
+    align-items: center;
+    gap: var(--space-sm);
+}
+.form-label .material-symbols-outlined {
+    font-size: 1.5em; /* Adjust icon size */
+    color: var(--color-primary-accent);
+}
+.form-input {
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--border-radius-sm);
+    color: var(--color-text);
+    background-color: var(--color-input-bg);
+    font-size: 1rem;
+    transition: border-color var(--transition-speed) var(--transition-ease), box-shadow var(--transition-speed) var(--transition-ease);
+    height: auto; /* Override default height */
+    line-height: normal; /* Override default line-height */
+}
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-primary-accent);
+    box-shadow: 0 0 0 3px rgba(255, 155, 7, 0.3);
+}
+
+/* --- Loading Indicator --- */
+.loading-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    padding: var(--space-xxl) 0; /* More padding */
+    color: var(--color-text-muted);
+    font-size: 1.2rem;
+    transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease, height var(--transition-speed) ease;
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+}
+.loading-indicator--hidden {
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+}
+.loading-indicator__spinner {
+   border: 4px solid rgba(255, 255, 255, 0.3);
+   border-left-color: var(--color-primary-accent);
+   border-radius: 50%;
+   width: 30px;
+   height: 30px;
+   animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* --- Receipts List --- */
+.receipts-list {
+    display: grid;
+    gap: var(--space-lg);
+    /* Responsive grid columns */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.receipt-card {
+    background-color: var(--color-card-bg);
+    padding: var(--space-lg);
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+    /* Animation */
+    opacity: 0;
+    transform: scale(0.95);
+    animation: fadeScaleIn 0.4s ease forwards;
+}
+
+@keyframes fadeScaleIn {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+.receipt-card__details {
+    flex-grow: 1; /* Allow details to take available space */
+}
+
+.receipt-card__category {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-text);
+    margin-bottom: var(--space-xs);
+    display: block; /* Ensure block display */
+}
+
+.receipt-card__amount {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--color-primary-accent);
+}
+
+.receipt-card__remove-button {
+    background-color: var(--color-danger);
+    color: var(--color-text);
+    border: none;
+    border-radius: var(--border-radius-sm); /* Smaller radius */
+    padding: var(--space-xs) var(--space-sm); /* Smaller padding */
+    height: auto; /* Override default height */
+    min-width: auto; /* Override default min-width */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+.receipt-card__remove-button .material-symbols-outlined {
+    font-size: 1.2rem; /* Smaller icon */
+}
+.receipt-card__remove-button:hover {
+    background-color: var(--color-danger-hover);
+    transform: scale(1.05);
+}
+.receipt-card__remove-button:disabled {
+    background-color: var(--color-disabled);
+    cursor: not-allowed;
+    transform: none;
+}
+/* Loader for remove button */
+.receipt-card__remove-button .form-button__loader {
+     width: 16px; height: 16px; border-width: 2px;
+     border-left-color: var(--color-text); /* White spinner */
+}
+.receipt-card__remove-button--loading .material-symbols-outlined {
+    opacity: 0; visibility: hidden;
+}
+
+
+/* --- Empty Message --- */
+.empty-message {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: var(--space-xxl);
+    font-style: italic;
+    font-size: 1.1rem;
+}
+.empty-message--hidden {
+    display: none;
+}
+
+/* --- Confirmation Modal Styles (Copied/Adapted from Settings) --- */
+.popup-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--color-overlay-bg); display: flex;
+    justify-content: center; align-items: center; z-index: 1300;
+    padding: var(--space-md); opacity: 1; visibility: visible;
+    transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
+}
+.popup-overlay--hidden { opacity: 0; visibility: hidden; }
+.popup {
+    background-color: var(--color-card-bg); padding: var(--space-xl);
+    border-radius: var(--border-radius-md); width: 100%; max-width: 450px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); position: relative; text-align: left;
+    transform: scale(0.9); opacity: 0;
+    animation: popupFadeIn 0.3s var(--transition-ease) forwards;
+}
+@keyframes popupFadeIn { to { transform: scale(1); opacity: 1; } }
+.popup__close-button {
+    position: absolute; top: var(--space-sm); right: var(--space-sm);
+    background: none; border: none; color: var(--color-text-muted);
+    padding: var(--space-xs); cursor: pointer; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+}
+.popup__close-button:hover { color: var(--color-text); background-color: rgba(255, 255, 255, 0.1); }
+.popup__close-button .material-symbols-outlined { font-size: 1.5rem; }
+.popup__title {
+    font-size: 1.5rem; margin-bottom: var(--space-lg); text-align: center;
+    color: var(--color-text); display: flex; align-items: center; justify-content: center; gap: var(--space-sm);
+}
+.popup__title .material-symbols-outlined { color: var(--color-danger); font-size: 1.8rem; } /* Warning icon */
+.popup__content { margin-bottom: var(--space-xl); }
+#confirmation-message { color: var(--color-text); text-align: center; font-size: 1.1rem; margin-bottom: var(--space-md);}
+/* Styles for showing receipt details in modal */
+.confirmation-details {
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    background-color: var(--color-input-bg);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--color-border-subtle);
+    text-align: center;
+}
+.confirmation-details strong { color: var(--color-text); }
+
+.popup__actions {
+    display: flex; justify-content: flex-end; gap: var(--space-md);
+    margin-top: var(--space-lg);
+}
+.popup__actions .form-button { min-width: 100px; height: var(--button-height); font-size: 1rem; border-radius: var(--border-radius-lg); } /* Consistent button style */
+.form-button--secondary { /* Copied from settings */
+    background-color: transparent; border: 2px solid var(--color-border-subtle); color: var(--color-text-muted);
+}
+.form-button--secondary:hover:not(:disabled) { border-color: var(--color-text); color: var(--color-text); background-color: rgba(255, 255, 255, 0.05); box-shadow: none; }
+.form-button--secondary:active:not(:disabled) { background-color: rgba(255, 255, 255, 0.1); }
+.form-button--danger { /* Copied from settings */
+    background-color: var(--color-danger); color: var(--color-text);
+}
+.form-button--danger:hover:not(:disabled) { background-color: var(--color-danger-hover); box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3); }
+/* Loader specific to popup */
+.popup__actions .form-button__loader { border-left-color: var(--color-text); /* White loader on danger bg */ }
+.popup__actions .form-button--secondary .form-button__loader { border-left-color: var(--color-text-muted); } /* Muted loader on secondary */
+
+
+/* --- Responsive Design --- */
+@media screen and (max-width: 817px) {
+   .header__menu-toggle { display: block; }
+   .header__title { font-size: 1.25rem; }
+   .header__version-badge { display: none; }
+   .sidebar { transform: translateX(-100%); z-index: 1100; padding-top: var(--space-lg); height: 100vh; top: 0; }
+   .sidebar--active { transform: translateX(0); box-shadow: 5px 0 15px rgba(0,0,0,0.2); }
+   .main-content { margin-left: 0; padding: var(--space-lg); }
+   .page-title { font-size: 1.75rem; }
+   .month-selector { flex-direction: column; align-items: flex-start; max-width: none; }
+   .receipts-list { grid-template-columns: 1fr; /* Stack cards */ }
+   .popup { max-width: 90%; padding: var(--space-lg); }
+   .popup__title { font-size: 1.3rem; }
+   .popup__actions { flex-direction: column-reverse; gap: var(--space-sm); } /* Stack buttons */
+   .popup__actions .form-button { width: 100%; }
+}
+
+</style>
+<script>
+// view-receipts_gamma.js
+
+// --- Utility function to get a cookie value by name ---
+function getCookie(cname) {
+    const name = cname + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') { c = c.substring(1); }
+        if (c.indexOf(name) === 0) { return c.substring(name.length, c.length); }
+    }
+    return "";
+}
+
+// --- DOM Element Selectors ---
+const menuToggle = document.getElementById('menu-toggle');
+const sidebar = document.getElementById('sidebar');
+const signInButton = document.getElementById('signin-button'); // Sidebar button
+const monthInput = document.getElementById('month-input');
+const loadingIndicator = document.getElementById('loading-indicator');
+const receiptsListContainer = document.getElementById('receipts-list');
+const emptyMessage = document.getElementById('empty-message');
+// Modal Selectors
+const confirmationOverlay = document.getElementById('confirmation-overlay');
+const confirmationPopup = document.getElementById('confirmation-popup');
+const confirmationTitle = document.getElementById('confirmation-title');
+const confirmationMessage = document.getElementById('confirmation-message');
+const confirmationDetails = document.getElementById('confirmation-details'); // Optional details display
+const confirmationCancelButton = document.getElementById('confirmation-cancel-button');
+const confirmationCancelButtonAlt = document.getElementById('confirmation-cancel-button-alt');
+const confirmationProceedButton = document.getElementById('confirmation-proceed-button');
+// Audio Selectors
+const successAudio = document.getElementById('success-audio');
+const failAudio = document.getElementById('fail-audio');
+
+// --- Global State ---
+let currentUserHash = null;
+let currentAction = null; // 'remove-receipt'
+let currentActionData = null; // Store data for the action (e.g., receipt details)
+let categoryNameMap = { // Base categories + custom fetched later
+    "a": "Groceries", "b": "Food Out", "c": "Snacks", "d": "Kitchenware",
+    "e": "Bathroomware", "f": "Livingware", "g": "Appliances", "h": "Gardenware",
+    "j": "Pets", "k": "Health", "l": "Books", "other": "Other"
+};
+let userCurrencySymbol = '$';
+let userCurrencyAfter = false;
+
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log("View Receipts DOM Loaded.");
+    currentUserHash = checkAuthAndSetupUI();
+    if (!currentUserHash) return; // Stop if not authenticated
+
+    await loadUserPreferences(currentUserHash); // Fetch currency and categories
+    setDefaultMonth();
+    addEventListeners(currentUserHash);
+    await fetchAndDisplayReceipts(monthInput.value, currentUserHash); // Fetch for default month
+
+    console.log("View Receipts Page Initialized.");
+});
+
+/** Checks auth, sets up basic UI state */
+function checkAuthAndSetupUI() {
+    const userHash = getCookie('hash');
+    if (!userHash) {
+        console.log("User not authenticated. Redirecting to sign-in.");
+        window.location.href = '../sign-in';
+        return null;
+    }
+    if (signInButton) signInButton.style.display = 'none';
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 7);
+    document.cookie = `hash=${userHash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`;
+    return userHash;
+}
+
+/** Loads user currency and custom categories */
+async function loadUserPreferences(userHash) {
+     if (typeof DB === 'undefined' || !DB.u || !DB.uCompute) {
+        console.error("DB object not found. Cannot load user preferences.");
+        return;
+    }
+    try {
+        const [user, customCategoriesData] = await Promise.all([
+            DB.u.get(userHash),
+            DB.uCompute.all(userHash, 'other', 'categories') // Fetch custom categories
+        ]);
+
+        if (user) {
+            userCurrencySymbol = user.currency?.includes('*') ? '' : (user.currency || '$');
+            userCurrencyAfter = user.currency?.includes('*') ? user.currency.replace('*', '') : '';
+            console.log("User currency loaded:", userCurrencySymbol, userCurrencyAfter);
+        } else {
+             console.warn("User data not found for currency.");
+        }
+
+        // Update category map with custom categories
+        const customCategories = Object.keys(customCategoriesData || {});
+        customCategories.forEach(catCode => {
+            if (!categoryNameMap[catCode]) { // Avoid overwriting defaults unless intended
+                 categoryNameMap[catCode] = catCode; // Use code as name if name isn't stored
+            }
+        });
+        console.log("Category map updated:", categoryNameMap);
+
+    } catch (error) {
+        console.error("Error loading user preferences:", error);
+    }
+}
+
+
+/** Sets the default value for the month input */
+function setDefaultMonth() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    if (monthInput) {
+        monthInput.value = `${year}-${month}`;
+    }
+}
+
+/** Adds event listeners */
+function addEventListeners(userHash) {
+    // Sidebar Toggle
+    menuToggle?.addEventListener('click', () => sidebar?.classList.toggle('sidebar--active'));
+    document.addEventListener('click', (event) => { /* ... (sidebar closing logic) ... */
+        if (window.innerWidth <= 817) { const isClickInsideSidebar = sidebar?.contains(event.target); const isClickOnMenuToggle = menuToggle?.contains(event.target); if (!isClickInsideSidebar && !isClickOnMenuToggle && sidebar?.classList.contains('sidebar--active')) { sidebar.classList.remove('sidebar--active'); } }
+    });
+
+    // Month Selector Change
+    monthInput?.addEventListener('change', (event) => {
+        fetchAndDisplayReceipts(event.target.value, userHash);
+    });
+
+    // Remove Button Click (Event Delegation)
+    receiptsListContainer?.addEventListener('click', (event) => {
+        const removeButton = event.target.closest('.receipt-card__remove-button');
+        if (removeButton && !removeButton.disabled) {
+            const categoryCode = removeButton.dataset.categoryCode;
+            const receiptId = removeButton.dataset.receiptId;
+            const month = removeButton.dataset.month;
+            const amount = removeButton.dataset.amount;
+            const categoryName = removeButton.dataset.categoryName;
+
+            if (categoryCode && receiptId && month && amount && categoryName) {
+                 showConfirmationModal('remove-receipt', {
+                    categoryCode, receiptId, month, amount, categoryName
+                 });
+            } else {
+                console.error("Missing data attributes on remove button:", removeButton.dataset);
+            }
+        }
+    });
+
+    // Modal Buttons
+    confirmationCancelButton?.addEventListener('click', hideConfirmationModal);
+    confirmationCancelButtonAlt?.addEventListener('click', hideConfirmationModal);
+    confirmationProceedButton?.addEventListener('click', handleProceedAction);
+
+    // Shortcut keys
+    document.addEventListener('keydown', handleShortcuts);
+}
+
+// --- Data Fetching and Display ---
+
+/** Sets the loading state of the UI */
+function setLoadingState(isLoading) {
+    if (isLoading) {
+        loadingIndicator?.classList.remove('loading-indicator--hidden');
+        receiptsListContainer.innerHTML = ''; // Clear existing receipts
+        emptyMessage?.classList.add('empty-message--hidden');
+    } else {
+        loadingIndicator?.classList.add('loading-indicator--hidden');
+    }
+}
+
+/** Fetches and displays receipts for the selected month */
+async function fetchAndDisplayReceipts(month, userHash) {
+    if (!month || !userHash) return;
+
+    setLoadingState(true);
+    console.log(`Fetching receipts for month: ${month}`);
+
+    if (typeof DB === 'undefined' || !DB.uCompute) {
+        console.error('Firestore DB object or DB.uCompute not found.');
+        setLoadingState(false);
+        emptyMessage.textContent = "Error loading receipts. Database connection issue.";
+        emptyMessage.classList.remove('empty-message--hidden');
+        return;
+    }
+
+    try {
+        const receiptsData = await DB.uCompute.all(userHash, 'receipts', month);
+        console.log("Receipts data fetched:", receiptsData);
+
+        receiptsListContainer.innerHTML = ''; // Clear previous list
+
+        if (!receiptsData || Object.keys(receiptsData).length === 0) {
+            emptyMessage.textContent = "No receipts found for the selected month.";
+            emptyMessage.classList.remove('empty-message--hidden');
+        } else {
+            emptyMessage.classList.add('empty-message--hidden');
+            // Sort receipts? Maybe by category then amount? For now, just iterate.
+            Object.entries(receiptsData).forEach(([key, amount]) => {
+                // Key format expected: categoryCode#receiptId (e.g., "a#randomid123")
+                const parts = key.split('#');
+                if (parts.length === 2) {
+                    const categoryCode = parts[0];
+                    const receiptId = parts[1];
+                    createReceiptCard(categoryCode, receiptId, month, amount);
+                } else {
+                    console.warn("Skipping receipt with unexpected key format:", key);
+                }
+            });
+        }
+    } catch (error) {
+        console.error("Error fetching receipts:", error);
+        receiptsListContainer.innerHTML = ''; // Clear any partial list
+        emptyMessage.textContent = `Error loading receipts: ${error.message}`;
+        emptyMessage.classList.remove('empty-message--hidden');
+    } finally {
+        setLoadingState(false);
+    }
+}
+
+/** Creates and appends a receipt card element */
+function createReceiptCard(categoryCode, receiptId, month, amount) {
+    const card = document.createElement('div');
+    card.className = 'receipt-card';
+    card.id = `receipt-${receiptId}`; // Add unique ID for potential targeting
+
+    const detailsDiv = document.createElement('div');
+    detailsDiv.className = 'receipt-card__details';
+
+    const categorySpan = document.createElement('span');
+    categorySpan.className = 'receipt-card__category';
+    const categoryName = categoryNameMap[categoryCode] || `Custom (${categoryCode})`;
+    categorySpan.textContent = categoryName;
+
+    const amountSpan = document.createElement('span');
+    amountSpan.className = 'receipt-card__amount';
+    amountSpan.textContent = formatCurrency(amount, userCurrencySymbol, userCurrencyAfter);
+
+    detailsDiv.appendChild(categorySpan);
+    detailsDiv.appendChild(amountSpan);
+
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'receipt-card__remove-button';
+    removeButton.title = 'Remove this receipt';
+    // Store data needed for removal
+    removeButton.dataset.categoryCode = categoryCode;
+    removeButton.dataset.receiptId = receiptId;
+    removeButton.dataset.month = month;
+    removeButton.dataset.amount = amount;
+    removeButton.dataset.categoryName = categoryName; // For confirmation message
+    removeButton.innerHTML = `
+        <span class="material-symbols-outlined">delete</span>
+        <span class="form-button__loader"></span> `;
+
+    card.appendChild(detailsDiv);
+    card.appendChild(removeButton);
+
+    receiptsListContainer.appendChild(card);
+}
+
+/** Formats a number as currency */
+function formatCurrency(amount, symbol, symbolAfter) {
+    const num = Number(amount);
+    if (isNaN(num)) return 'N/A';
+    const formattedAmount = num.toFixed(2);
+    const displaySymbol = symbolAfter ? ` ${symbolAfter}` : symbol;
+    return symbolAfter ? `${formattedAmount}${displaySymbol}` : `${displaySymbol}${formattedAmount}`;
+}
+
+
+// --- Remove Receipt Logic ---
+
+/** Core logic to delete receipt and update totals */
+async function removeReceiptAndTotal(data) {
+     if (!data) return false;
+     const { categoryCode, receiptId, month, amount, categoryName } = data;
+     const numericAmount = Number(amount);
+
+     console.log(`Attempting removal: Cat=${categoryCode}, ID=${receiptId}, Month=${month}, Amount=${numericAmount}`);
+
+     if (typeof DB === 'undefined' || !DB.uCompute) {
+        throw new Error("Database connection not available.");
+     }
+     if (isNaN(numericAmount)) {
+         throw new Error("Invalid amount associated with receipt.");
+     }
+
+     // 1. Delete the specific receipt entry
+     const receiptKey = `${categoryCode}#${receiptId}`;
+     await DB.uCompute.deleteF(currentUserHash, 'receipts', month, receiptKey);
+     console.log(`Receipt entry ${receiptKey} deleted.`);
+
+     // 2. Update the monthly total for that category
+     let currentTotal = await DB.uCompute.get(currentUserHash, 'totals', month, categoryCode);
+     currentTotal = (currentTotal === null || typeof currentTotal !== 'number') ? 0 : currentTotal;
+     const newTotal = Math.max(0, currentTotal - numericAmount); // Ensure total doesn't go below zero
+     await DB.uCompute.add(currentUserHash, 'totals', month, categoryCode, newTotal);
+     console.log(`Total for ${categoryCode}/${month} updated from ${currentTotal} to ${newTotal}.`);
+
+     return true; // Indicate success
+}
+
+
+// --- Confirmation Modal Logic ---
+
+/** Shows the confirmation modal */
+function showConfirmationModal(actionType, data) {
+    currentAction = actionType;
+    currentActionData = data; // Store receipt data
+    console.log("Showing confirmation modal for action:", currentAction, currentActionData);
+
+    if (!confirmationOverlay || !confirmationTitle || !confirmationMessage || !confirmationProceedButton) return;
+
+    // Customize modal content for receipt removal
+    if (actionType === 'remove-receipt' && data) {
+        confirmationTitle.innerHTML = `<span class="material-symbols-outlined">warning</span> Delete Receipt?`;
+        confirmationMessage.textContent = `Are you sure you want to permanently delete this receipt?`;
+        // Display details
+        confirmationDetails.innerHTML = `
+            <strong>Category:</strong> ${data.categoryName}<br>
+            <strong>Amount:</strong> ${formatCurrency(data.amount, userCurrencySymbol, userCurrencyAfter)}
+        `;
+        confirmationDetails.style.display = 'block'; // Show details block
+        confirmationProceedButton.classList.add('form-button--danger');
+        confirmationProceedButton.querySelector('.form-button__text').textContent = 'Delete';
+    } else {
+        // Handle other actions or hide details if not applicable
+        confirmationDetails.style.display = 'none';
+        confirmationMessage.textContent = "Are you sure?"; // Generic fallback
+    }
+
+    confirmationOverlay.classList.remove('popup-overlay--hidden');
+}
+
+/** Hides the confirmation modal */
+function hideConfirmationModal() {
+    currentAction = null;
+    currentActionData = null;
+    confirmationOverlay?.classList.add('popup-overlay--hidden');
+    setButtonLoading(confirmationProceedButton, false); // Reset proceed button state
+    console.log("Confirmation modal hidden.");
+}
+
+/** Handles the 'Proceed' button click in the modal */
+async function handleProceedAction() {
+    if (!currentAction || !currentUserHash) {
+        console.error("No action or user hash defined for proceed.");
+        hideConfirmationModal();
+        return;
+    }
+
+    const buttonToDisable = document.querySelector(`.receipt-card__remove-button[data-receipt-id="${currentActionData?.receiptId}"]`);
+
+    if (currentAction === 'remove-receipt' && currentActionData) {
+        setButtonLoading(confirmationProceedButton, true); // Show loading on modal button
+        if(buttonToDisable) setButtonLoading(buttonToDisable, true); // Disable original button too
+
+        try {
+            await removeReceiptAndTotal(currentActionData);
+            console.log("Receipt removal successful.");
+            successAudio?.play();
+            hideConfirmationModal();
+            // Refresh the list for the current month
+            await fetchAndDisplayReceipts(monthInput.value, currentUserHash);
+        } catch (error) {
+            console.error("Proceed action failed:", error);
+            failAudio?.play();
+            alert(`Failed to ${currentAction === 'remove-receipt' ? 'delete receipt' : 'perform action'}: ${error.message || 'Please try again.'}`);
+            setButtonLoading(confirmationProceedButton, false); // Re-enable modal button
+            if(buttonToDisable) setButtonLoading(buttonToDisable, false); // Re-enable original button
+            hideConfirmationModal(); // Still hide modal on error
+        }
+    } else {
+         console.warn("Unknown or incomplete action for proceed:", currentAction, currentActionData);
+         hideConfirmationModal();
+    }
+}
+
+// --- Utility to set button loading state ---
+function setButtonLoading(button, isLoading) {
+    if (!button) return;
+    const textSpan = button.querySelector('.form-button__text'); // Specific to modal buttons
+    const iconSpan = button.querySelector('.material-symbols-outlined'); // Specific to remove buttons
+
+    if (isLoading) {
+        button.disabled = true;
+        button.classList.add('form-button--loading'); // General loading class
+        if (textSpan) textSpan.style.visibility = 'hidden'; // Hide text if exists
+        if (iconSpan) iconSpan.style.visibility = 'hidden'; // Hide icon if exists
+    } else {
+        button.disabled = false;
+        button.classList.remove('form-button--loading');
+         if (textSpan) textSpan.style.visibility = 'visible';
+         if (iconSpan) iconSpan.style.visibility = 'visible';
+    }
+}
+
+// --- Shortcut Keys ---
+function handleShortcuts(event) {
+     // Prevent shortcuts if focus is on an input/select or modal is open
+    if (document.activeElement.tagName === 'INPUT' ||
+        document.activeElement.tagName === 'SELECT' ||
+        !confirmationOverlay?.classList.contains('popup-overlay--hidden')) {
+        return;
+    }
+     const shortcuts = {
+        'D': '../dashboard', 'R': '../add-receipt', 'V': '../report',
+        'P': '../printout', 'L': '../links'
+    };
+    if (event.shiftKey && shortcuts[event.key.toUpperCase()]) {
+        window.location.href = shortcuts[event.key.toUpperCase()];
+    }
+}
+</script>
