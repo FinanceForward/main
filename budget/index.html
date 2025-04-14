@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budgets - Finance Forward</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=adddashboardinforeceipt_longsettingsmenugavelloginlogoutaccount_circlebar_chartlistsavingseditdeletewarningadd_circlecategoryclosecalendar_month"/>
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <link rel="stylesheet" href="./budgets_gamma.css">
+
+    <script defer src="../firestore.js" type="module"></script>
+    </head>
+<body>
+    <header class="header">
+       <button class="header__menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+           <img class="header__icon header__icon--menu" src="../src/icons/menu.png" alt="Menu">
+       </button>
+       <div class="header__title">
+           <a href="../dashboard/" style="cursor: pointer;">Finance Forward <span class="header__version-badge">GAMMA GEMMA</span></a>
+       </div>
+       <div class="header__actions">
+           <a href="../add-receipt" class="header__action-link" aria-label="Add Receipt">
+               <img src="../src/icons/add.png" alt="Add Receipt" class="header__icon">
+           </a>
+           <img class="header__icon header__icon--logo" src="../src/fflogo.jpg" alt="Finance Forward Logo">
+       </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+       <h1 class="sidebar__title">Finance Forward</h1>
+       <ul class="sidebar__nav-list">
+           <li class="sidebar__nav-item"><a href="../add-receipt"><img src="../src/icons/add.png" alt=""> Add Receipt</a></li>
+           <li class="sidebar__nav-item"><a href="../report"><img src="../src/icons/receipt_long.png" alt=""> Report</a></li>
+           <li class="sidebar__nav-item"><a href="../links"><img src="../src/icons/log.png" alt=""> More Links</a></li>
+       </ul>
+       <button class="sidebar__button sidebar__button--signin" id="signin-button">Sign In</button>
+       <div class="sidebar__footer">
+           <a href="../settings/" class="sidebar__footer-link"><img src="../src/icons/settings.png" alt=""> Account</a>
+           <a href="../legal/" class="sidebar__footer-link"><img src="../src/icons/gavel.png" alt=""> Legal</a>
+           <a href="../beta/dashboard/" class="sidebar__footer-link"><span>β</span> Use BETA dashboard</a>
+       </div>
+    </nav>
+
+    <main class="main-content" id="main-content">
+        <div class="page-header">
+             <h1 class="page-title">Monthly Budgets</h1>
+             <button type="button" class="form-button form-button--primary" id="add-budget-button">
+                 <span class="material-symbols-outlined">add_circle</span> Add Budget
+             </button>
+        </div>
+
+        <p class="page-description">Track your spending against your budget goals for the current month (<span id="current-month-display">...</span>).</p>
+
+        <div class="loading-indicator loading-indicator--hidden" id="loading-indicator">
+            <div class="loading-indicator__spinner"></div>
+            <span>Loading budgets and spending...</span>
+        </div>
+
+        <div class="budgets-list" id="budgets-list">
+            </div>
+
+        <p class="empty-message empty-message--hidden" id="empty-message">
+            You haven't set any budgets yet. Click 'Add Budget' to get started!
+        </p>
+
+    </main>
+
+    <div class="popup-overlay popup-overlay--hidden" id="budget-modal-overlay">
+        <div class="popup" id="budget-modal-popup">
+            <button class="popup__close-button" id="budget-modal-close-button" aria-label="Close">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h2 class="popup__title" id="budget-modal-title">Add New Budget</h2>
+            <form id="budget-modal-form">
+                <input type="hidden" id="edit-budget-id" value="">
+
+                <div class="form-group">
+                    <label for="budget-modal-category" class="form-label">Category</label>
+                    <select id="budget-modal-category" class="form-select" required>
+                        <option value="" disabled selected>Select Category...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="budget-modal-warning" class="form-label">Warning Threshold ($)</label>
+                    <input type="number" id="budget-modal-warning" class="form-input" placeholder="e.g., 150" step="0.01" min="0" required>
+                    <small class="form-hint">Show a warning when spending reaches this amount.</small>
+                </div>
+                 <div class="form-group">
+                    <label for="budget-modal-limit" class="form-label">Spending Limit ($)</label>
+                    <input type="number" id="budget-modal-limit" class="form-input" placeholder="e.g., 200" step="0.01" min="0.01" required>
+                     <small class="form-hint">The total budget amount for this category.</small>
+                </div>
+                <p class="form-error form-error--hidden" id="budget-modal-error"></p>
+                <div class="popup__actions">
+                     <button type="button" class="form-button form-button--secondary" id="budget-modal-cancel-button">Cancel</button>
+                     <button type="submit" class="form-button" id="budget-modal-save-button">
+                        <span class="form-button__text">Save Budget</span>
+                        <span class="form-button__loader"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+     <div class="popup-overlay popup-overlay--hidden" id="delete-confirmation-overlay">
+        <div class="popup" id="delete-confirmation-popup">
+            <button class="popup__close-button" id="delete-confirmation-cancel-button" aria-label="Close">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h2 class="popup__title" id="delete-confirmation-title">
+                 <span class="material-symbols-outlined">warning</span> Confirmation
+            </h2>
+            <div class="popup__content">
+                <p id="delete-confirmation-message">Are you sure?</p>
+                <div id="delete-confirmation-details" class="confirmation-details"></div> </div>
+            <div class="popup__actions">
+                 <button type="button" class="form-button form-button--secondary" id="delete-confirmation-cancel-button-alt">Cancel</button>
+                 <button type="button" class="form-button form-button--danger" id="delete-confirmation-proceed-button">
+                    <span class="form-button__text">Delete Budget</span>
+                    <span class="form-button__loader"></span>
+                 </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="./budgets_gamma.js" defer type="module"></script>
+    <audio src="../src/Tink.mp3" id="success-audio"></audio>
+    <audio src="../src/Sosumi.mp3" id="fail-audio"></audio>
+</body>
+</html>
+<style>
+/* budgets_gamma.css */
+
+/* --- Base Styles & Variables (Consistent) --- */
+:root {
+   /* Color Palette */
+   --color-background: #000000;
+   --color-text: #FFFFFF;
+   --color-text-muted: #a0a0a0;
+   --color-header-bg: #838383;
+   --color-sidebar-bg: #2F2C27;
+   --color-card-bg: #2F2C27;
+   --color-dashboard-bg: #1E1E1E;
+   --color-input-bg: #3E3A34;
+   --color-primary-accent: #FF9B07; /* Orange */
+   --color-primary-accent-hover: #e68a00;
+   --color-border-subtle: #4a4a4a;
+   --color-danger: #f44336; /* Red */
+   --color-danger-hover: #da190b;
+   --color-warning: #ff5500; /* Red for warning */
+   --color-warning-hover: #da190b;
+   --color-info: #4CAF50; /* Green for edit button */
+   --color-info-hover: #45a049;
+   --color-disabled: #5a5a5a;
+   --color-overlay-bg: rgba(0, 0, 0, 0.75);
+   --color-progress-bg: #555; /* Background of progress bar */
+
+   /* Font */
+   --font-family-base: 'Manrope', sans-serif;
+
+   /* Spacing */
+   --space-xs: 0.25rem; --space-sm: 0.5rem; --space-md: 1rem;
+   --space-lg: 1.5rem; --space-xl: 2rem; --space-xxl: 3rem;
+
+   /* Sizes */
+   --header-height: 60px;
+   --sidebar-width: 250px;
+   --input-height: 50px;
+   --button-height: 50px;
+   --action-button-height: 32px; /* Slightly smaller action buttons */
+
+   /* Transitions */
+   --transition-speed: 0.3s;
+   --transition-ease: ease;
+
+   /* Borders */
+   --border-radius-sm: 4px;
+   --border-radius-md: 8px;
+   --border-radius-lg: 25px;
+}
+
+/* Reset & Base */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; }
+body { font-family: var(--font-family-base); background-color: var(--color-dashboard-bg); color: var(--color-text); line-height: 1.6; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; transition: color var(--transition-speed) var(--transition-ease); }
+img { max-width: 100%; height: auto; display: block; }
+button { font-family: inherit; font-size: inherit; cursor: pointer; border: none; background-color: transparent; color: inherit; padding: 0; border-radius: var(--border-radius-lg); transition: background-color var(--transition-speed) var(--transition-ease), opacity var(--transition-speed) var(--transition-ease), transform var(--transition-speed) var(--transition-ease); }
+label { display: block; margin-bottom: var(--space-sm); font-weight: 700; text-align: left; }
+input, select, button { font-family: inherit; font-size: 1rem; }
+small { font-size: 0.85em; color: var(--color-text-muted); }
+
+/* --- Header & Sidebar (Consistent) --- */
+.header { /* ... */ background-color: var(--color-header-bg); color: var(--color-text); display: flex; justify-content: space-between; align-items: center; padding: 0 var(--space-md); height: var(--header-height); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); }
+.header__menu-toggle { display: none; background: none; border: none; padding: var(--space-sm); margin-right: var(--space-sm); }
+.header__title { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: var(--space-sm); }
+.header__version-badge { background-color: var(--color-sidebar-bg); color: var(--color-primary-accent); padding: var(--space-xs) var(--space-sm); font-size: 0.8rem; border-radius: var(--border-radius-sm); font-weight: 700; text-transform: uppercase; }
+.header__actions { display: flex; align-items: center; gap: var(--space-md); }
+.header__action-link { display: flex; align-items: center; }
+.header__icon { width: 25px; height: 25px; transition: opacity var(--transition-speed) var(--transition-ease); }
+.header__icon:hover { opacity: 0.8; }
+.header__icon--logo { width: 40px; height: 40px; }
+.header__icon--menu { width: 30px; height: 30px; }
+.sidebar { /* ... */ background-color: var(--color-sidebar-bg); width: var(--sidebar-width); height: 100vh; position: fixed; top: 0; left: 0; padding: var(--space-lg); padding-top: calc(var(--header-height) + var(--space-lg)); overflow-y: auto; z-index: 900; transition: transform var(--transition-speed) var(--transition-ease); display: flex; flex-direction: column; }
+.sidebar__title { font-size: 1.5rem; margin-bottom: var(--space-xl); font-weight: 700; color: var(--color-text); }
+.sidebar__nav-list { flex-grow: 1; }
+.sidebar__nav-item { margin-bottom: var(--space-sm); }
+li::marker { content: ''; }
+.sidebar__nav-item a, .sidebar__footer-link { color: var(--color-text); padding: var(--space-sm) var(--space-md); display: flex; align-items: center; gap: var(--space-md); font-size: 1.125rem; border-radius: var(--border-radius-md); transition: color var(--transition-speed) var(--transition-ease), background-color var(--transition-speed) var(--transition-ease); }
+.sidebar__nav-item a .material-symbols-outlined { font-size: 1.2em; width: 20px; height: 20px; opacity: 0.8; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; } /* Style icon in sidebar */
+.sidebar__nav-item a img, .sidebar__footer-link img, .sidebar__footer-link span { width: 20px; height: 20px; opacity: 0.8; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
+.sidebar__nav-item a:hover, .sidebar__footer-link:hover { color: var(--color-primary-accent); background-color: rgba(255, 255, 255, 0.05); }
+.sidebar__nav-item a:hover img, .sidebar__footer-link:hover img, .sidebar__footer-link:hover span, .sidebar__nav-item a:hover .material-symbols-outlined { opacity: 1; }
+.sidebar__button { background-color: var(--color-primary-accent); color: var(--color-text); border: none; padding: var(--space-sm) var(--space-md); width: 100%; margin-top: var(--space-lg); text-align: center; font-weight: 700; font-size: 1rem; }
+.sidebar__button:hover { background-color: var(--color-primary-accent-hover); }
+.sidebar__footer { margin-top: var(--space-xl); padding-top: var(--space-lg); border-top: 1px solid var(--color-border-subtle); }
+.sidebar__footer-link { margin-top: var(--space-sm); font-size: 1rem; }
+.sidebar--active { transform: translateX(0); }
+
+/* --- Main Content Area --- */
+.main-content { margin-top: var(--header-height); margin-left: var(--sidebar-width); padding: var(--space-xl); background-color: var(--color-dashboard-bg); min-height: calc(100vh - var(--header-height)); transition: margin-left var(--transition-speed) var(--transition-ease); }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); flex-wrap: wrap; gap: var(--space-md); }
+.page-title { font-size: 2rem; color: var(--color-text); margin-bottom: 0; }
+.page-description { color: var(--color-text-muted); margin-bottom: var(--space-xl); font-size: 1rem; }
+#current-month-display { font-weight: 700; color: var(--color-primary-accent); }
+
+/* --- Add Budget Button --- */
+#add-budget-button { height: 44px; padding: 0 var(--space-lg); font-size: 0.95rem; min-width: auto; }
+
+/* --- Loading & Empty States --- */
+.loading-indicator { /* ... */ display: flex; align-items: center; justify-content: center; gap: var(--space-md); padding: var(--space-xxl) 0; color: var(--color-text-muted); font-size: 1.1rem; transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease, height var(--transition-speed) ease; opacity: 1; visibility: visible; height: auto; }
+.loading-indicator--hidden { opacity: 0; visibility: hidden; height: 0; padding: 0; overflow: hidden; }
+.loading-indicator__spinner { border: 3px solid rgba(255, 255, 255, 0.3); border-left-color: var(--color-primary-accent); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.empty-message { /* ... */ text-align: center; color: var(--color-text-muted); padding: var(--space-xxl); font-style: italic; font-size: 1.1rem; background-color: var(--color-card-bg); border-radius: var(--border-radius-md); margin-top: var(--space-lg); }
+.empty-message--hidden { display: none; }
+
+/* --- Budgets List --- */
+.budgets-list { display: grid; gap: var(--space-lg); grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.budget-card { background-color: var(--color-card-bg); padding: var(--space-lg); border-radius: var(--border-radius-md); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); display: flex; flex-direction: column; gap: var(--space-md); opacity: 0; transform: scale(0.95); animation: fadeScaleIn 0.4s ease forwards; }
+.budgets-list > .budget-card:nth-child(1) { animation-delay: 0.05s; }
+.budgets-list > .budget-card:nth-child(2) { animation-delay: 0.1s; }
+.budgets-list > .budget-card:nth-child(3) { animation-delay: 0.15s; }
+@keyframes fadeScaleIn { to { opacity: 1; transform: scale(1); } }
+.budget-card__header { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-sm); }
+.budget-card__category { font-size: 1.3rem; font-weight: 700; color: var(--color-text); word-break: break-word; }
+.budget-card__actions { display: flex; gap: var(--space-xs); flex-shrink: 0; }
+.budget-card__button { background: none; border: none; padding: var(--space-xs); color: var(--color-text-muted); cursor: pointer; transition: color 0.2s ease, transform 0.2s ease; display: flex; align-items: center; justify-content: center; height: var(--action-button-height); width: var(--action-button-height); border-radius: 50%; }
+.budget-card__button .material-symbols-outlined { font-size: 1.25rem; }
+.budget-card__button:hover { transform: scale(1.1); }
+.budget-card__edit-button { color: var(--color-info); } /* Edit button color */
+.budget-card__edit-button:hover { color: var(--color-info-hover); background-color: rgba(76, 175, 80, 0.1); }
+.budget-card__delete-button { color: var(--color-danger); } /* Delete button color */
+.budget-card__delete-button:hover { color: var(--color-danger-hover); background-color: rgba(244, 67, 54, 0.1); }
+.budget-card__spending { font-size: 0.95rem; color: var(--color-text-muted); }
+.budget-card__spending strong { color: var(--color-text); font-weight: 700; }
+.budget-card__spending .amount--warning { color: var(--color-warning); }
+.budget-card__spending .amount--limit { color: var(--color-danger); }
+
+/* Progress Bar */
+.progress-bar { width: 100%; height: 12px; background-color: var(--color-progress-bg); border-radius: 6px; overflow: hidden; margin-top: var(--space-xs); }
+.progress-bar__fill { height: 100%; background-color: var(--color-primary-accent); border-radius: 6px; transition: width var(--transition-speed) var(--transition-ease), background-color var(--transition-speed) var(--transition-ease); width: 0%; position: relative; }
+.progress-bar__fill--warning { background-color: var(--color-warning); }
+.progress-bar__fill--limit { background-color: var(--color-danger); }
+/* Progress bar animation */
+.progress-bar__fill::after { content: ''; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background-image: linear-gradient( -45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent ); z-index: 1; background-size: 20px 20px; animation: moveProgress 2s linear infinite; border-radius: 6px; opacity: 0.5; }
+@keyframes moveProgress { 0% { background-position: 0 0; } 100% { background-position: 40px 40px; } }
+
+/* --- Add/Edit Budget Modal Styles --- */
+.popup-overlay { /* ... */ position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--color-overlay-bg); display: flex; justify-content: center; align-items: center; z-index: 1300; padding: var(--space-md); opacity: 1; visibility: visible; transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease; }
+.popup-overlay--hidden { opacity: 0; visibility: hidden; }
+.popup { /* ... */ background-color: var(--color-card-bg); padding: var(--space-xl); border-radius: var(--border-radius-md); width: 100%; max-width: 500px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); position: relative; text-align: left; transform: scale(0.9); opacity: 0; animation: popupFadeIn 0.3s var(--transition-ease) forwards; }
+@keyframes popupFadeIn { to { transform: scale(1); opacity: 1; } }
+.popup__close-button { /* ... */ position: absolute; top: var(--space-sm); right: var(--space-sm); background: none; border: none; color: var(--color-text-muted); padding: var(--space-xs); cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.popup__close-button:hover { color: var(--color-text); background-color: rgba(255, 255, 255, 0.1); }
+.popup__close-button .material-symbols-outlined { font-size: 1.5rem; }
+.popup__title { /* ... */ font-size: 1.5rem; margin-bottom: var(--space-lg); text-align: center; color: var(--color-text); display: flex; align-items: center; justify-content: center; gap: var(--space-sm); }
+.popup__title .material-symbols-outlined { font-size: 1.8rem; } /* Default icon */
+#budget-modal-popup .popup__title .material-symbols-outlined { color: var(--color-primary-accent); } /* Title icon color */
+.popup__content { margin-bottom: var(--space-xl); }
+.popup__actions { /* ... */ display: flex; justify-content: flex-end; gap: var(--space-md); margin-top: var(--space-lg); }
+.popup__actions .form-button { min-width: 120px; height: var(--button-height); font-size: 1rem; border-radius: var(--border-radius-lg); }
+/* Form styles within popup */
+#budget-modal-form { display: flex; flex-direction: column; gap: var(--space-lg); }
+#budget-modal-form .form-group { margin-bottom: 0; }
+.form-hint { font-size: 0.8rem; color: var(--color-text-muted); margin-top: var(--space-xs); display: block; }
+
+/* --- Delete Confirmation Modal Styles --- */
+#delete-confirmation-overlay .popup__title .material-symbols-outlined { color: var(--color-danger); } /* Warning icon red */
+.confirmation-details { /* ... */ font-size: 0.95rem; color: var(--color-text-muted); background-color: var(--color-input-bg); padding: var(--space-sm) var(--space-md); border-radius: var(--border-radius-sm); border: 1px solid var(--color-border-subtle); text-align: center; }
+.confirmation-details strong { color: var(--color-text); }
+
+/* --- Form Element Base Styles (Consistent) --- */
+.form-input, .form-select { /* ... */ width: 100%; padding: 0 var(--space-md); height: var(--input-height); line-height: var(--input-height); border: 1px solid var(--color-border-subtle); border-radius: var(--border-radius-md); color: var(--color-text); background-color: var(--color-input-bg); font-size: 1rem; transition: border-color var(--transition-speed) var(--transition-ease), box-shadow var(--transition-speed) var(--transition-ease); }
+.form-input:focus, .form-select:focus { outline: none; border-color: var(--color-primary-accent); box-shadow: 0 0 0 3px rgba(255, 155, 7, 0.3); }
+.form-input::placeholder { color: var(--color-text-muted); opacity: 0.8; }
+.form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)' width='16' height='16' fill='%23a0a0a0' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right var(--space-md) center; background-size: 1em; padding-right: calc(var(--space-md) * 3); }
+.form-select option { background-color: var(--color-input-bg); color: var(--color-text); }
+.form-select option[disabled] { color: #777; }
+.form-button { /* ... */ height: var(--button-height); padding: 0 var(--space-lg); background-color: var(--color-primary-accent); color: var(--color-background); font-weight: 700; font-size: 1rem; border: none; cursor: pointer; border-radius: var(--border-radius-lg); display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm); position: relative; }
+.form-button:hover:not(:disabled) { background-color: var(--color-primary-accent-hover); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 155, 7, 0.3); }
+.form-button:active:not(:disabled) { transform: translateY(0); box-shadow: none; }
+.form-button:disabled, .form-button--loading { background-color: var(--color-disabled); color: rgba(255, 255, 255, 0.7); cursor: not-allowed; transform: none; box-shadow: none; }
+.form-button--secondary { background-color: transparent; border: 2px solid var(--color-border-subtle); color: var(--color-text-muted); }
+.form-button--secondary:hover:not(:disabled) { border-color: var(--color-text); color: var(--color-text); background-color: rgba(255, 255, 255, 0.05); box-shadow: none; }
+.form-button--secondary:active:not(:disabled) { background-color: rgba(255, 255, 255, 0.1); }
+.form-button--danger { background-color: var(--color-danger); color: var(--color-text); }
+.form-button--danger:hover:not(:disabled) { background-color: var(--color-danger-hover); box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3); }
+.form-button__text { transition: opacity 0.2s ease; }
+.form-button__loader { position: absolute; width: 20px; height: 20px; border: 3px solid rgba(0, 0, 0, 0.3); border-left-color: var(--color-background); border-radius: 50%; opacity: 0; visibility: hidden; animation: spin 0.8s linear infinite; transition: opacity 0.2s ease, visibility 0.2s ease; }
+.form-button--loading .form-button__text { opacity: 0; visibility: hidden; }
+.form-button--loading .form-button__loader { opacity: 1; visibility: visible; }
+.popup__actions .form-button__loader { border-left-color: var(--color-text); } /* White loader on danger */
+.popup__actions .form-button--secondary .form-button__loader { border-left-color: var(--color-text-muted); } /* Muted loader on secondary */
+.form-error { color: var(--color-error); font-size: 0.9rem; min-height: 1.2em; margin-top: var(--space-xs); text-align: left; opacity: 1; transition: opacity var(--transition-speed) ease; }
+.form-error--hidden { opacity: 0; }
+
+
+/* --- Responsive Design --- */
+@media screen and (max-width: 817px) {
+   .header__menu-toggle { display: block; }
+   .header__title { font-size: 1.25rem; }
+   .header__version-badge { display: none; }
+   .sidebar { transform: translateX(-100%); z-index: 1100; padding-top: var(--space-lg); height: 100vh; top: 0; }
+   .sidebar--active { transform: translateX(0); box-shadow: 5px 0 15px rgba(0,0,0,0.2); }
+   .main-content { margin-left: 0; padding: var(--space-lg); }
+   .page-title { font-size: 1.75rem; }
+   .page-header { flex-direction: column; align-items: flex-start; }
+   .budgets-list { grid-template-columns: 1fr; } /* Stack cards */
+   .budget-card__category { font-size: 1.1rem; }
+   .popup { max-width: 90%; padding: var(--space-lg); }
+   .popup__title { font-size: 1.3rem; }
+   .popup__actions { flex-direction: column-reverse; gap: var(--space-sm); } /* Stack buttons */
+   .popup__actions .form-button { width: 100%; }
+}
+
+</style>
+<script>
+// budgets_gamma.js
+
+// Assuming 'DB' object and Firestore SDK functions are available globally or imported
+// import { DB } from '../firestore.js';
+// Assuming getBudgets and addBudget functions are available
+// import { getBudgets, addBudget } from './budget_functions_gamma.js';
+
+// --- Utility function to get a cookie value by name ---
+function getCookie(cname) { /* ... (same as before) ... */
+    const name = cname + "="; const decodedCookie = decodeURIComponent(document.cookie); const ca = decodedCookie.split(';'); for(let i = 0; i < ca.length; i++) { let c = ca[i]; while (c.charAt(0) === ' ') { c = c.substring(1); } if (c.indexOf(name) === 0) { return c.substring(name.length, c.length); } } return "";
+}
+
+// --- DOM Element Selectors ---
+const menuToggle = document.getElementById('menu-toggle');
+const sidebar = document.getElementById('sidebar');
+const signInButton = document.getElementById('signin-button');
+const currentMonthDisplay = document.getElementById('current-month-display');
+const loadingIndicator = document.getElementById('loading-indicator');
+const budgetsListContainer = document.getElementById('budgets-list');
+const emptyMessage = document.getElementById('empty-message');
+const addBudgetButton = document.getElementById('add-budget-button');
+// Add/Edit Modal
+const budgetModalOverlay = document.getElementById('budget-modal-overlay');
+const budgetModalPopup = document.getElementById('budget-modal-popup');
+const budgetModalCloseButton = document.getElementById('budget-modal-close-button');
+const budgetModalTitle = document.getElementById('budget-modal-title');
+const budgetModalForm = document.getElementById('budget-modal-form');
+const editBudgetIdInput = document.getElementById('edit-budget-id');
+const budgetModalCategorySelect = document.getElementById('budget-modal-category');
+const budgetModalWarningInput = document.getElementById('budget-modal-warning');
+const budgetModalLimitInput = document.getElementById('budget-modal-limit');
+const budgetModalError = document.getElementById('budget-modal-error');
+const budgetModalCancelButton = document.getElementById('budget-modal-cancel-button');
+const budgetModalSaveButton = document.getElementById('budget-modal-save-button');
+// Delete Modal
+const deleteConfirmationOverlay = document.getElementById('delete-confirmation-overlay');
+const deleteConfirmationPopup = document.getElementById('delete-confirmation-popup');
+const deleteConfirmationTitle = document.getElementById('delete-confirmation-title');
+const deleteConfirmationMessage = document.getElementById('delete-confirmation-message');
+const deleteConfirmationDetails = document.getElementById('delete-confirmation-details');
+const deleteConfirmationCancelButton = document.getElementById('delete-confirmation-cancel-button');
+const deleteConfirmationCancelButtonAlt = document.getElementById('delete-confirmation-cancel-button-alt');
+const deleteConfirmationProceedButton = document.getElementById('delete-confirmation-proceed-button');
+// Audio Selectors
+const successAudio = document.getElementById('success-audio');
+const failAudio = document.getElementById('fail-audio');
+
+// --- Global State ---
+let currentUserHash = null;
+let currentDeleteActionData = null; // Store { budgetId, categoryName } for delete action
+let categoryNameMap = { // Base categories + custom fetched later
+    "a": "Groceries", "b": "Food Out", "c": "Snacks", "d": "Kitchenware",
+    "e": "Bathroomware", "f": "Livingware", "g": "Appliances", "h": "Gardenware",
+    "j": "Pets", "k": "Health", "l": "Books", "other": "Other",
+    "all": "All Categories"
+};
+let userCurrencySymbol = '$';
+let userCurrencyAfter = false;
+let currentMonthString = ''; // YYYY-MM format
+// No need for isEditMode flag, check editBudgetIdInput.value instead
+
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log("Budgets Page DOM Loaded.");
+    currentUserHash = checkAuthAndSetupUI();
+    if (!currentUserHash) return;
+
+    setCurrentMonthDisplay();
+    await loadUserPreferencesAndCategories(currentUserHash);
+    addEventListeners(currentUserHash);
+    await fetchAndRenderBudgets(currentUserHash);
+
+    console.log("Budgets Page Initialized.");
+});
+
+/** Checks auth, sets up basic UI state */
+function checkAuthAndSetupUI() { /* ... (same as before) ... */
+    const userHash = getCookie('hash'); if (!userHash) { window.location.href = '../sign-in'; return null; } if (signInButton) signInButton.style.display = 'none'; const expiryDate = new Date(); expiryDate.setDate(expiryDate.getDate() + 7); document.cookie = `hash=${userHash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`; return userHash;
+}
+
+/** Sets the display for the current month */
+function setCurrentMonthDisplay() { /* ... (same as before) ... */
+    const now = new Date(); currentMonthString = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`; const monthName = now.toLocaleString('default', { month: 'long' }); const year = now.getFullYear(); if (currentMonthDisplay) { currentMonthDisplay.textContent = `${monthName} ${year}`; }
+}
+
+/** Loads user currency and custom categories, populates category map */
+async function loadUserPreferencesAndCategories(userHash) { /* ... (same as before, filters 'Subscriptions') ... */
+     if (typeof DB === 'undefined' || !DB.u || !DB.uCompute) { console.error("DB object not found."); return; } try { const [user, customCategoriesData] = await Promise.all([ DB.u.get(userHash), DB.uCompute.all(userHash, 'other', 'categories') ]); if (user) { userCurrencySymbol = user.currency?.includes('*') ? '' : (user.currency || '$'); userCurrencyAfter = user.currency?.includes('*') ? user.currency.replace('*', '') : ''; } else { console.warn("User data not found for currency."); } const customCategories = Object.keys(customCategoriesData || {}); customCategories.forEach(catCode => { if (catCode.toLowerCase() !== 'subscriptions') { if (!categoryNameMap[catCode]) { categoryNameMap[catCode] = catCode; } } }); console.log("Category map updated:", categoryNameMap); } catch (error) { console.error("Error loading user preferences/categories:", error); }
+}
+
+let budgets_global = null;
+/** Adds all necessary event listeners */
+function addEventListeners(userHash) {
+    // Sidebar Toggle
+    menuToggle?.addEventListener('click', () => sidebar?.classList.toggle('sidebar--active'));
+    document.addEventListener('click', (event) => { /* ... (sidebar closing logic) ... */
+        if (window.innerWidth <= 817) { const isClickInsideSidebar = sidebar?.contains(event.target); const isClickOnMenuToggle = menuToggle?.contains(event.target); if (!isClickInsideSidebar && !isClickOnMenuToggle && sidebar?.classList.contains('sidebar--active')) { sidebar.classList.remove('sidebar--active'); } }
+    });
+
+    // Add Budget Button
+    addBudgetButton?.addEventListener('click', () => {
+        if (budgets_global.length == 0) {
+            showAddBudgetModal()
+        } else {
+            console.log("A budget already exists.");
+        }
+    });
+
+    // Budget Card Button Clicks (Event Delegation for Edit/Delete)
+    budgetsListContainer?.addEventListener('click', (event) => {
+        const editButton = event.target.closest('.budget-card__edit-button');
+        const deleteButton = event.target.closest('.budget-card__delete-button');
+        const card = event.target.closest('.budget-card');
+
+        if (editButton && card?.dataset.budgetId) {
+            const budgetData = {
+                id: card.dataset.budgetId,
+                category: card.dataset.category, // category code
+                warning: card.dataset.warning,
+                limit: card.dataset.limit
+            };
+            showEditBudgetModal(budgetData); // Call edit modal function
+        } else if (deleteButton && card?.dataset.budgetId) {
+            const budgetData = {
+                id: card.dataset.budgetId,
+                categoryName: card.dataset.categoryName // Use display name for confirmation
+            };
+            showDeleteConfirmationModal(budgetData); // Call delete modal function
+        }
+    });
+
+    // Add/Edit Modal Buttons
+    budgetModalCloseButton?.addEventListener('click', hideBudgetModal);
+    budgetModalCancelButton?.addEventListener('click', hideBudgetModal);
+    budgetModalForm?.addEventListener('submit', (e) => handleBudgetFormSubmit(e, userHash));
+
+    // Delete Modal Buttons
+    deleteConfirmationCancelButton?.addEventListener('click', hideDeleteConfirmationModal);
+    deleteConfirmationCancelButtonAlt?.addEventListener('click', hideDeleteConfirmationModal);
+    deleteConfirmationProceedButton?.addEventListener('click', handleDeleteProceedAction);
+
+    // Shortcut keys
+    document.addEventListener('keydown', handleShortcuts);
+}
+
+// --- Loading & UI State ---
+function setLoadingState(isLoading) { /* ... (same as before) ... */ if (isLoading) { loadingIndicator?.classList.remove('loading-indicator--hidden'); budgetsListContainer.innerHTML = ''; emptyMessage?.classList.add('empty-message--hidden'); } else { loadingIndicator?.classList.add('loading-indicator--hidden'); } }
+function showEmptyMessage(show) { /* ... (same as before) ... */ if(show) { emptyMessage?.classList.remove('empty-message--hidden'); } else { emptyMessage?.classList.add('empty-message--hidden'); } }
+function formatCurrency(amount, symbol, symbolAfter) { /* ... (same as before) ... */ const num = Number(amount); if (isNaN(num)) return 'N/A'; const formattedAmount = num.toFixed(2); const displaySymbol = symbolAfter ? ` ${symbolAfter}` : symbol; return symbolAfter ? `${formattedAmount}${displaySymbol}` : `${displaySymbol}${formattedAmount}`; }
+
+// --- Budget Data Fetching and Rendering ---
+
+/** Fetches budgets and current spending, then renders the budget cards */
+async function fetchAndRenderBudgets(userHash) { /* ... (same as before, removed subscription processing) ... */
+    if (!userHash) return; setLoadingState(true);
+    if (typeof DB === 'undefined' || !DB.uCompute || !DB.uDoc || typeof getBudgets !== 'function') { console.error('Required DB functions or getBudgets not available.'); setLoadingState(false); showEmptyMessage(true); emptyMessage.textContent = "Error loading budgets."; return; }
+    try {
+        const [budgets, spendingTotalsData] = await Promise.all([ getBudgets(userHash), DB.uCompute.all(userHash, 'totals', currentMonthString) ]);
+        budgets_global = budgets; // For debugging
+        console.log("Fetched Budgets:", budgets); console.log("Fetched Totals:", spendingTotalsData);
+        const spendingMap = { ...(spendingTotalsData || {}) }; // Use only receipt totals
+        spendingMap['all'] = Object.values(spendingMap).reduce((acc, val) => acc + (Number(val) || 0), 0); // Calculate total spending
+        console.log("Spending Map (Totals Only):", spendingMap);
+        budgetsListContainer.innerHTML = '';
+        if (!budgets || budgets.length === 0) { showEmptyMessage(true); emptyMessage.textContent = "You haven't set any budgets yet."; }
+        else { showEmptyMessage(false); budgets.sort((a, b) => (categoryNameMap[a.category] || a.category).localeCompare(categoryNameMap[b.category] || b.category)); budgets.forEach(budget => { if (budget.category.toLowerCase() !== 'subscriptions') { const currentSpending = spendingMap[budget.category] || 0; createBudgetCard(budget, currentSpending); } }); if (budgetsListContainer.children.length === 0) { showEmptyMessage(true); emptyMessage.textContent = "No budgets found for display."; } }
+    } catch (error) { console.error("Error fetching/rendering budgets:", error); budgetsListContainer.innerHTML = ''; showEmptyMessage(true); emptyMessage.textContent = `Error: ${error.message}`; }
+    finally {
+        setLoadingState(false);
+        if (budgets_global.length != 0) {
+            addBudgetButton.disabled = true;
+            addBudgetButton.color = 'gray';
+        }
+    }
+}
+
+
+/** Creates and appends a budget card element */
+function createBudgetCard(budget, currentSpending) {
+    const card = document.createElement('div');
+    card.className = 'budget-card';
+    card.dataset.budgetId = budget.id;
+    card.dataset.category = budget.category;
+    card.dataset.warning = budget.warning;
+    card.dataset.limit = budget.limit;
+    const categoryName = categoryNameMap[budget.category] || budget.category;
+    card.dataset.categoryName = categoryName;
+
+    const limit = Number(budget.limit) || 0;
+    const warning = Number(budget.warning) || 0;
+    const spending = Number(currentSpending) || 0;
+    let progressPercent = 0;
+    let progressBarClass = '';
+    let spendingStatusClass = '';
+
+    if (limit > 0) {
+        const rawPercent = (spending / limit) * 100;
+        progressPercent = Math.min(rawPercent, 100);
+        if (spending >= limit) { progressBarClass = 'progress-bar__fill--limit'; spendingStatusClass = 'amount--limit'; }
+        else if (spending >= warning) { progressBarClass = 'progress-bar__fill--warning'; spendingStatusClass = 'amount--warning'; }
+    } else if (spending > 0) { spendingStatusClass = 'amount--limit'; }
+
+    const formattedSpending = formatCurrency(spending, userCurrencySymbol, userCurrencyAfter);
+    const formattedLimit = formatCurrency(limit, userCurrencySymbol, userCurrencyAfter);
+    const formattedWarning = formatCurrency(warning, userCurrencySymbol, userCurrencyAfter);
+
+    card.innerHTML = `
+        <div class="budget-card__header">
+            <span class="budget-card__category">${categoryName}</span>
+            <div class="budget-card__actions">
+                <button type="button" class="budget-card__button budget-card__edit-button" title="Edit Budget">
+                    <span class="material-symbols-outlined">edit</span>
+                </button>
+                <button type="button" class="budget-card__button budget-card__delete-button" title="Delete Budget">
+                    <span class="material-symbols-outlined">delete</span>
+                </button>
+            </div>
+        </div>
+        <div class="budget-card__spending">
+            Spent <strong class="${spendingStatusClass}">${formattedSpending}</strong> of ${formattedLimit}
+            ${warning > 0 ? ` (Warn @ ${formattedWarning})` : ''}
+        </div>
+        <div class="progress-bar">
+            <div class="progress-bar__fill ${progressBarClass}" style="width: ${progressPercent}%;"></div>
+        </div>
+    `;
+
+    budgetsListContainer.appendChild(card);
+}
+
+// --- Add/Edit Budget Modal ---
+
+/** Populates the category dropdown in the modal, excluding 'Subscriptions' */
+let omicronPlan = false; // Placeholder for plan check
+function populateBudgetModalCategories() {
+    if (!budgetModalCategorySelect) return;
+    const currentValue = budgetModalCategorySelect.value;
+    while (budgetModalCategorySelect.options.length > 1) { budgetModalCategorySelect.remove(1); }
+    budgetModalCategorySelect.appendChild(new Option("All Categories", "all"));
+    Object.entries(categoryNameMap)
+        .filter(([code, name]) => code.toLowerCase() !== 'subscriptions' && name.toLowerCase() !== 'subscriptions') // Filter
+        .sort(([, nameA], [, nameB]) => nameA.localeCompare(nameB))
+        .forEach(([code, name]) => {
+            const option = new Option(name + (omicronPlan? '': " (upgrade to omicron plan for category-specific budgets)"), code);
+            option.disabled = !omicronPlan; // <-- Add this line
+            budgetModalCategorySelect.appendChild(option);
+        });
+    // Restore selection if possible
+    if (budgetModalCategorySelect.querySelector(`option[value="${currentValue}"]`)) {
+        budgetModalCategorySelect.value = currentValue;
+    } else {
+        budgetModalCategorySelect.value = ""; // Reset if previous value was 'Subscriptions' or removed
+    }
+}
+
+/** Shows the modal for adding a new budget */
+function showAddBudgetModal() {
+    if (!budgetModalOverlay) return;
+    console.log("Showing Add Budget modal.");
+    budgetModalCategorySelect.value = "all"; // Default to 'All Categories'
+    // isEditMode = false; // No longer needed, check hidden input
+    budgetModalForm.reset(); // Clear form fields
+    editBudgetIdInput.value = ''; // Clear hidden ID
+    budgetModalTitle.innerHTML = `<span class="material-symbols-outlined">add_circle</span> Add New Budget`;
+    budgetModalSaveButton.querySelector('.form-button__text').textContent = 'Add Budget';
+    clearError(budgetModalError);
+    populateBudgetModalCategories(); // Populate categories
+    budgetModalOverlay.classList.remove('popup-overlay--hidden');
+    budgetModalCategorySelect.disabled = false; // Ensure category select is enabled for adding
+}
+
+/** Shows the modal for editing an existing budget */
+function showEditBudgetModal(budgetData) {
+     if (!budgetModalOverlay || !budgetData) return;
+     console.log("Showing Edit Budget modal for:", budgetData.category);
+     // isEditMode = true; // No longer needed
+     budgetModalForm.reset(); // Clear previous values first
+     editBudgetIdInput.value = budgetData.id; // Set hidden ID
+
+     populateBudgetModalCategories(); // Ensure categories are loaded
+
+     // Populate fields
+     if (budgetModalCategorySelect.querySelector(`option[value="${budgetData.category}"]`)) {
+        budgetModalCategorySelect.value = budgetData.category;
+     } else {
+         console.warn(`Category "${budgetData.category}" not found in dropdown.`);
+         // Optionally add it temporarily if needed, or handle error
+         // For now, disable category change during edit if it's not in the list
+         // OR add it back if it was a valid custom category somehow removed from map temporarily
+         const option = new Option(budgetData.category, budgetData.category, false, true); // Add it back selected
+         budgetModalCategorySelect.appendChild(option);
+         budgetModalCategorySelect.value = budgetData.category;
+         // budgetModalCategorySelect.disabled = true; // Option 1: Disable change
+     }
+     // Disable category changing during edit to prevent confusion? Or allow it?
+     // Let's allow it for now, but be aware budgetData.category holds the *original* code/key.
+     budgetModalCategorySelect.disabled = false; // Ensure enabled
+
+     budgetModalWarningInput.value = budgetData.warning;
+     budgetModalLimitInput.value = budgetData.limit;
+
+     budgetModalTitle.innerHTML = `<span class="material-symbols-outlined">edit</span> Edit Budget`;
+     budgetModalSaveButton.querySelector('.form-button__text').textContent = 'Save Changes';
+     clearError(budgetModalError);
+     budgetModalOverlay.classList.remove('popup-overlay--hidden');
+}
+
+
+/** Hides the Add/Edit budget modal and resets its state */
+function hideBudgetModal() {
+    budgetModalOverlay?.classList.add('popup-overlay--hidden');
+    setButtonLoading(budgetModalSaveButton, false); // Reset button state
+    // Reset form state explicitly on close
+    editBudgetIdInput.value = '';
+    budgetModalTitle.innerHTML = `<span class="material-symbols-outlined">add_circle</span> Add New Budget`;
+    budgetModalSaveButton.querySelector('.form-button__text').textContent = 'Add Budget';
+    budgetModalCategorySelect.disabled = false; // Ensure enabled
+    budgetModalForm.reset(); // Clear fields
+    clearError(budgetModalError);
+}
+
+/** Handles submission from the Add/Edit budget modal */
+async function handleBudgetFormSubmit(event, userHash) {
+    event.preventDefault();
+    clearError(budgetModalError);
+
+    // Get data from modal form
+    const budgetId = editBudgetIdInput.value; // Will be empty if adding, have ID if editing
+    const category = budgetModalCategorySelect.value;
+    const warning = parseFloat(budgetModalWarningInput.value);
+    const limit = parseFloat(budgetModalLimitInput.value);
+
+    // Validation
+    if (!category) { displayError(budgetModalError, "Please select a category."); return; }
+    if (category.toLowerCase() === 'subscriptions') { displayError(budgetModalError, "Cannot set a budget for 'Subscriptions'."); return; }
+    if (isNaN(warning) || warning < 0) { displayError(budgetModalError, "Warning threshold must be non-negative."); return; }
+    if (isNaN(limit) || limit <= 0) { displayError(budgetModalError, "Spending limit must be positive."); return; }
+    if (warning >= limit) { displayError(budgetModalError, "Warning threshold must be less than limit."); return; }
+
+    const budgetData = { category, warning, limit };
+    setButtonLoading(budgetModalSaveButton, true);
+
+    try {
+        if (typeof DB === 'undefined' || !DB.uDoc) throw new Error("Database connection not available.");
+
+        if (budgetId) { // --- Editing existing budget ---
+            console.log(`Updating budget ID: ${budgetId}`, budgetData);
+            // Use newDoc which acts as set/overwrite in firestore.js implementation
+            // Pass the existing budgetId as the document name/ID
+             const success = await DB.uDoc.newDoc(userHash, 'budgets', budgetId, budgetData);
+             if (!success) throw new Error("DB function reported failure during update.");
+            console.log("Budget updated successfully.");
+        } else { // --- Adding new budget ---
+             console.log("Adding new budget:", budgetData);
+             // Use the specific addBudget function which handles ID generation
+             const newId = await addBudget(userHash, budgetData); // Assumes addBudget is available
+             if (!newId) throw new Error("Failed to add budget via addBudget function.");
+             console.log("Budget added successfully with ID:", newId);
+        }
+
+        successAudio?.play();
+        hideBudgetModal(); // Also resets form state
+        await fetchAndRenderBudgets(userHash); // Refresh the list
+
+    } catch (error) {
+        console.error("Error saving budget:", error);
+        displayError(budgetModalError, `Save failed: ${error.message || 'Please try again.'}`);
+        failAudio?.play();
+    } finally {
+        setButtonLoading(budgetModalSaveButton, false);
+        if (budgets_global.length != 0) {
+            addBudgetButton.disabled = true;
+            addBudgetButton.color = 'gray';
+        }
+    }
+}
+
+
+// --- Delete Confirmation Modal Logic ---
+/** Shows the delete confirmation modal */
+function showDeleteConfirmationModal(data) { /* ... (same as previous) ... */
+    currentAction = 'delete-budget'; currentActionData = data;
+    if (!deleteConfirmationOverlay || !deleteConfirmationTitle || !deleteConfirmationMessage || !deleteConfirmationProceedButton || !deleteConfirmationDetails) return;
+    deleteConfirmationTitle.innerHTML = `<span class="material-symbols-outlined">warning</span> Delete Budget?`;
+    deleteConfirmationMessage.textContent = `Are you sure you want to permanently delete the budget for:`;
+    deleteConfirmationDetails.innerHTML = `<strong>${data.categoryName}</strong>`;
+    deleteConfirmationDetails.style.display = 'block';
+    deleteConfirmationProceedButton.querySelector('.form-button__text').textContent = 'Delete Budget';
+    deleteConfirmationOverlay.classList.remove('popup-overlay--hidden');
+}
+/** Hides the delete confirmation modal */
+function hideDeleteConfirmationModal() { /* ... (same as previous) ... */
+    currentAction = null; currentActionData = null;
+    deleteConfirmationOverlay?.classList.add('popup-overlay--hidden');
+    setButtonLoading(deleteConfirmationProceedButton, false);
+}
+/** Handles the 'Proceed' button click in the delete modal */
+async function handleDeleteProceedAction() { /* ... (same as previous) ... */
+    if (currentAction !== 'delete-budget' || !currentActionData?.id || !currentUserHash) { console.error("Invalid action/data for delete:", currentAction, currentActionData); hideDeleteConfirmationModal(); return; }
+    const budgetId = currentActionData.id; const categoryName = currentActionData.categoryName;
+    const buttonToDisable = document.querySelector(`.budget-card[data-budget-id="${budgetId}"] .budget-card__delete-button`);
+    setButtonLoading(deleteConfirmationProceedButton, true); if(buttonToDisable) setButtonLoading(buttonToDisable, true);
+    try {
+        if (typeof DB === 'undefined' || !DB.uDoc) throw new Error("DB connection error.");
+        await DB.uDoc.deleteDoc(currentUserHash, 'budgets', budgetId); // Use budgetId
+        successAudio?.play(); hideDeleteConfirmationModal(); await fetchAndRenderBudgets(currentUserHash);
+    } catch (error) { console.error("Delete budget error:", error); failAudio?.play(); alert(`Failed to delete: ${error.message || 'Try again.'}`); setButtonLoading(deleteConfirmationProceedButton, false); if(buttonToDisable) setButtonLoading(buttonToDisable, false); hideDeleteConfirmationModal(); }
+    finally { 
+        if (budgets_global.length != 0) {
+            addBudgetButton.disabled = true;
+            addBudgetButton.color = 'gray'
+            return;
+        } else {
+            addBudgetButton.disabled = false;
+            addBudgetButton.color = ''
+            return;
+        }
+    }
+}
+
+
+// --- Utility Functions ---
+/** Displays an error message */
+function displayError(element, message, isError = true) { /* ... */ if (!element) return; element.textContent = message; element.style.color = isError ? 'var(--color-error)' : 'var(--color-text-muted)'; element.classList.remove('form-error--hidden'); if (!isError) { setTimeout(() => { if (element.textContent === message) { clearError(element); } }, 3000); } }
+/** Clears a specific error message */
+function clearError(element) { /* ... */ if(element) { element.textContent = ''; element.classList.add('form-error--hidden'); } }
+/** Sets the loading state of a button */
+function setButtonLoading(button, isLoading) { /* ... */ if (!button) return; const textSpan = button.querySelector('.form-button__text'); const iconSpan = button.querySelector('.material-symbols-outlined'); if (isLoading) { button.disabled = true; button.classList.add('form-button--loading'); if (textSpan) textSpan.style.visibility = 'hidden'; if (iconSpan) iconSpan.style.visibility = 'hidden'; } else { button.disabled = false; button.classList.remove('form-button--loading'); if (textSpan) textSpan.style.visibility = 'visible'; if (iconSpan) iconSpan.style.visibility = 'visible'; } }
+/** Handles shortcut keys */
+function handleShortcuts(event) { /* ... */ if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT' || !deleteConfirmationOverlay?.classList.contains('popup-overlay--hidden') || !budgetModalOverlay?.classList.contains('popup-overlay--hidden')) { return; } const shortcuts = { 'D': '../dashboard', 'R': '../add-receipt', 'V': '../report', 'P': '../printout', 'L': '../links' }; if (event.shiftKey && shortcuts[event.key.toUpperCase()]) { window.location.href = shortcuts[event.key.toUpperCase()]; } }
+
+// --- Need Budget Functions ---
+// Define getBudgets and addBudget if not imported/globally available
+/** Retrieves all budget documents */
+async function getBudgets(hash) { if (!hash) { console.error("getBudgets: Hash required."); return []; } if (typeof DB?.uDoc?.allDocs !== 'function') { console.error("getBudgets: DB.uDoc.allDocs unavailable."); return []; } try { const b = await DB.uDoc.allDocs(hash, 'budgets'); return b; } catch (e) { console.error("Error fetching budgets:", e); return []; } }
+/** Adds a new budget document */
+async function addBudget(hash, budgetData) { function c() { const r = Math.random().toString(36).substring(2, 11); return `budget_${Date.now().toString(36)}_${r}`; } if (!hash) { console.error("addBudget: Hash required."); return null; } if (!budgetData || typeof budgetData.category !== 'string' || typeof budgetData.warning !== 'number' || typeof budgetData.limit !== 'number') { console.error("addBudget: Invalid data.", budgetData); return null; } if (budgetData.warning < 0 || budgetData.limit <= 0 || budgetData.warning >= budgetData.limit) { console.error("addBudget: Invalid values."); return null; } if (typeof DB?.uDoc?.newDoc !== 'function') { console.error("addBudget: DB.uDoc.newDoc unavailable."); return null; } try { const id = c(); const d = { category: budgetData.category, warning: budgetData.warning, limit: budgetData.limit }; const ok = await DB.uDoc.newDoc(hash, 'budgets', id, d); if (ok) { return id; } else { console.error("addBudget: DB.uDoc.newDoc failed."); return null; } } catch (e) { console.error("Error adding budget:", e); return null; } }
+
+// --- Need Subscription Logic (Only for spending calculation) ---
+// REMOVED Sub and DateConfig classes as they are not needed on this page
+// Calculation now happens within fetchAndRenderBudgets using only totals
+</script>

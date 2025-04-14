@@ -1,3 +1,12 @@
+// Set version before importing Firebase
+let version = "Gamma Gemma";
+window.version = version;
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector(".header__version-badge").innerText = "Gamma Gemma";
+    document.querySelector(".header__title").style.cursor = "pointer";
+    document.querySelector(".header__title").addEventListener('click', () => {location.href = '../dashboard'});
+});
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, setDoc, getDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -424,11 +433,7 @@ let DB = {
     }
 };
 
-let version = "BETA 1.2 FIRE";
-let versionNOTES = "We've migrated to a new database and fixed a few bugs. This will be the last version update before Finance Forward GAMMA";
 
 // Export the DB functions for use in the global scope
 window.DB = DB;
-window.version = version;
-window.versionNOTES = versionNOTES;
-export { DB, version, versionNOTES };
+export { DB, version };
