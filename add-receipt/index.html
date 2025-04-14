@@ -63,6 +63,7 @@
                             <span class="form-button__scan-text--full">Scan Receipt Instead</span>
                         </button>
                     </div>
+                    <h3 id="budget-notice"></h3>
                 </div>
 
                 <div class="form-group">
@@ -106,6 +107,7 @@
                     <span class="popup__label">Scanned Amount:</span>
                     <span class="popup__value" id="popup-scan-amount">N/A</span>
                 </div>
+                <h3 id="budget-notice-on-popup"></h3>
                 <div class="popup__field">
                     <span class="popup__label">Month:</span>
                     <span class="popup__value" id="popup-scan-month">N/A</span>
@@ -114,7 +116,7 @@
                     <label for="popup-scan-category" class="form-label">Category</label>
                     <select id="popup-scan-category" name="popup-category" class="form-select" required>
                         <option value="" disabled selected>Select Category</option>
-                        </select>
+                    </select>
                 </div>
             </div>
             <div class="popup__actions popup__actions--close">
@@ -731,14 +733,16 @@ document.addEventListener('keyup', (event) => {
 
 
 // --- Initialization ---
+let userHash = null; // Store user hash for later use
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("Add Receipt DOM Loaded. Initializing...");
-    const userHash = checkAuthAndSetupUI();
+    userHash = checkAuthAndSetupUI();
     if (!userHash) return; // Stop if not authenticated
-
+    addEventListeners(userHash); // Add all event listeners
+    
     await populateCategoryDropdown(categorySelect, userHash, true); // Populate main dropdown
     setDefaultMonth();
-    addEventListeners(userHash); // Add all event listeners
+    setBudgetInfoSignMain();
 
     console.log("Add Receipt Page Initialized.");
 });
@@ -748,8 +752,8 @@ document.addEventListener('DOMContentLoaded', async () => {
  * @returns {string|null} User hash if authenticated, null otherwise.
  */
 function checkAuthAndSetupUI() {
-    const userHash = getCookie('hash');
-    if (!userHash) {
+    const userHashx = getCookie('hash');
+    if (!userHashx) {
         console.log("User not authenticated. Redirecting to sign-in.");
         window.location.href = '../sign-in';
         return null;
@@ -757,8 +761,8 @@ function checkAuthAndSetupUI() {
         if (signInButton) signInButton.style.display = 'none';
         const expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + 7);
-        document.cookie = `hash=${userHash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`;
-        return userHash;
+        document.cookie = `hash=${userHashx}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`;
+        return userHashx;
     }
 }
 
@@ -847,11 +851,43 @@ async function populateCategoryDropdown(selectElement, userHash, includeManageOp
 
 /** Handles redirecting when 'Manage Categories' is selected */
 function handleCategoryChange(event) {
-     if (event.target.value === 'category_manager') {
+    if (event.target.value === 'category_manager') {
         console.log("Redirecting to Category Manager...");
         window.location.href = '../category_manager'; // Adjust path if needed
     }
 }
+
+async function setBudgetInfoSignMain() {
+    // Fetch monthly totals and subscriptions
+    console.log(monthInput.value)
+    const [totals, subscriptions, budgets] = await Promise.all([
+        DB.uCompute.all(userHash, 'totals', monthInput.value),
+        DB.uDoc.allDocs(userHash, 'subscriptions'),
+        DB.uDoc.allDocs(userHash, 'budgets'),
+    ]);
+
+    console.log("Monthly Totals Data:", totals);
+    console.log("Subscriptions Data:", subscriptions);
+    console.log("Budgets Data:", budgets);
+    const combinedTotals = totals
+
+
+    // Calculate Grand Total
+    let grandTotal = Object.values(combinedTotals).reduce((sum, value) => sum + (typeof value === 'number' ? value : 0), 0) + amountInput.value;
+    grandTotal = (Number(grandTotal) || 0).toFixed(2);
+
+    const budgetWarn = budgets.filter(budget => budget['category'] == 'all')[0]["warning"] || 0; // Default to 0 if no budget set
+    const budgetMax = budgets.filter(budget => budget['category'] == 'all')[0]["limit"] || 0; // Default to 0 if no budget set
+    const budgetStatus = grandTotal > budgetMax ? 'OVERSPENT' : (grandTotal > budgetWarn ? 'WARNING' : 'OK');
+
+    console.log(`Current total for ${categorySelect.value}/${monthInput.value}: ${grandTotal}`);
+    document.getElementById('budget-notice').innerHTML =
+    budgetStatus == "OVERSPENT" ? `You have currently overspent your budget! Currently spent ${grandTotal} out of your ${budgetMax} budget (Over-budget)` :
+    budgetStatus == "WARNING" ? `You are approaching the budget limit! Currently spent ${grandTotal} out of your ${budgetMax} budget (Warning)` :
+    `Currently spent ${grandTotal} out of ${budgetMax} budget (Under-budget)`;
+}
+
+amountInput.addEventListener('change', setBudgetInfoSignMain);
 
 // --- Form Submission Logic ---
 /**
@@ -1043,6 +1079,32 @@ async function handleFileSelect(event, userHash) {
         scannedReceiptData.amount = scannedAmount;
         scannedReceiptData.month = monthInput.value || getDefaultMonth(); // Use current input or default
         showScanConfirmPopup(userHash);
+        
+        // Fetch monthly totals and subscriptions
+        const [totals, subscriptions, budgets] = await Promise.all([
+            DB.uCompute.all(userHash, 'totals', scannedReceiptData.month),
+            DB.uDoc.allDocs(userHash, 'subscriptions'),
+            DB.uDoc.allDocs(userHash, 'budgets'),
+        ]);
+
+        console.log("Monthly Totals Data:", totals);
+        console.log("Subscriptions Data:", subscriptions);
+        console.log("Budgets Data:", budgets);
+        const combinedTotals = totals
+
+
+        // Calculate Grand Total
+        const grandTotal = Object.values(combinedTotals).reduce((sum, value) => sum + (typeof value === 'number' ? value : 0), 0) + scannedReceiptData.amount;
+
+        const budgetWarn = budgets.filter(budget => budget['category'] == 'all')[0]["warning"] || 0; // Default to 0 if no budget set
+        const budgetMax = budgets.filter(budget => budget['category'] == 'all')[0]["limit"] || 0; // Default to 0 if no budget set
+        const budgetStatus = grandTotal > budgetMax ? 'OVERSPENT' : (grandTotal > budgetWarn ? 'WARNING' : 'OK');
+
+        console.log(`Current total for ${categorySelect.value}/${scannedReceiptData.month}: ${grandTotal}`);
+        document.getElementById('budget-notice-on-popup').innerHTML =
+        budgetStatus == "OVERSPENT" ? `You have currently overspent your budget! Currently spent ${grandTotal} out of ${budgetMax} budget (Over-budget)` :
+        budgetStatus == "WARNING" ? `You are approaching the budget limit! Currently spent ${grandTotal} out of ${budgetMax} budget (Warning)` :
+        `Currently spent ${grandTotal} out of ${budgetMax} budget (Under-budget)`;
 
     } catch (error) {
         console.error('Error during file handling or OCR:', error);
