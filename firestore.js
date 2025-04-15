@@ -2,13 +2,18 @@
 let version = "Gamma Gemma";
 window.version = version;
 document.addEventListener("DOMContentLoaded", () => {
-    document.querySelector(".header__version-badge").innerText = "Gamma Gemma";
+    try {
+        document.querySelector(".header__version-badge").innerText = "Gamma Gemma";
+    } catch {
+        document.querySelector(".minimal-header__version-badge").innerText = "Gamma Gemma";
+    }
     document.querySelector(".header__title").style.cursor = "pointer";
     document.querySelector(".header__title").addEventListener('click', () => {location.href = '../dashboard'});
 });
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, setDoc, getDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateEmail, updatePassword, deleteUser, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 // Firebase config (replace with your actual credentials)
 const firebaseConfig = {
@@ -23,9 +28,103 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 // DB Functions (Only using Firestore SDK functions)
 let DB = {
+    'auth': {
+        /**
+         * Signs in a user with email and password.
+         * @param {string} email - The user's email address.
+         * @param {string} password - The user's password.
+         * @returns {Promise<string|null>} The user's UID if successful, null otherwise.
+         * @description This function uses Firebase Authentication to sign in a user with their email and password.
+         */
+        'create': async (email, password) => {
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                return userCredential.user.uid;
+            } catch (error) {
+                console.error("Error creating user:", error);
+                return null;
+            }
+        },
+
+        /**
+         * 
+         * @param {string} email 
+         * @param {string} password 
+         * @returns {Promise<string|null>} The user's UID if successful, null otherwise.
+         * @description Signs in a user with email and password.
+         */
+        'signIn': async (email, password) => {
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                return userCredential.user.uid;
+            } catch (error) {
+                console.error("Error signing in:", error);
+                return { "error": error.code };
+            }
+        },
+
+        'signOut': async () => {
+            signOut(auth)
+                .then(() => {
+                    // Sign-out successful.
+                    console.log("User signed out successfully.");
+                    return true
+                }).catch((error) => {
+                    // An error happened.
+                    console.error("Sign-out error:", error);
+                    return error
+                });
+        },
+
+        'delete': async () => {
+            deleteUser(auth.currentUser)
+                .then(() => {
+                    // User deleted successfully.
+                    console.log("User account deleted successfully.");
+                    return true;
+                }).catch((error) => {
+                    // An error happened.
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.error("Error deleting user account:", errorCode, errorMessage);
+                    return error;
+                });
+        },
+
+        'updateEmail': async (email) => {
+            updateEmail(user, email)
+                .then(() => {
+                    // Email updated successfully.
+                    console.log("Email address updated successfully!");
+                    return true;
+                }).catch((error) => {
+                    // An error happened.
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.error("Error updating email:", errorCode, errorMessage);
+                    return error;
+                });
+        },
+
+        'updatePassword': async (password) => {
+            updatePassword(user, password)
+                .then(() => {
+                    // Password updated successfully.
+                    console.log("Password updated successfully!");
+                    return true;
+                }).catch((error) => {
+                    // An error happened.
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.error("Error updating password:", errorCode, errorMessage);
+                    return error;
+                });
+        }
+    },
     'u': {
         /**
          * Creates a new user document and returns its ID.
@@ -436,4 +535,5 @@ let DB = {
 
 // Export the DB functions for use in the global scope
 window.DB = DB;
-export { DB, version };
+window.auth = auth
+export { DB, version, auth };
