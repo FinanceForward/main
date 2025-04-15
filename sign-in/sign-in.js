@@ -81,6 +81,27 @@ async function signin() {
     if (emailOBJ.value == '') return errormsg('EMAIL REQUIRED');
     if (passOBJ.value == '') return errormsg('PASSWORD REQUIRED');
 
+    DB.auth.signIn(emailOBJ.value, passOBJ.value).then((uid) => {
+      if (typeof uid === "object" && uid.hasOwnProperty("error")) {
+        console.log("auth failed: ", uid['error']);
+        errormsg({
+          "wrong-password": "That password doesn't look right.",
+          "user-not-found": "No account found with that email.",
+          "invalid-email": "Please check the email format.",
+          "too-many-requests": "Too many attempts. Try again later.",
+          "user-disabled": "This account has been disabled.",
+          "network-request-failed": "Network issue. Try again later.",
+        }[uid['error'].replace('auth/','')] || "Internal Error. Try again. If the problem persists, please contact help@financeforward.us");
+      }
+      console.log('auth created:', emailOBJ.value, passOBJ.value);
+      console.log('uid:', uid);
+      errormsg('AUTH CREATED');
+    }).catch(err => {
+      console.error('firebase auth error:', err);
+      errormsg('INTERNAL: AUTHENTICATION ERROR');
+      return;
+    });
+
     DB.u.exists(hash).then(exists => {
       if (!exists) {
         errormsg('ACCOUNT NOT FOUND');
@@ -132,6 +153,16 @@ async function signup() {
     if (passOBJ.value == '') return errormsg('PASSWORD REQUIRED');
     if (passOBJ.value != passCheckOBJ.value) return errormsg('PASSWORDS DO NOT MATCH');
 
+    let uid_G = null;
+    DB.auth.create(emailOBJ.value, passOBJ.value).then((uid) => {
+      console.log('auth created:', emailOBJ.value, passOBJ.value);
+      errormsg('AUTH CREATED');
+      uid_G = uid;
+    }).catch(err => {
+      console.error('firebase auth error:', err);
+      errormsg('INTERNAL: AUTHENTICATION ERROR');
+      return;
+    });
     DB.u.exists(hash).then(exists => {
       if (exists) {
         errormsg('ACCOUNT ALREADY EXISTS');
@@ -142,7 +173,7 @@ async function signup() {
           console.log('account created:', hash);
 
           // set currency
-          DB.u.update(hash, {'currency': currency}).then(() => {
+          DB.u.update(hash, {'currency': currency, 'ownerUid': uid_G}).then(() => {
             console.log('currency set:', currency);
             errormsg('ACCOUNT CREATED');
 
