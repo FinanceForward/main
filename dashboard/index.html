@@ -8,7 +8,6 @@
    <link rel="stylesheet" href="./dashboard_gamma.css">
    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=edit"/>
-
    <script defer src="../firestore.js" type="module"></script>
    </head>
 <body>
@@ -59,22 +58,31 @@
 
            <div class="dashboard__card dashboard__card--categories">
                <h2 class="dashboard__card-title">Top 3 Categories</h2>
-               <div class="dashboard__list" aria-live="polite">
-                   <div class="dashboard__list-item">
-                       <span class="dashboard__category-name" id="top-cat-1">N/A</span>
-                       <div class="dashboard__category-amount" id="top-cat-amt-1">0.00</div>
+               <div class="donut-chart">
+                   <svg width="100%" height="100%" viewBox="0 0 42 42" class="donut">
+                       <circle class="donut-hole" cx="21" cy="21" r="15.91549430918954" fill="#2F2C27"></circle>
+                       <circle class="donut-ring" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#d2d3d4" stroke-width="3"></circle>
+                       <circle id="donut-segment-1" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#FF9B07" stroke-width="3" stroke-dasharray="0 100"></circle>
+                       <circle id="donut-segment-2" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#f44336" stroke-width="3" stroke-dasharray="0 100"></circle>
+                       <circle id="donut-segment-3" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#ff6600" stroke-width="3" stroke-dasharray="0 100"></circle>
+                   </svg>
+                   <div class="donut-legend">
+                       <div class="donut-legend-item">
+                           <span class="donut-legend-color" style="background-color: #FF9B07;"></span>
+                           <span class="donut-legend-text" id="top-cat-legend-1">N/A</span>
+                       </div>
+                       <div class="donut-legend-item">
+                           <span class="donut-legend-color" style="background-color: #f44336;"></span>
+                           <span class="donut-legend-text" id="top-cat-legend-2">N/A</span>
+                       </div>
+                       <div class="donut-legend-item">
+                           <span class="donut-legend-color" style="background-color: #ff6600;"></span>
+                           <span class="donut-legend-text" id="top-cat-legend-3">N/A</span>
+                       </div>
+                       <a href="../report" class="dashboard__action-link"><img src="../src/icons/receipt_long.png" alt="">View Detailed Report</a>
                    </div>
-                   <div class="dashboard__list-item">
-                       <span class="dashboard__category-name" id="top-cat-2">N/A</span>
-                       <div class="dashboard__category-amount" id="top-cat-amt-2">0.00</div>
-                   </div>
-                   <div class="dashboard__list-item">
-                       <span class="dashboard__category-name" id="top-cat-3">N/A</span>
-                       <div class="dashboard__category-amount" id="top-cat-amt-3">0.00</div>
-                   </div>
-                   <a href="../report" class="dashboard__action-link"><img src="../src/icons/receipt_long.png" alt="">View Detailed Report</a>
                </div>
-            </div>
+           </div>
 
            <div class="dashboard__card dashboard__card--actions">
                 <h2 class="dashboard__card-title">Useful Links</h2>
@@ -506,41 +514,40 @@ button {
 }
 
 /* Categories card will automatically be row 2, col 1 */
-.dashboard__card--categories .dashboard__list {
-   margin-top: var(--space-sm);
-}
-
-.dashboard__list {
-   text-align: left; /* Align list items left */
-   margin: 0 auto; /* Center the list block */
-   max-width: 90%; /* Prevent list from getting too wide */
-}
-
-.dashboard__list-item {
-   font-size: 1.125rem; /* 18px */
-   margin-bottom: var(--space-sm);
+.dashboard__card--categories .donut-chart {
    display: flex;
-   justify-content: space-between; /* Space out name and amount */
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
    gap: var(--space-md);
 }
 
-.dashboard__category-name {
-   font-weight: 400;
-   white-space: nowrap;
-   overflow: hidden;
-   text-overflow: ellipsis; /* Handle long category names */
-   flex-shrink: 1; /* Allow name to shrink */
+.dashboard__card--categories .donut {
+   max-width: 200px;
+   max-height: 200px;
 }
 
-.dashboard__category-amount {
-   font-weight: 700;
-   color: var(--color-text); /* Standard text color for amount */
-   white-space: nowrap;
-   flex-shrink: 0; /* Prevent amount from shrinking */
+.dashboard__card--categories .donut-legend {
+   display: flex;
+   flex-direction: column;
+   gap: var(--space-sm);
 }
-.currency-symbol {
-   color: var(--color-text); /* Dim currency symbol slightly */
-   font-size: 0.9em; /* Slightly smaller symbol */
+
+.dashboard__card--categories .donut-legend-item {
+   display: flex;
+   align-items: center;
+   gap: var(--space-sm);
+}
+
+.dashboard__card--categories .donut-legend-color {
+   width: 20px;
+   height: 20px;
+   border-radius: 50%;
+}
+
+.dashboard__card--categories .donut-legend-text {
+   font-size: 1rem;
+   color: var(--color-text);
 }
 
 /* Actions Card (will automatically be row 2, col 2) */
@@ -783,25 +790,15 @@ const budgetContainer = document.querySelector('.dashboard__card--budget');
 const totalCurrencyPreElement = document.getElementById('total-currency-pre');
 const totalCurrencyPostElement = document.getElementById('total-currency-post');
 
-const topCategoryElements = [
-   document.getElementById('top-cat-1'),
-   document.getElementById('top-cat-2'),
-   document.getElementById('top-cat-3'),
+const topCategoryLegendElements = [
+   document.getElementById('top-cat-legend-1'),
+   document.getElementById('top-cat-legend-2'),
+   document.getElementById('top-cat-legend-3'),
 ];
-const topCategoryAmountElements = [
-   document.getElementById('top-cat-amt-1'),
-   document.getElementById('top-cat-amt-2'),
-   document.getElementById('top-cat-amt-3'),
-];
-const categoryCurrencyPreElements = [
-   document.getElementById('cat1-currency-pre'),
-   document.getElementById('cat2-currency-pre'),
-   document.getElementById('cat3-currency-pre'),
-];
-const categoryCurrencyPostElements = [
-   document.getElementById('cat1-currency-post'),
-   document.getElementById('cat2-currency-post'),
-   document.getElementById('cat3-currency-post'),
+const donutSegmentElements = [
+   document.getElementById('donut-segment-1'),
+   document.getElementById('donut-segment-2'),
+   document.getElementById('donut-segment-3'),
 ];
 
 
@@ -889,6 +886,27 @@ function setBudgetProgress(progress) {
 
    // Update the background-size to match the progress
    progressBar.style.backgroundSize = `${Math.round(1/progress *10000)}% 100%`;  // Width of the gradient is now equal to progress
+}
+
+/**
+* Updates the donut chart segments based on category data.
+* @param {Array} sortedCategories - Array of sorted category data.
+* @param {number} grandTotal - The grand total of all categories.
+*/
+function updateDonutChart(sortedCategories, grandTotal) {
+   let cumulativePercentage = 0;
+
+   sortedCategories.slice(0, 3).forEach((category, index) => {
+       const [catCode, catAmount] = category;
+       const percentage = (catAmount / grandTotal) * 100;
+       const startPercentage = cumulativePercentage;
+       const endPercentage = cumulativePercentage + percentage;
+
+       donutSegmentElements[index].setAttribute('stroke-dasharray', `${percentage} ${100 - percentage}`);
+       donutSegmentElements[index].setAttribute('stroke-dashoffset', `${100 - startPercentage}`);
+       topCategoryLegendElements[index].innerHTML = `${catCode} (${currency(catAmount)})`; // Updates text content
+       cumulativePercentage += percentage;
+   });
 }
 
 // --- Subscription Calculation Logic (Copied from original, consider refactoring if complex) ---
@@ -1169,7 +1187,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
            // Determine Top 3 Categories
-           const sortedCategories = Object.entries(combinedTotals)
+           let sortedCategories = Object.entries(combinedTotals)
                .filter(([key, value]) => typeof value === 'number' && value > 0) // Ensure value is a positive number
                .sort(([, a], [, b]) => b - a); // Sort descending by amount
 
@@ -1190,14 +1208,17 @@ document.addEventListener('DOMContentLoaded', () => {
                if (sortedCategories[i]) {
                    const [catCode, catAmount] = sortedCategories[i];
                    const catName = categoryNameMap[catCode] || catCode; // Use mapped name or code
-                   topCategoryElements[i].innerHTML = catName;
-                   topCategoryAmountElements[i].innerHTML = currency(catAmount);
+                   topCategoryLegendElements[i].innerHTML = catName;
                } else {
                    // Handle cases with fewer than 3 categories
-                   topCategoryElements[i].innerHTML = "N/A";
-                   topCategoryAmountElements[i].innerHTML = currency(0);
+                   topCategoryLegendElements[i].innerHTML = "N/A";
                }
            }
+
+           // Update Donut Chart
+           sortedCategories = sortedCategories.map(x => [categoryNameMap[x[0]] || x[0], x[1]]);
+           console.log("Updated Sorted Categories:", sortedCategories);
+           updateDonutChart(sortedCategories, grandTotal);
 
            // 4. Hide Loader, Show Dashboard
            clearTimeout(loaderTimeout); // Clear the backup timeout
@@ -1207,6 +1228,10 @@ document.addEventListener('DOMContentLoaded', () => {
            const endTime = Date.now();
            console.log(`Dashboard initialized and data loaded in ${endTime - startTime}ms`);
 
+           if (user.hasOwnProperty('newaccount') && user['newaccount'] == true) {
+               newAccountTour();
+           }
+
        } catch (error) {
            console.error("Error fetching or processing dashboard data:", error);
            // Display error state to user
@@ -1215,8 +1240,7 @@ document.addEventListener('DOMContentLoaded', () => {
            toggleDashboard(true); // Show dashboard potentially with error message display
             totalValueElement.innerHTML = 'Error';
             budgetValueElement.innerHTML = 'Error';
-            topCategoryElements.forEach(el => el.innerHTML = 'Error');
-            topCategoryAmountElements.forEach(el => el.innerHTML = 'N/A');
+            topCategoryLegendElements.forEach(el => el.innerHTML = 'Error');
        }
 
    }).catch(error => {
@@ -1227,4 +1251,9 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '../sign-in'; // Or display error on page
    });
 });
+
+function newAccountTour() {
+   console.info("Running New Account Tour!")
+   DB.u.update(getCookie('hash'), { 'newaccount': false }).catch(err => console.error("Failed to update user newaccount status:", err));
+}
 </script>
