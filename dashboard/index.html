@@ -764,8 +764,7 @@ button {
 
 // --- Global Variables & Configuration ---
 // Assume 'version' is defined globally or in firestore.js
-// const version = 'GAMMA 1.0'; // Example if not global
-const versionNOTES = "This is the GAMMA GEMINI 1.0 version, featuring a redesigned interface, and the ability to scan receipts."; // Example notes
+const versionNOTES = "This new version features the ability to add budgets!\nTry it out with the Edit Budget button on the bottom of the page!"; // Example notes
 
 // --- DOM Element Selectors ---
 const loader = document.getElementById('loader');
@@ -1104,9 +1103,10 @@ document.addEventListener('DOMContentLoaded', () => {
        console.log("User data fetched:", user);
 
        // Check version and show notes (using global 'version' variable)
-       if (user.version !== "GAMMA GEMINI 1.0") {
-           alert(`Welcome to Finance Forward GAMMA GEMINI 1.0!\n\n${versionNOTES}`);
-           DB.u.update(userHash, { 'version': 'GAMMA GEMINI 1.0' }).catch(err => console.error("Failed to update user version:", err));
+       if (user.version !== version) {
+           console.log("Version mismatch. Showing version notes.");
+           alert(`Welcome to Finance Forward ${version}!\n\n${versionNOTES}`);
+           DB.u.update(userHash, { 'version': version }).catch(err => console.error("Failed to update user version:", err));
        }
 
        // Initialize custom categories if they don't exist
