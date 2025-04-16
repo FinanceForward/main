@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Receipt - Finance Forward GAMMA</title>
+    <title>Add Receipt - Finance Forward</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=adddashboardinforeceipt_longsettingsmenugavelloginlogoutaccount_circlebar_chartlistphoto_cameraclose"/>
     <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
@@ -21,7 +21,7 @@
            <img class="header__icon header__icon--menu" src="../src/icons/menu.png" alt="Menu">
        </button>
        <div class="header__title">
-           Finance Forward <span class="header__version-badge">GAMMA GEMINI 1.0</span>
+           Finance Forward <span class="header__version-badge">GAMMA GEMMA</span>
        </div>
        <div class="header__actions">
            <a href="../add-receipt" class="header__action-link" aria-label="Add Receipt">
@@ -860,11 +860,21 @@ function handleCategoryChange(event) {
 async function setBudgetInfoSignMain() {
     // Fetch monthly totals and subscriptions
     console.log(monthInput.value)
-    const [totals, subscriptions, budgets] = await Promise.all([
+    const [user, totals, subscriptions, budgets] = await Promise.all([
+        DB.u.get(userHash),
         DB.uCompute.all(userHash, 'totals', monthInput.value),
         DB.uDoc.allDocs(userHash, 'subscriptions'),
         DB.uDoc.allDocs(userHash, 'budgets'),
     ]);
+
+    let currency = null;
+    let isCurrencyAfter = false;
+    if (user.hasOwnProperty('currency') && user['currency'].includes("*")) {
+        currency = user['currency'].split("*")[0]
+        isCurrencyAfter = true;
+    } else {
+        currency = user['currency'];
+    }
 
     console.log("Monthly Totals Data:", totals);
     console.log("Subscriptions Data:", subscriptions);
@@ -882,9 +892,9 @@ async function setBudgetInfoSignMain() {
 
     console.log(`Current total for ${categorySelect.value}/${monthInput.value}: ${grandTotal}`);
     document.getElementById('budget-notice').innerHTML =
-    budgetStatus == "OVERSPENT" ? `You have currently overspent your budget! Currently spent ${grandTotal} out of your ${budgetMax} budget (Over-budget)` :
-    budgetStatus == "WARNING" ? `You are approaching the budget limit! Currently spent ${grandTotal} out of your ${budgetMax} budget (Warning)` :
-    `Currently spent ${grandTotal} out of ${budgetMax} budget (Under-budget)`;
+    budgetStatus == "OVERSPENT" ? `This would put you over your your budget! Spent ${isCurrencyAfter ? '' : currency}${grandTotal}${isCurrencyAfter ? currency : ''} of your ${isCurrencyAfter ? '' : currency}${budgetMax}${isCurrencyAfter ? currency : ''} budget` :
+    budgetStatus == "WARNING" ? `You are approaching the budget limit! Spent ${isCurrencyAfter ? '' : currency}${grandTotal}${isCurrencyAfter ? currency : ''} of your ${isCurrencyAfter ? '' : currency}${budgetMax}${isCurrencyAfter ? currency : ''} budget` :
+    `This would put this month's total at ${grandTotal} out of ${budgetMax} budget (Under-budget)`;
 }
 
 amountInput.addEventListener('change', setBudgetInfoSignMain);
@@ -1063,6 +1073,7 @@ async function handleFileSelect(event, userHash) {
              throw new Error("OCR functions (OCRIMAGE, getProgressCode) not found. Ensure parse.js is loaded and exports them.");
         }
         const ocrResult = await OCRIMAGE(event.target); // Pass the input element
+        console.log('done awaiting')
         // --- Check OCR Status ---
         // Assuming getProgressCode() returns 600 on success as per user's previous code
         if (getProgressCode() !== 600) {
@@ -1081,11 +1092,21 @@ async function handleFileSelect(event, userHash) {
         showScanConfirmPopup(userHash);
         
         // Fetch monthly totals and subscriptions
-        const [totals, subscriptions, budgets] = await Promise.all([
-            DB.uCompute.all(userHash, 'totals', scannedReceiptData.month),
+        const [user, totals, subscriptions, budgets] = await Promise.all([
+            DB.u.get(userHash),
+            DB.uCompute.all(userHash, 'totals', monthInput.value),
             DB.uDoc.allDocs(userHash, 'subscriptions'),
             DB.uDoc.allDocs(userHash, 'budgets'),
         ]);
+
+        let currency = null;
+        let isCurrencyAfter = false;
+        if (user.hasOwnProperty('currency') && user['currency'].includes("*")) {
+            currency = user['currency'].split("*")[0]
+            isCurrencyAfter = true;
+        } else {
+            currency = user['currency'];
+        }
 
         console.log("Monthly Totals Data:", totals);
         console.log("Subscriptions Data:", subscriptions);
@@ -1102,10 +1123,9 @@ async function handleFileSelect(event, userHash) {
 
         console.log(`Current total for ${categorySelect.value}/${scannedReceiptData.month}: ${grandTotal}`);
         document.getElementById('budget-notice-on-popup').innerHTML =
-        budgetStatus == "OVERSPENT" ? `You have currently overspent your budget! Currently spent ${grandTotal} out of ${budgetMax} budget (Over-budget)` :
-        budgetStatus == "WARNING" ? `You are approaching the budget limit! Currently spent ${grandTotal} out of ${budgetMax} budget (Warning)` :
-        `Currently spent ${grandTotal} out of ${budgetMax} budget (Under-budget)`;
-
+        budgetStatus == "OVERSPENT" ? `This would put you over your your budget! Spent ${isCurrencyAfter ? '' : currency}${grandTotal}${isCurrencyAfter ? currency : ''} of your ${isCurrencyAfter ? '' : currency}${budgetMax}${isCurrencyAfter ? currency : ''} budget` :
+        budgetStatus == "WARNING" ? `You are approaching the budget limit! Spent ${isCurrencyAfter ? '' : currency}${grandTotal}${isCurrencyAfter ? currency : ''} of your ${isCurrencyAfter ? '' : currency}${budgetMax}${isCurrencyAfter ? currency : ''} budget` :
+        `This would put this month's total at ${grandTotal} out of ${budgetMax} budget (Under-budget)`;
     } catch (error) {
         console.error('Error during file handling or OCR:', error);
         failAudio?.play();

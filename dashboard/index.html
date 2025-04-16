@@ -81,6 +81,7 @@
                 <div class="dashboard__actions-container">
                    <a href="../category_manager" class="dashboard__action-link"><img src="../src/icons/manage.png" alt=""> Edit Categories</a>
                    <a href="../subs_manager" class="dashboard__action-link"><img src="../src/icons/subscriptions.png" alt=""> Subscriptions</a>
+                   <a href="../receipts" class="dashboard__action-link"><img src="../src/icons/receipt.png" alt=""> Receipts</a>
                    <a href="../links" class="dashboard__action-link"><img src="../src/icons/log.png" alt=""> Other Links</a>
                 </div>
            </div>
@@ -89,6 +90,13 @@
                <h2 class="dashboard__card-title">Budget Status</h2>
                <p class="dashboard__card-value" aria-live="polite">
                   <span id="budget-status-text"><span class="dashboard__card-text">You've spent</span> <span id="budget-total">0.00</span> <span class="dashboard__card-text">of your budget of</span> <span id="budget-max">0.00</span></span> <br>
+                  <div>
+                     <div class="budget-bar-container">
+                        <div class="budget-bar">
+                          <span class="budget-bar-text"></span>
+                        </div>
+                      </div>
+                  </div>
                   <a href="../budget/" class="dashboard__action-link"><span class="material-symbols-outlined">edit</span> Edit Budget</a>
                </p>
             </div>
@@ -129,7 +137,7 @@
    --color-primary-accent-hover: #e68a00; /* Darker Orange */
    --color-danger: #f44336; /* Red */
    --color-green-ok: #4CAF50; /* Green for under-budget */
-   --color-amber-warning: #FFC107; /* Amber for budget warning */
+   --color-warning: #ff6600; /* Amber for budget warning */
    --color-border-subtle: #4a4a4a; /* Added for subtle borders if needed */
 
    /* Font */
@@ -562,9 +570,11 @@ button {
    text-align: center;
    min-width: 150px; /* Minimum width for actions */
    transition: background-color var(--transition-speed) var(--transition-ease);
+   width:fit-content;
+   align-self: center;
 }
 .dashboard__action-link img,
-.dashboard__action-link span, /* Include span for beta icon */
+.dashboard__action-link span, /* Include span for icon */
 .dashboard__card-action img {
    width: 18px;
    height: 18px;
@@ -573,6 +583,36 @@ button {
    align-items: center;
    justify-content: center;
 }
+
+/* Budget Bar Styles */
+.budget-bar-container {
+  width: 100%;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.budget-bar {
+  height: 20px;
+  background: linear-gradient(to right, var(--color-green-ok), var(--color-primary-accent), var(--color-warning), var(--color-danger));
+  background-size: 100% 100%;        /* Default full gradient size */
+  background-position: left center;  /* Position it to start from the left */
+  border-radius: 10px;
+  width: 0%;                         /* Initially set to 0% width */
+  transition: width 0.3s ease-in-out, background-size 0.3s ease-in-out;
+  position: relative;
+}
+
+.budget-bar-text {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+}
+/* End Budget Bar Styles */
 
 .dashboard__action-link:hover,
 .dashboard__card-action:hover {
@@ -833,6 +873,23 @@ function toggleDashboard(show) {
    } else {
        dashboardElement?.classList.add('dashboard--hidden');
    }
+}
+
+/**
+* Sets the budget progress bar and text.
+* @param {number} percentage - The percentage of the budget used.
+*/
+function setBudgetProgress(progress) {
+   const progressBar = document.querySelector('.budget-bar');
+
+   // Ensure progress is between 0 and 100
+   progress = Math.min(Math.max(progress, 0), 100);
+
+   // Set the width of the progress bar
+   progressBar.style.width = progress + '%';
+
+   // Update the background-size to match the progress
+   progressBar.style.backgroundSize = `${Math.round(1/progress *10000)}% 100%`;  // Width of the gradient is now equal to progress
 }
 
 // --- Subscription Calculation Logic (Copied from original, consider refactoring if complex) ---
@@ -1099,16 +1156,14 @@ document.addEventListener('DOMContentLoaded', () => {
                const budgetMax = budgets.filter(budget => budget['category'] == 'all')[0]["limit"] || 0; // Default to 0 if no budget set
                const budgetStatus = grandTotal > budgetMax ? 'OVERSPENT' : (grandTotal > budgetWarn ? 'WARNING' : 'OK');
                if (budgetStatus === 'OVERSPENT') {
-                     budgetValueElement.style.color = 'black';
-                     budgetContainer.style.backgroundColor = 'var(--color-danger)'
-               } else if (budgetStatus === 'WARNING') {
                      budgetValueElement.style.color = 'var(--color-danger)';
-                     budgetMaxElement.style.color = 'var(--color-danger)';
-                     budgetContainer.style.backgroundColor = 'var(--color-amber-warning)'
+               } else if (budgetStatus === 'WARNING') {
+                     budgetValueElement.style.color = 'var(--color-warning)'
                } else {
                      budgetValueElement.style.color = 'var(--color-green-ok)';
                }
                budgetMaxElement.innerHTML = currency(budgetMax);
+               setBudgetProgress((grandTotal / budgetMax) * 100); // Set budget bar
            }
 
 
