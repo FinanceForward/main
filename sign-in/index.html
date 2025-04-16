@@ -687,7 +687,7 @@ async function handleSignupSubmit(event) {
         } else {
             await DB.u.create(hash);
             console.log("Account created:", hash);
-            await DB.u.update(hash, { 'currency': currency });
+            await DB.u.update(hash, { 'currency': currency, 'newaccount': true });
             console.log("Currency set:", currency);
             displayError(signupError, "Account created! Logging you in...", false);
             const expiryDate = new Date();
