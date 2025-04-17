@@ -1129,7 +1129,6 @@ async function handleFileSelect(event, userHash) {
     } catch (error) {
         console.error('Error during file handling or OCR:', error);
         failAudio?.play();
-        alert(`Failed to process receipt image: ${error.message || 'Unknown error'}`);
     } finally {
         // Hide loading indicator, show form again
         ocrLoadingIndicator?.classList.add('section-hidden');

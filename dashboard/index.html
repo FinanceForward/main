@@ -107,6 +107,11 @@
                         </div>
                       </div>
                   </div>
+                  <div>
+                     <div id="sub-budgets__container">
+
+                     </div>
+                  </div>
                   <a href="../budget/" class="dashboard__action-link"><span class="material-symbols-outlined">edit</span> Edit Budget</a>
                </p>
             </div>
@@ -627,6 +632,47 @@ button {
 }
 /* End Budget Bar Styles */
 
+/* Sub-Budget Styles */
+#sub-budgets__container {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.sub-budget-bar__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.sub-budget-bar__label {
+    color: var(--color-text-muted);
+    font-size: calc(1rem + 3px);
+    white-space: nowrap;
+}
+
+.sub-budget-bar__label-large {
+    color: var(--color-text);
+    font-size: calc(1rem + 3px);
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.sub-budget-bar {
+    flex: 1;
+    height: 20px;
+    background-color: #ffffff;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.sub-budget-bar__fill {
+    height: 100%;
+    background-color: var(--color-primary-accent);
+    transition: width 0.3s ease;
+}
+/* End Sub-Budget Styles */
+
 .dashboard__action-link:hover,
 .dashboard__card-action:hover {
    background-color: var(--color-primary-accent-hover);
@@ -769,6 +815,10 @@ button {
        padding: var(--space-sm) var(--space-md);
        min-width: 120px;
     }
+
+   .sub-budget-bar__container {
+      display: block;
+   }
 }
 </style>
 
@@ -1174,7 +1224,7 @@ document.addEventListener('DOMContentLoaded', () => {
            budgetValueElement.innerHTML = currency(grandTotal);
            if (budgets.filter(budget => budget['category'] == 'all').length == 0) {
                budgetValueElement.innerHTML = currency(0);
-               document.getElementById('budget-status-text').innerHTML = '<span class="dashboard__card-text">No Budget Set</span>';
+               document.getElementById('budget-status-text').innerHTML = '<span class="dashboard__card-text">No Overall Budget Set</span>';
            } else {
                const budgetWarn = budgets.filter(budget => budget['category'] == 'all')[0]["warning"] || 0; // Default to 0 if no budget set
                const budgetMax = budgets.filter(budget => budget['category'] == 'all')[0]["limit"] || 0; // Default to 0 if no budget set
@@ -1190,14 +1240,7 @@ document.addEventListener('DOMContentLoaded', () => {
                setBudgetProgress((grandTotal / budgetMax) * 100); // Set budget bar
            }
 
-
-
-           // Determine Top 3 Categories
-           let sortedCategories = Object.entries(combinedTotals)
-               .filter(([key, value]) => typeof value === 'number' && value > 0) // Ensure value is a positive number
-               .sort(([, a], [, b]) => b - a); // Sort descending by amount
-
-           console.log("Sorted Categories:", sortedCategories);
+           const subBudgetsContainer = document.getElementById('sub-budgets__container');
 
            // Map category codes to names (including custom)
            const categoryNameMap = {
@@ -1208,6 +1251,42 @@ document.addEventListener('DOMContentLoaded', () => {
                ...(user.c_categories.reduce((acc, cat) => ({ ...acc, [cat]: cat }), {})) // Add custom categories
            };
 
+           function createBudgetBar(budget, currentSpending) {
+               const categoryName = categoryNameMap[budget.category] || budget.category;
+               const limit = Number(budget.limit) || 0;
+               const spending = Number(currentSpending) || 0;
+               const progressPercent = limit > 0 ? Math.min((spending / limit) * 100, 100) : 0;
+
+               return `
+                  <div class="sub-budget-bar__container">
+                        <div class="sub-budget-bar__label"><span class="sub-budget-bar__label-large">${categoryName}</span> | ${currency(spending)} of ${currency(limit)}</div>
+                        <div class="sub-budget-bar">
+                           <div class="sub-budget-bar__fill" style="width: ${progressPercent}%;${progressPercent == 100 ? ' background-color: var(--color-danger)' : ''}"></div>
+                        </div>
+                  </div>
+               `;
+            }
+
+           if (budgets.filter(budget => budget['category'] != 'all').length == 0) {
+            subBudgetsContainer.innerHTML = '<span class="dashboard__card-text">No Category Budgets Set</span>';
+           } else {
+               const budgetStatusText = budgets.filter(budget => budget['category'] != 'all').map(budget => {
+                   const budgetWarn = budget["warning"] || 0; // Default to 0 if no budget set
+                   const budgetMax = budget["limit"] || 0; // Default to 0 if no budget set
+                   const categoryName = user.c_categories.find(cat => cat === budget.category) || budget.category; // Use custom name if exists
+                   return createBudgetBar(budget, combinedTotals[budget.category] || 0);
+               }).join('<br>');
+               subBudgetsContainer.innerHTML = budgetStatusText;
+           }
+
+
+
+           // Determine Top 3 Categories
+           let sortedCategories = Object.entries(combinedTotals)
+               .filter(([key, value]) => typeof value === 'number' && value > 0) // Ensure value is a positive number
+               .sort(([, a], [, b]) => b - a); // Sort descending by amount
+
+           console.log("Sorted Categories:", sortedCategories);
 
            // Update Top 3 Display
            for (let i = 0; i < 3; i++) {
