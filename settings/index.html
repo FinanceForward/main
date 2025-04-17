@@ -30,6 +30,7 @@
     <nav class="sidebar" id="sidebar">
        <h1 class="sidebar__title">Finance Forward</h1>
        <ul class="sidebar__nav-list">
+           <li class="sidebar__nav-item"><a href="../dashboard"><img src="../src/icons/dashboard.png" alt=""> Dashboard</a></li>
            <li class="sidebar__nav-item"><a href="../add-receipt"><img src="../src/icons/add.png" alt=""> Add Receipt</a></li>
            <li class="sidebar__nav-item"><a href="../report"><img src="../src/icons/receipt_long.png" alt=""> Report</a></li>
            <li class="sidebar__nav-item"><a href="../links"><img src="../src/icons/log.png" alt=""> More Links</a></li>
@@ -38,7 +39,6 @@
        <div class="sidebar__footer">
            <a href="../settings/" class="sidebar__footer-link"><img src="../src/icons/settings.png" alt=""> Account</a>
            <a href="../legal/" class="sidebar__footer-link"><img src="../src/icons/gavel.png" alt=""> Legal</a>
-           <a href="../beta/dashboard/" class="sidebar__footer-link"><span>β</span> Use BETA dashboard</a>
        </div>
     </nav>
 
@@ -729,11 +729,10 @@ async function handleUpdateAccount(event, userHash) {
         let newHash = await createUserHash(newEmail, newPassword); // Assume hash doesn't change initially
 
         // Prepare update data - only include changed fields
-        const updateData = {};
         await DB.u.update(userHash, { 'hash': newHash }); // This likely won't work if hash is the ID
 
-        await DB.auth.updateEmail(newEmail)
-        await DB.auth.updatePassword(newPassword)
+        await DB.auth.updateEmail(newEmail);
+        await DB.auth.updatePassword(newPassword);
 
         const expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + 7);

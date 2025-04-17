@@ -8,9 +8,10 @@
    <link rel="stylesheet" href="./dashboard_gamma.css">
    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=edit"/>
-
    <script defer src="../firestore.js" type="module"></script>
-   </head>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css"/>
+   <script src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
+</head>
 <body>
    <header class="header">
        <button class="header__menu-toggle" id="menu-toggle" aria-label="Toggle menu">
@@ -30,6 +31,7 @@
    <nav class="sidebar" id="sidebar">
        <h1 class="sidebar__title">Finance Forward</h1>
        <ul class="sidebar__nav-list">
+          <li class="sidebar__nav-item"><a href="../dashboard"><img src="../src/icons/dashboard.png" alt=""> Dashboard</a></li>
            <li class="sidebar__nav-item"><a href="../add-receipt"><img src="../src/icons/add.png" alt=""> Add Receipt</a></li>
            <li class="sidebar__nav-item"><a href="../report"><img src="../src/icons/receipt_long.png" alt=""> Report</a></li>
            <li class="sidebar__nav-item"><a href="../links"><img src="../src/icons/log.png" alt=""> More Links</a></li>
@@ -38,7 +40,6 @@
        <div class="sidebar__footer">
            <a href="../settings/" class="sidebar__footer-link"><img src="../src/icons/settings.png" alt=""> Account</a>
            <a href="../legal/" class="sidebar__footer-link"><img src="../src/icons/gavel.png" alt=""> Legal</a>
-           <a href="../beta/dashboard/" class="sidebar__footer-link"><span>β</span> Use BETA dashboard</a>
        </div>
    </nav>
 
@@ -59,28 +60,38 @@
 
            <div class="dashboard__card dashboard__card--categories">
                <h2 class="dashboard__card-title">Top 3 Categories</h2>
-               <div class="dashboard__list" aria-live="polite">
-                   <div class="dashboard__list-item">
-                       <span class="dashboard__category-name" id="top-cat-1">N/A</span>
-                       <div class="dashboard__category-amount" id="top-cat-amt-1">0.00</div>
+               <div class="donut-chart">
+                   <svg width="100%" height="100%" viewBox="0 0 42 42" class="donut">
+                       <circle class="donut-hole" cx="21" cy="21" r="15.91549430918954" fill="#2F2C27"></circle>
+                       <circle class="donut-ring" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#d2d3d4" stroke-width="3"></circle>
+                       <circle id="donut-segment-1" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#FF9B07" stroke-width="3" stroke-dasharray="0 100"></circle>
+                       <circle id="donut-segment-2" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#f44336" stroke-width="3" stroke-dasharray="0 100"></circle>
+                       <circle id="donut-segment-3" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#ff6600" stroke-width="3" stroke-dasharray="0 100"></circle>
+                   </svg>
+                   <div class="donut-legend">
+                       <div class="donut-legend-item">
+                           <span class="donut-legend-color" style="background-color: #FF9B07;"></span>
+                           <span class="donut-legend-text" id="top-cat-legend-1">N/A</span>
+                       </div>
+                       <div class="donut-legend-item">
+                           <span class="donut-legend-color" style="background-color: #f44336;"></span>
+                           <span class="donut-legend-text" id="top-cat-legend-2">N/A</span>
+                       </div>
+                       <div class="donut-legend-item">
+                           <span class="donut-legend-color" style="background-color: #ff6600;"></span>
+                           <span class="donut-legend-text" id="top-cat-legend-3">N/A</span>
+                       </div>
+                       <a href="../report" class="dashboard__action-link"><img src="../src/icons/receipt_long.png" alt="">View Detailed Report</a>
                    </div>
-                   <div class="dashboard__list-item">
-                       <span class="dashboard__category-name" id="top-cat-2">N/A</span>
-                       <div class="dashboard__category-amount" id="top-cat-amt-2">0.00</div>
-                   </div>
-                   <div class="dashboard__list-item">
-                       <span class="dashboard__category-name" id="top-cat-3">N/A</span>
-                       <div class="dashboard__category-amount" id="top-cat-amt-3">0.00</div>
-                   </div>
-                   <a href="../report" class="dashboard__action-link"><img src="../src/icons/receipt_long.png" alt="">View Detailed Report</a>
                </div>
-            </div>
+           </div>
 
            <div class="dashboard__card dashboard__card--actions">
                 <h2 class="dashboard__card-title">Useful Links</h2>
                 <div class="dashboard__actions-container">
                    <a href="../category_manager" class="dashboard__action-link"><img src="../src/icons/manage.png" alt=""> Edit Categories</a>
                    <a href="../subs_manager" class="dashboard__action-link"><img src="../src/icons/subscriptions.png" alt=""> Subscriptions</a>
+                   <a href="../receipts" class="dashboard__action-link"><img src="../src/icons/receipt.png" alt=""> Receipts</a>
                    <a href="../links" class="dashboard__action-link"><img src="../src/icons/log.png" alt=""> Other Links</a>
                 </div>
            </div>
@@ -89,6 +100,18 @@
                <h2 class="dashboard__card-title">Budget Status</h2>
                <p class="dashboard__card-value" aria-live="polite">
                   <span id="budget-status-text"><span class="dashboard__card-text">You've spent</span> <span id="budget-total">0.00</span> <span class="dashboard__card-text">of your budget of</span> <span id="budget-max">0.00</span></span> <br>
+                  <div>
+                     <div class="budget-bar-container">
+                        <div class="budget-bar">
+                          <span class="budget-bar-text"></span>
+                        </div>
+                      </div>
+                  </div>
+                  <div>
+                     <div id="sub-budgets__container">
+
+                     </div>
+                  </div>
                   <a href="../budget/" class="dashboard__action-link"><span class="material-symbols-outlined">edit</span> Edit Budget</a>
                </p>
             </div>
@@ -129,7 +152,7 @@
    --color-primary-accent-hover: #e68a00; /* Darker Orange */
    --color-danger: #f44336; /* Red */
    --color-green-ok: #4CAF50; /* Green for under-budget */
-   --color-amber-warning: #FFC107; /* Amber for budget warning */
+   --color-warning: #ff6600; /* Amber for budget warning */
    --color-border-subtle: #4a4a4a; /* Added for subtle borders if needed */
 
    /* Font */
@@ -497,42 +520,45 @@ button {
    font-size: 3rem; /* 48px - Even more prominent */
 }
 
+.currency-symbol {
+  color: var(--color-text);
+}
+
 /* Categories card will automatically be row 2, col 1 */
-.dashboard__card--categories .dashboard__list {
-   margin-top: var(--space-sm);
-}
-
-.dashboard__list {
-   text-align: left; /* Align list items left */
-   margin: 0 auto; /* Center the list block */
-   max-width: 90%; /* Prevent list from getting too wide */
-}
-
-.dashboard__list-item {
-   font-size: 1.125rem; /* 18px */
-   margin-bottom: var(--space-sm);
+.dashboard__card--categories .donut-chart {
    display: flex;
-   justify-content: space-between; /* Space out name and amount */
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
    gap: var(--space-md);
 }
 
-.dashboard__category-name {
-   font-weight: 400;
-   white-space: nowrap;
-   overflow: hidden;
-   text-overflow: ellipsis; /* Handle long category names */
-   flex-shrink: 1; /* Allow name to shrink */
+.dashboard__card--categories .donut {
+   max-width: 200px;
+   max-height: 200px;
 }
 
-.dashboard__category-amount {
-   font-weight: 700;
-   color: var(--color-text); /* Standard text color for amount */
-   white-space: nowrap;
-   flex-shrink: 0; /* Prevent amount from shrinking */
+.dashboard__card--categories .donut-legend {
+   display: flex;
+   flex-direction: column;
+   gap: var(--space-sm);
 }
-.currency-symbol {
-   color: var(--color-text); /* Dim currency symbol slightly */
-   font-size: 0.9em; /* Slightly smaller symbol */
+
+.dashboard__card--categories .donut-legend-item {
+   display: flex;
+   align-items: center;
+   gap: var(--space-sm);
+}
+
+.dashboard__card--categories .donut-legend-color {
+   width: 20px;
+   height: 20px;
+   border-radius: 50%;
+}
+
+.dashboard__card--categories .donut-legend-text {
+   font-size: 1rem;
+   color: var(--color-text);
 }
 
 /* Actions Card (will automatically be row 2, col 2) */
@@ -562,9 +588,11 @@ button {
    text-align: center;
    min-width: 150px; /* Minimum width for actions */
    transition: background-color var(--transition-speed) var(--transition-ease);
+   width:fit-content;
+   align-self: center;
 }
 .dashboard__action-link img,
-.dashboard__action-link span, /* Include span for beta icon */
+.dashboard__action-link span, /* Include span for icon */
 .dashboard__card-action img {
    width: 18px;
    height: 18px;
@@ -573,6 +601,77 @@ button {
    align-items: center;
    justify-content: center;
 }
+
+/* Budget Bar Styles */
+.budget-bar-container {
+  width: 100%;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.budget-bar {
+  height: 20px;
+  background: linear-gradient(to right, var(--color-green-ok), var(--color-primary-accent), var(--color-warning), var(--color-danger));
+  background-size: 100% 100%;        /* Default full gradient size */
+  background-position: left center;  /* Position it to start from the left */
+  border-radius: 10px;
+  width: 0%;                         /* Initially set to 0% width */
+  transition: width 0.3s ease-in-out, background-size 0.3s ease-in-out;
+  position: relative;
+}
+
+.budget-bar-text {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+}
+/* End Budget Bar Styles */
+
+/* Sub-Budget Styles */
+#sub-budgets__container {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.sub-budget-bar__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.sub-budget-bar__label {
+    color: var(--color-text-muted);
+    font-size: calc(1rem + 3px);
+    white-space: nowrap;
+}
+
+.sub-budget-bar__label-large {
+    color: var(--color-text);
+    font-size: calc(1rem + 3px);
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.sub-budget-bar {
+    flex: 1;
+    height: 20px;
+    background-color: #ffffff;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.sub-budget-bar__fill {
+    height: 100%;
+    background-color: var(--color-primary-accent);
+    transition: width 0.3s ease;
+}
+/* End Sub-Budget Styles */
 
 .dashboard__action-link:hover,
 .dashboard__card-action:hover {
@@ -716,6 +815,10 @@ button {
        padding: var(--space-sm) var(--space-md);
        min-width: 120px;
     }
+
+   .sub-budget-bar__container {
+      display: block;
+   }
 }
 </style>
 
@@ -724,8 +827,7 @@ button {
 
 // --- Global Variables & Configuration ---
 // Assume 'version' is defined globally or in firestore.js
-// const version = 'GAMMA 1.0'; // Example if not global
-const versionNOTES = "This is the GAMMA GEMINI 1.0 version, featuring a redesigned interface, and the ability to scan receipts."; // Example notes
+const versionNOTES = "This new version features the ability to add budgets!\nTry it out with the Edit Budget button on the bottom of the page!"; // Example notes
 
 // --- DOM Element Selectors ---
 const loader = document.getElementById('loader');
@@ -744,25 +846,15 @@ const budgetContainer = document.querySelector('.dashboard__card--budget');
 const totalCurrencyPreElement = document.getElementById('total-currency-pre');
 const totalCurrencyPostElement = document.getElementById('total-currency-post');
 
-const topCategoryElements = [
-   document.getElementById('top-cat-1'),
-   document.getElementById('top-cat-2'),
-   document.getElementById('top-cat-3'),
+const topCategoryLegendElements = [
+   document.getElementById('top-cat-legend-1'),
+   document.getElementById('top-cat-legend-2'),
+   document.getElementById('top-cat-legend-3'),
 ];
-const topCategoryAmountElements = [
-   document.getElementById('top-cat-amt-1'),
-   document.getElementById('top-cat-amt-2'),
-   document.getElementById('top-cat-amt-3'),
-];
-const categoryCurrencyPreElements = [
-   document.getElementById('cat1-currency-pre'),
-   document.getElementById('cat2-currency-pre'),
-   document.getElementById('cat3-currency-pre'),
-];
-const categoryCurrencyPostElements = [
-   document.getElementById('cat1-currency-post'),
-   document.getElementById('cat2-currency-post'),
-   document.getElementById('cat3-currency-post'),
+const donutSegmentElements = [
+   document.getElementById('donut-segment-1'),
+   document.getElementById('donut-segment-2'),
+   document.getElementById('donut-segment-3'),
 ];
 
 
@@ -833,6 +925,44 @@ function toggleDashboard(show) {
    } else {
        dashboardElement?.classList.add('dashboard--hidden');
    }
+}
+
+/**
+* Sets the budget progress bar and text.
+* @param {number} percentage - The percentage of the budget used.
+*/
+function setBudgetProgress(progress) {
+   const progressBar = document.querySelector('.budget-bar');
+
+   // Ensure progress is between 0 and 100
+   progress = Math.min(Math.max(progress, 0), 100);
+
+   // Set the width of the progress bar
+   progressBar.style.width = progress + '%';
+
+   // Update the background-size to match the progress
+   progressBar.style.backgroundSize = `${Math.round(1/progress *10000)}% 100%`;  // Width of the gradient is now equal to progress
+}
+
+/**
+* Updates the donut chart segments based on category data.
+* @param {Array} sortedCategories - Array of sorted category data.
+* @param {number} grandTotal - The grand total of all categories.
+*/
+function updateDonutChart(sortedCategories, grandTotal) {
+   let cumulativePercentage = 0;
+
+   sortedCategories.slice(0, 3).forEach((category, index) => {
+       const [catCode, catAmount] = category;
+       const percentage = (catAmount / grandTotal) * 100;
+       const startPercentage = cumulativePercentage;
+       const endPercentage = cumulativePercentage + percentage;
+
+       donutSegmentElements[index].setAttribute('stroke-dasharray', `${percentage} ${100 - percentage}`);
+       donutSegmentElements[index].setAttribute('stroke-dashoffset', `${100 - startPercentage}`);
+       topCategoryLegendElements[index].innerHTML = `${catCode} (${currency(catAmount)})`; // Updates text content
+       cumulativePercentage += percentage;
+   });
 }
 
 // --- Subscription Calculation Logic (Copied from original, consider refactoring if complex) ---
@@ -1047,9 +1177,10 @@ document.addEventListener('DOMContentLoaded', () => {
        console.log("User data fetched:", user);
 
        // Check version and show notes (using global 'version' variable)
-       if (user.version !== "GAMMA GEMINI 1.0") {
-           alert(`Welcome to Finance Forward GAMMA GEMINI 1.0!\n\n${versionNOTES}`);
-           DB.u.update(userHash, { 'version': 'GAMMA GEMINI 1.0' }).catch(err => console.error("Failed to update user version:", err));
+       if (user.version !== version) {
+           console.log("Version mismatch. Showing version notes.");
+           alert(`Welcome to Finance Forward ${version}!\n\n${versionNOTES}`);
+           DB.u.update(userHash, { 'version': version }).catch(err => console.error("Failed to update user version:", err));
        }
 
        // Initialize custom categories if they don't exist
@@ -1093,32 +1224,23 @@ document.addEventListener('DOMContentLoaded', () => {
            budgetValueElement.innerHTML = currency(grandTotal);
            if (budgets.filter(budget => budget['category'] == 'all').length == 0) {
                budgetValueElement.innerHTML = currency(0);
-               document.getElementById('budget-status-text').innerHTML = '<span class="dashboard__card-text">No Budget Set</span>';
+               document.getElementById('budget-status-text').innerHTML = '<span class="dashboard__card-text">No Overall Budget Set</span>';
            } else {
                const budgetWarn = budgets.filter(budget => budget['category'] == 'all')[0]["warning"] || 0; // Default to 0 if no budget set
                const budgetMax = budgets.filter(budget => budget['category'] == 'all')[0]["limit"] || 0; // Default to 0 if no budget set
                const budgetStatus = grandTotal > budgetMax ? 'OVERSPENT' : (grandTotal > budgetWarn ? 'WARNING' : 'OK');
                if (budgetStatus === 'OVERSPENT') {
-                     budgetValueElement.style.color = 'black';
-                     budgetContainer.style.backgroundColor = 'var(--color-danger)'
-               } else if (budgetStatus === 'WARNING') {
                      budgetValueElement.style.color = 'var(--color-danger)';
-                     budgetMaxElement.style.color = 'var(--color-danger)';
-                     budgetContainer.style.backgroundColor = 'var(--color-amber-warning)'
+               } else if (budgetStatus === 'WARNING') {
+                     budgetValueElement.style.color = 'var(--color-warning)'
                } else {
                      budgetValueElement.style.color = 'var(--color-green-ok)';
                }
                budgetMaxElement.innerHTML = currency(budgetMax);
+               setBudgetProgress((grandTotal / budgetMax) * 100); // Set budget bar
            }
 
-
-
-           // Determine Top 3 Categories
-           const sortedCategories = Object.entries(combinedTotals)
-               .filter(([key, value]) => typeof value === 'number' && value > 0) // Ensure value is a positive number
-               .sort(([, a], [, b]) => b - a); // Sort descending by amount
-
-           console.log("Sorted Categories:", sortedCategories);
+           const subBudgetsContainer = document.getElementById('sub-budgets__container');
 
            // Map category codes to names (including custom)
            const categoryNameMap = {
@@ -1129,20 +1251,59 @@ document.addEventListener('DOMContentLoaded', () => {
                ...(user.c_categories.reduce((acc, cat) => ({ ...acc, [cat]: cat }), {})) // Add custom categories
            };
 
+           function createBudgetBar(budget, currentSpending) {
+               const categoryName = categoryNameMap[budget.category] || budget.category;
+               const limit = Number(budget.limit) || 0;
+               const spending = Number(currentSpending) || 0;
+               const progressPercent = limit > 0 ? Math.min((spending / limit) * 100, 100) : 0;
+
+               return `
+                  <div class="sub-budget-bar__container">
+                        <div class="sub-budget-bar__label"><span class="sub-budget-bar__label-large">${categoryName}</span> | ${currency(spending)} of ${currency(limit)}</div>
+                        <div class="sub-budget-bar">
+                           <div class="sub-budget-bar__fill" style="width: ${progressPercent}%;${progressPercent == 100 ? ' background-color: var(--color-danger)' : ''}"></div>
+                        </div>
+                  </div>
+               `;
+            }
+
+           if (budgets.filter(budget => budget['category'] != 'all').length == 0) {
+            subBudgetsContainer.innerHTML = '<span class="dashboard__card-text">No Category Budgets Set</span>';
+           } else {
+               const budgetStatusText = budgets.filter(budget => budget['category'] != 'all').map(budget => {
+                   const budgetWarn = budget["warning"] || 0; // Default to 0 if no budget set
+                   const budgetMax = budget["limit"] || 0; // Default to 0 if no budget set
+                   const categoryName = user.c_categories.find(cat => cat === budget.category) || budget.category; // Use custom name if exists
+                   return createBudgetBar(budget, combinedTotals[budget.category] || 0);
+               }).join('<br>');
+               subBudgetsContainer.innerHTML = budgetStatusText;
+           }
+
+
+
+           // Determine Top 3 Categories
+           let sortedCategories = Object.entries(combinedTotals)
+               .filter(([key, value]) => typeof value === 'number' && value > 0) // Ensure value is a positive number
+               .sort(([, a], [, b]) => b - a); // Sort descending by amount
+
+           console.log("Sorted Categories:", sortedCategories);
 
            // Update Top 3 Display
            for (let i = 0; i < 3; i++) {
                if (sortedCategories[i]) {
                    const [catCode, catAmount] = sortedCategories[i];
                    const catName = categoryNameMap[catCode] || catCode; // Use mapped name or code
-                   topCategoryElements[i].innerHTML = catName;
-                   topCategoryAmountElements[i].innerHTML = currency(catAmount);
+                   topCategoryLegendElements[i].innerHTML = catName;
                } else {
                    // Handle cases with fewer than 3 categories
-                   topCategoryElements[i].innerHTML = "N/A";
-                   topCategoryAmountElements[i].innerHTML = currency(0);
+                   topCategoryLegendElements[i].innerHTML = "N/A";
                }
            }
+
+           // Update Donut Chart
+           sortedCategories = sortedCategories.map(x => [categoryNameMap[x[0]] || x[0], x[1]]);
+           console.log("Updated Sorted Categories:", sortedCategories);
+           updateDonutChart(sortedCategories, grandTotal);
 
            // 4. Hide Loader, Show Dashboard
            clearTimeout(loaderTimeout); // Clear the backup timeout
@@ -1152,6 +1313,10 @@ document.addEventListener('DOMContentLoaded', () => {
            const endTime = Date.now();
            console.log(`Dashboard initialized and data loaded in ${endTime - startTime}ms`);
 
+           if (user.hasOwnProperty('newaccount') && user['newaccount'] == true) {
+               newAccountTour();
+           }
+
        } catch (error) {
            console.error("Error fetching or processing dashboard data:", error);
            // Display error state to user
@@ -1160,8 +1325,7 @@ document.addEventListener('DOMContentLoaded', () => {
            toggleDashboard(true); // Show dashboard potentially with error message display
             totalValueElement.innerHTML = 'Error';
             budgetValueElement.innerHTML = 'Error';
-            topCategoryElements.forEach(el => el.innerHTML = 'Error');
-            topCategoryAmountElements.forEach(el => el.innerHTML = 'N/A');
+            topCategoryLegendElements.forEach(el => el.innerHTML = 'Error');
        }
 
    }).catch(error => {
@@ -1172,4 +1336,223 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '../sign-in'; // Or display error on page
    });
 });
+
+function newAccountTour() {
+   console.info("Running New Account Tour!")
+   DB.u.update(getCookie('hash'), { 'newaccount': false }).catch(err => console.error("Failed to update user newaccount status:", err));
+   // Add tour logic here
+   const tour = new Shepherd.Tour({
+     defaultStepOptions: {
+       cancelIcon: {
+         enabled: true
+       },
+       classes: 'class-1 class-2',
+       scrollTo: { behavior: 'smooth', block: 'center' }
+     },
+     useModalOverlay: true,
+   });
+
+   tour.addStep({
+     title: 'Welcome to Finance Forward!',
+     text: 'This is your dashboard. Let\'s take a quick tour.',
+     attachTo: {
+       element: '.header__title',
+       on: 'bottom'
+     },
+     buttons: [
+       {
+         action() {
+           return this.next();
+         },
+         text: 'Next',
+         classes: 'shepherd-button-primary' // Add primary class
+       }
+     ],
+     id: 'welcome'
+   });
+
+   tour.addStep({
+     title: 'Add Receipts',
+     text: 'Click here to add your receipts.',
+     attachTo: {
+       element: '.header__actions a[href="../add-receipt"]',
+       on: 'bottom'
+     },
+     buttons: [
+       {
+         action() {
+           return this.back();
+         },
+         classes: 'shepherd-button-secondary',
+         text: 'Back'
+       },
+       {
+         action() {
+           return this.next();
+         },
+         text: 'Next',
+         classes: 'shepherd-button-primary' // Add primary class
+       }
+     ],
+     id: 'add-receipt'
+   });
+
+   tour.addStep({
+     title: 'Dashboard Title Link',
+     text: 'Click the title to return to the dashboard from any page.',
+     attachTo: {
+       element: '.header__title',
+       on: 'bottom'
+     },
+     buttons: [
+       {
+         action() {
+           return this.back();
+         },
+         classes: 'shepherd-button-secondary',
+         text: 'Back'
+       },
+       {
+         action() {
+           return this.next();
+         },
+         text: 'Next',
+         classes: 'shepherd-button-primary' // Add primary class
+       }
+     ],
+     id: 'dashboard-link'
+   });
+
+     tour.addStep({
+       title: 'View Report',
+       text: 'Click here to view detailed reports.',
+       attachTo: {
+         element: '.sidebar__nav-item a[href="../report"]',
+         on: 'right'
+       },
+       buttons: [
+         {
+           action() {
+             return this.back();
+           },
+           classes: 'shepherd-button-secondary',
+           text: 'Back'
+         },
+         {
+           action() {
+             return this.next();
+           },
+           text: 'Next',
+           classes: 'shepherd-button-primary' // Add primary class
+         }
+       ],
+       id: 'view-report'
+     });
+
+   tour.addStep({
+     title: 'Subscription Manager',
+     text: 'Manage your subscriptions here.',
+     attachTo: {
+       element: '.dashboard__actions-container a[href="../subs_manager"]',
+       on: 'top'
+     },
+     buttons: [
+       {
+         action() {
+           return this.back();
+         },
+         classes: 'shepherd-button-secondary',
+         text: 'Back'
+       },
+       {
+         action() {
+           return this.next();
+         },
+         text: 'Next',
+         classes: 'shepherd-button-primary' // Add primary class
+       }
+     ],
+     id: 'subs-manager'
+   });
+
+   tour.addStep({
+     title: 'Top Categories',
+     text: 'See your spending habits by category.',
+     attachTo: {
+       element: '.dashboard__card--categories',
+       on: 'top'
+     },
+     buttons: [
+       {
+         action() {
+           return this.back();
+         },
+         classes: 'shepherd-button-secondary',
+         text: 'Back'
+       },
+       {
+         action() {
+           return this.next();
+         },
+         text: 'Next',
+         classes: 'shepherd-button-primary' // Add primary class
+       }
+     ],
+     id: 'top-categories'
+   });
+
+   tour.addStep({
+     title: 'Budget Status',
+     text: 'Here you can see your budget status.',
+     attachTo: {
+       element: '.dashboard__card--budget',
+       on: 'top'
+     },
+     buttons: [
+       {
+         action() {
+           return this.back();
+         },
+         classes: 'shepherd-button-secondary',
+         text: 'Back'
+       },
+       {
+         action() {
+           return this.next();
+         },
+         text: 'Next',
+         classes: 'shepherd-button-primary' // Add primary class
+       }
+     ],
+     id: 'budget-status'
+   });
+
+   tour.addStep({
+     title: 'Edit Budget',
+     text: 'Click here to edit your budget.',
+     attachTo: {
+       element: '.dashboard__card--budget a[href="../budget/"]',
+       on: 'top'
+     },
+     buttons: [
+       {
+         action() {
+           return this.back();
+         },
+         classes: 'shepherd-button-secondary',
+         text: 'Back'
+       },
+       {
+         action() {
+           return tour.complete();
+         },
+         text: 'Finish',
+         classes: 'shepherd-button-primary' // Add primary class
+       }
+     ],
+     id: 'edit-budget'
+   });
+
+   tour.start();
+}
 </script>

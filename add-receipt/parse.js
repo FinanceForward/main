@@ -590,6 +590,7 @@ function levenshteinDistance(a, b) {
       try {
         const response = await fetch(url, {method: 'POST', body: data});
         const json = await response.json();
+        if (json?.OCRExitCode == 4) return null;
         if (json?.OCRExitCode !== 1 || !json?.ParsedResults?.[0]) {console.error(json); return new Error('OCR failed or no text found')}
         return json['ParsedResults'][0]['ParsedText'].replaceAll('\r\n', ' ');
       } catch (error) {

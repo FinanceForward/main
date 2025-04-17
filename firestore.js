@@ -1,11 +1,11 @@
 // Set version before importing Firebase
-let version = "Gamma Gemma";
+let version = "Gamma Gemma 2.0";
 window.version = version;
 document.addEventListener("DOMContentLoaded", () => {
     try {
-        document.querySelector(".header__version-badge").innerText = "Gamma Gemma";
+        document.querySelector(".header__version-badge").innerText = version;
     } catch {
-        document.querySelector(".minimal-header__version-badge").innerText = "Gamma Gemma";
+        document.querySelector(".minimal-header__version-badge").innerText = version;
     }
     document.querySelector(".header__title").style.cursor = "pointer";
     document.querySelector(".header__title").addEventListener('click', () => {location.href = '../dashboard'});
@@ -96,7 +96,7 @@ let DB = {
         },
 
         'updateEmail': async (email) => {
-            updateEmail(user, email)
+            updateEmail(auth.currentUser, email)
                 .then(() => {
                     // Email updated successfully.
                     console.log("Email address updated successfully!");
@@ -111,7 +111,7 @@ let DB = {
         },
 
         'updatePassword': async (password) => {
-            updatePassword(user, password)
+            updatePassword(auth.currentUser, password)
                 .then(() => {
                     // Password updated successfully.
                     console.log("Password updated successfully!");
