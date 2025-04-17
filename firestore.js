@@ -96,7 +96,7 @@ let DB = {
         },
 
         'updateEmail': async (email) => {
-            updateEmail(user, email)
+            updateEmail(auth.currentUser, email)
                 .then(() => {
                     // Email updated successfully.
                     console.log("Email address updated successfully!");
@@ -111,7 +111,7 @@ let DB = {
         },
 
         'updatePassword': async (password) => {
-            updatePassword(user, password)
+            updatePassword(auth.currentUser, password)
                 .then(() => {
                     // Password updated successfully.
                     console.log("Password updated successfully!");
