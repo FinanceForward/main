@@ -9,11 +9,8 @@
    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=edit"/>
    <script defer src="../firestore.js" type="module"></script>
-   <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css"
-  />
-  <script src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css"/>
+   <script src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
 </head>
 <body>
    <header class="header">
@@ -42,7 +39,6 @@
        <div class="sidebar__footer">
            <a href="../settings/" class="sidebar__footer-link"><img src="../src/icons/settings.png" alt=""> Account</a>
            <a href="../legal/" class="sidebar__footer-link"><img src="../src/icons/gavel.png" alt=""> Legal</a>
-           <a href="../beta/dashboard/" class="sidebar__footer-link"><span>β</span> Use BETA dashboard</a>
        </div>
    </nav>
 
@@ -516,6 +512,10 @@ button {
 }
 .dashboard__card--total .dashboard__card-value {
    font-size: 3rem; /* 48px - Even more prominent */
+}
+
+.currency-symbol {
+  color: var(--color-text);
 }
 
 /* Categories card will automatically be row 2, col 1 */

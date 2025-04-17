@@ -631,6 +631,10 @@ async function handleSigninSubmit(event) {
         console.log("Attempting sign in with hash:", hash);
         if (typeof DB === 'undefined' || !DB.u) throw new Error("Database connection not available.");
 
+        let uid = await DB.auth.signIn(email, pass);
+
+        if (!uid) throw new Error("Invalid credentials.");
+
         const exists = await DB.u.exists(hash);
 
         if (!exists) {
