@@ -30,6 +30,7 @@
     <nav class="sidebar" id="sidebar">
        <h1 class="sidebar__title">Finance Forward</h1>
        <ul class="sidebar__nav-list">
+            <li class="sidebar__nav-item"><a href="../dashboard"><img src="../src/icons/dashboard.png" alt=""> Dashboard</a></li>
            <li class="sidebar__nav-item"><a href="../add-receipt"><img src="../src/icons/add.png" alt=""> Add Receipt</a></li>
            <li class="sidebar__nav-item"><a href="../report"><img src="../src/icons/receipt_long.png" alt=""> Report</a></li>
            <li class="sidebar__nav-item"><a href="../links"><img src="../src/icons/log.png" alt=""> More Links</a></li>
@@ -38,7 +39,6 @@
        <div class="sidebar__footer">
            <a href="../settings/" class="sidebar__footer-link"><img src="../src/icons/settings.png" alt=""> Account</a>
            <a href="../legal/" class="sidebar__footer-link"><img src="../src/icons/gavel.png" alt=""> Legal</a>
-           <a href="../beta/dashboard/" class="sidebar__footer-link"><span>β</span> Use BETA dashboard</a>
        </div>
     </nav>
 
@@ -82,12 +82,12 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="budget-modal-warning" class="form-label">Warning Threshold ($)</label>
+                    <label for="budget-modal-warning" class="form-label">Warning Threshold</label>
                     <input type="number" id="budget-modal-warning" class="form-input" placeholder="e.g., 150" step="0.01" min="0" required>
                     <small class="form-hint">Show a warning when spending reaches this amount.</small>
                 </div>
                  <div class="form-group">
-                    <label for="budget-modal-limit" class="form-label">Spending Limit ($)</label>
+                    <label for="budget-modal-limit" class="form-label">Spending Limit</label>
                     <input type="number" id="budget-modal-limit" class="form-input" placeholder="e.g., 200" step="0.01" min="0.01" required>
                      <small class="form-hint">The total budget amount for this category.</small>
                 </div>
@@ -338,6 +338,9 @@ li::marker { content: ''; }
 
 </style>
 <script>
+
+let omicronPlan = false; // Placeholder for plan check
+
 // budgets_gamma.js
 
 // Assuming 'DB' object and Firestore SDK functions are available globally or imported
@@ -439,10 +442,10 @@ function addEventListeners(userHash) {
 
     // Add Budget Button
     addBudgetButton?.addEventListener('click', () => {
-        if (budgets_global.length == 0) {
+        if (budgets_global.length == 0 || omicronPlan) {
             showAddBudgetModal()
         } else {
-            console.log("A budget already exists.");
+            console.log("A budget already exists!");
         }
     });
 
@@ -507,7 +510,7 @@ async function fetchAndRenderBudgets(userHash) { /* ... (same as before, removed
     } catch (error) { console.error("Error fetching/rendering budgets:", error); budgetsListContainer.innerHTML = ''; showEmptyMessage(true); emptyMessage.textContent = `Error: ${error.message}`; }
     finally {
         setLoadingState(false);
-        if (budgets_global.length != 0) {
+        if (budgets_global.length != 0 && !omicronPlan) {
             addBudgetButton.disabled = true;
             addBudgetButton.color = 'gray';
         }
@@ -558,7 +561,7 @@ function createBudgetCard(budget, currentSpending) {
         </div>
         <div class="budget-card__spending">
             Spent <strong class="${spendingStatusClass}">${formattedSpending}</strong> of ${formattedLimit}
-            ${warning > 0 ? ` (Warn @ ${formattedWarning})` : ''}
+            ${warning > 0 ? ` (Warning @ ${formattedWarning})` : ''}
         </div>
         <div class="progress-bar">
             <div class="progress-bar__fill ${progressBarClass}" style="width: ${progressPercent}%;"></div>
@@ -571,14 +574,13 @@ function createBudgetCard(budget, currentSpending) {
 // --- Add/Edit Budget Modal ---
 
 /** Populates the category dropdown in the modal, excluding 'Subscriptions' */
-let omicronPlan = false; // Placeholder for plan check
 function populateBudgetModalCategories() {
     if (!budgetModalCategorySelect) return;
     const currentValue = budgetModalCategorySelect.value;
     while (budgetModalCategorySelect.options.length > 1) { budgetModalCategorySelect.remove(1); }
     budgetModalCategorySelect.appendChild(new Option("All Categories", "all"));
     Object.entries(categoryNameMap)
-        .filter(([code, name]) => code.toLowerCase() !== 'subscriptions' && name.toLowerCase() !== 'subscriptions') // Filter
+        .filter(([code, name]) => code.toLowerCase() !== 'subscriptions' && code.toLowerCase() !== 'all' && name.toLowerCase() !== 'subscriptions' && name.toLowerCase() !== 'all') // Filter
         .sort(([, nameA], [, nameB]) => nameA.localeCompare(nameB))
         .forEach(([code, name]) => {
             const option = new Option(name + (omicronPlan? '': " (upgrade to omicron plan for category-specific budgets)"), code);
@@ -708,7 +710,7 @@ async function handleBudgetFormSubmit(event, userHash) {
         failAudio?.play();
     } finally {
         setButtonLoading(budgetModalSaveButton, false);
-        if (budgets_global.length != 0) {
+        if (budgets_global.length != 0 && !omicronPlan) {
             addBudgetButton.disabled = true;
             addBudgetButton.color = 'gray';
         }
@@ -746,7 +748,7 @@ async function handleDeleteProceedAction() { /* ... (same as previous) ... */
         successAudio?.play(); hideDeleteConfirmationModal(); await fetchAndRenderBudgets(currentUserHash);
     } catch (error) { console.error("Delete budget error:", error); failAudio?.play(); alert(`Failed to delete: ${error.message || 'Try again.'}`); setButtonLoading(deleteConfirmationProceedButton, false); if(buttonToDisable) setButtonLoading(buttonToDisable, false); hideDeleteConfirmationModal(); }
     finally { 
-        if (budgets_global.length != 0) {
+        if (budgets_global.length != 0 && !omicronPlan) {
             addBudgetButton.disabled = true;
             addBudgetButton.color = 'gray'
             return;

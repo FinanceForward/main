@@ -631,6 +631,10 @@ async function handleSigninSubmit(event) {
         console.log("Attempting sign in with hash:", hash);
         if (typeof DB === 'undefined' || !DB.u) throw new Error("Database connection not available.");
 
+        let uid = await DB.auth.signIn(email, pass);
+
+        if (!uid) throw new Error("Invalid credentials.");
+
         const exists = await DB.u.exists(hash);
 
         if (!exists) {
@@ -677,7 +681,11 @@ async function handleSignupSubmit(event) {
     try {
         const hash = await createUserHash(email, pass);
         console.log("Attempting sign up with hash:", hash);
-        if (typeof DB === 'undefined' || !DB.u) throw new Error("Database connection not available.");
+        if (typeof DB === 'undefined' || !DB.u || !DB.auth) throw new Error("Database connection not available.");
+
+        const uid = await DB.auth.create(email, pass);
+        if (!uid) throw new Error("Failed to create user. UID: " + uid);
+        console.log("User created:", uid);
 
         const exists = await DB.u.exists(hash);
 
@@ -687,8 +695,9 @@ async function handleSignupSubmit(event) {
         } else {
             await DB.u.create(hash);
             console.log("Account created:", hash);
-            await DB.u.update(hash, { 'currency': currency });
-            console.log("Currency set:", currency);
+            await DB.u.update(hash, { 'currency': currency, 'newaccount': true, 'ownerUid': uid });
+            console.log("Account updated with currency:", currency);
+            console.log("UID stored in database:", uid);
             displayError(signupError, "Account created! Logging you in...", false);
             const expiryDate = new Date();
             expiryDate.setDate(expiryDate.getDate() + 7);
