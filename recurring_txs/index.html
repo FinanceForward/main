@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subscription Manager - Finance Forward GAMMA</title>
+    <title>Recurring Transactions - Finance Forward</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=adddashboardinforeceipt_longsettingsmenugavelloginlogoutaccount_circlebar_chartlistsubscriptionsdeletewarningcloseadd_circleeventcalendar_monthtodayedit"/>
     <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
@@ -37,7 +37,6 @@
            <li class="sidebar__nav-item"><a href="../report"><img src="../src/icons/receipt_long.png" alt=""> Report</a></li>
            <li class="sidebar__nav-item"><a href="../links"><img src="../src/icons/log.png" alt=""> More Links</a></li>
        </ul>
-       <button class="sidebar__button sidebar__button--signin" id="signin-button">Sign In</button>
        <div class="sidebar__footer">
            <a href="../settings/" class="sidebar__footer-link"><img src="../src/icons/settings.png" alt=""> Account</a>
            <a href="../legal/" class="sidebar__footer-link"><img src="../src/icons/gavel.png" alt=""> Legal</a>
@@ -45,17 +44,17 @@
     </nav>
 
     <main class="main-content" id="main-content">
-        <h1 class="page-title">Subscription Manager</h1>
+        <h1 class="page-title">Recurring Transactions</h1>
 
         <section class="settings-card">
             <h2 class="settings-card__title">
                 <span class="material-symbols-outlined">add_circle</span>
-                Add New Subscription
+                Add New Recurring Transaction
             </h2>
             <form class="add-subscription-form" id="add-subscription-form">
                 <div class="form-row">
                     <div class="form-group form-group--half">
-                        <label for="sub-name" class="form-label">Subscription Name</label>
+                        <label for="sub-name" class="form-label">Transaction Name</label>
                         <input type="text" id="sub-name" class="form-input" placeholder="e.g., Streaming Service" required>
                     </div>
                     <div class="form-group form-group--half">
@@ -97,7 +96,7 @@
                 </div>
                 <p class="form-error form-error--hidden" id="add-subscription-error"></p>
                 <button type="submit" class="form-button" id="add-subscription-button">
-                    <span class="form-button__text">Add Subscription</span>
+                    <span class="form-button__text">Add Recurring Transaction</span>
                     <span class="form-button__loader"></span>
                 </button>
             </form>
@@ -106,19 +105,19 @@
         <section class="settings-card">
              <h2 class="settings-card__title">
                 <span class="material-symbols-outlined">subscriptions</span>
-                Your Subscriptions
+                Your Recurring Transactions
             </h2>
 
             <div class="loading-indicator loading-indicator--hidden" id="loading-indicator">
                 <div class="loading-indicator__spinner"></div>
-                <span>Loading subscriptions...</span>
+                <span>Loading Recurring Transactions...</span>
             </div>
 
             <div class="subscription-list" id="subscription-list-container">
                 </div>
 
             <p class="empty-message empty-message--hidden" id="empty-message">
-                You haven't added any subscriptions yet.
+                You haven't added any recurring transactions yet.
             </p>
         </section>
 
@@ -595,7 +594,6 @@ function getCookie(cname) {
 // --- DOM Element Selectors ---
 const menuToggle = document.getElementById('menu-toggle');
 const sidebar = document.getElementById('sidebar');
-const signInButton = document.getElementById('signin-button'); // Sidebar button
 // Add Form
 const addSubscriptionForm = document.getElementById('add-subscription-form');
 const subNameInput = document.getElementById('sub-name');
@@ -651,7 +649,7 @@ let allSubscriptionsCache = []; // Cache fetched subscriptions
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("Subscription Manager DOM Loaded.");
-    currentUserHash = checkAuthAndSetupUI();
+    currentUserHash = getCookie('hash');
     if (!currentUserHash) return; // Stop if not authenticated
 
     await loadUserPreferences(currentUserHash); // Fetch currency
@@ -661,21 +659,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     console.log("Subscription Manager Page Initialized.");
 });
-
-/** Checks authentication, sets up basic UI state */
-function checkAuthAndSetupUI() {
-    const userHash = getCookie('hash');
-    if (!userHash) {
-        console.log("User not authenticated. Redirecting to sign-in.");
-        window.location.href = '../sign-in';
-        return null;
-    }
-    if (signInButton) signInButton.style.display = 'none';
-    const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 7);
-    document.cookie = `hash=${userHash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`;
-    return userHash;
-}
 
 /** Loads user currency */
 async function loadUserPreferences(userHash) {
@@ -920,7 +903,7 @@ async function handleAddSubscription(event, userHash) {
 
     // 2. Final Validation
     if (validationError) { displayError(addSubscriptionError, validationError); return; }
-    if (!name) { displayError(addSubscriptionError, "Subscription name cannot be empty."); return; }
+    if (!name) { displayError(addSubscriptionError, "Transaction name cannot be empty."); return; }
     if (isNaN(price) || price <= 0) { displayError(addSubscriptionError, "Please enter a valid positive amount."); return; }
     if (allSubscriptionsCache.some(sub => sub.name.toLowerCase() === name.toLowerCase())) {
          displayError(addSubscriptionError, `A subscription named "${name}" already exists.`); return;
@@ -932,14 +915,14 @@ async function handleAddSubscription(event, userHash) {
     try {
         if (typeof DB === 'undefined' || !DB.uDoc) throw new Error("Database connection not available.");
         await DB.uDoc.newDoc(userHash, 'subscriptions', newSubscription.name, newSubscription);
-        console.log("Subscription added:", newSubscription);
+        console.log("Recurring transaction added:", newSubscription);
         successAudio?.play();
         addSubscriptionForm.reset(); // Clear form
         updateFrequencyDetailsVisibility(subFrequencyInput, frequencyDetailsContainer); // Reset visibility
         await renderSubscriptions(userHash); // Refresh list
     } catch (error) {
         console.error("Error adding subscription:", error);
-        displayError(addSubscriptionError, `Failed to add subscription: ${error.message || 'Please try again.'}`);
+        displayError(addSubscriptionError, `Failed to add recurring transaction: ${error.message || 'Please try again.'}`);
         failAudio?.play();
     } finally {
         setButtonLoading(addSubscriptionButton, false);
@@ -1040,13 +1023,13 @@ async function handleEditSubscriptionSave(event, userHash) {
 
     // 3. Final Validation
     if (validationError) { displayError(editSubscriptionError, validationError); return; }
-    if (!newName) { displayError(editSubscriptionError, "Subscription name cannot be empty."); return; }
+    if (!newName) { displayError(editSubscriptionError, "Transaction name cannot be empty."); return; }
     if (isNaN(newPrice) || newPrice <= 0) { displayError(editSubscriptionError, "Please enter a valid positive amount."); return; }
 
     // Check for duplicate name ONLY if the name was changed
     if (newName.toLowerCase() !== originalName.toLowerCase() &&
         allSubscriptionsCache.some(sub => sub.name.toLowerCase() === newName.toLowerCase())) {
-         displayError(editSubscriptionError, `A subscription named "${newName}" already exists.`);
+         displayError(editSubscriptionError, `A Recurring Transaction named "${newName}" already exists.`);
          return;
     }
 
@@ -1066,14 +1049,14 @@ async function handleEditSubscriptionSave(event, userHash) {
         if (newName === originalName) {
             // Name hasn't changed, just update the existing document
             await DB.uDoc.updateDoc(userHash, 'subscriptions', originalName, updatedSubscriptionData);
-            console.log("Subscription updated:", originalName, updatedSubscriptionData);
+            console.log("Recurring Transaction updated:", originalName, updatedSubscriptionData);
         } else {
             // Name HAS changed. Since name is the ID, we need to delete the old and add the new.
             // Use a transaction or batch write in production for atomicity if possible.
-            console.log(`Subscription renamed from "${originalName}" to "${newName}". Recreating document...`);
+            console.log(`Recurring Transaction renamed from "${originalName}" to "${newName}". Recreating document...`);
             await DB.uDoc.deleteDoc(userHash, 'subscriptions', originalName);
             await DB.uDoc.newDoc(userHash, 'subscriptions', newName, updatedSubscriptionData);
-            console.log("Subscription recreated with new name.");
+            console.log("Recurring Transaction recreated with new name.");
         }
 
         successAudio?.play();
@@ -1081,8 +1064,8 @@ async function handleEditSubscriptionSave(event, userHash) {
         await renderSubscriptions(userHash); // Refresh the list
 
     } catch (error) {
-        console.error("Error updating subscription:", error);
-        displayError(editSubscriptionError, `Failed to update subscription: ${error.message || 'Please try again.'}`);
+        console.error("Error updating Recurring Transaction:", error);
+        displayError(editSubscriptionError, `Failed to update Recurring Transaction: ${error.message || 'Please try again.'}`);
         failAudio?.play();
     } finally {
         setButtonLoading(editPopupSaveButton, false);
@@ -1101,12 +1084,12 @@ function showRemoveConfirmationModal(data) {
 
     // Customize modal content
     if (data?.subscriptionName) {
-        removeConfirmationTitle.innerHTML = `<span class="material-symbols-outlined">warning</span> Delete Subscription?`;
-        removeConfirmationMessage.textContent = `Are you sure you want to permanently delete the subscription:`;
+        removeConfirmationTitle.innerHTML = `<span class="material-symbols-outlined">warning</span> Delete Recurring Transaction?`;
+        removeConfirmationMessage.textContent = `Are you sure you want to permanently delete the Recurring Transaction:`;
         removeConfirmationDetails.innerHTML = `<strong>${data.subscriptionName}</strong>`;
         removeConfirmationDetails.style.display = 'block';
         removeConfirmationProceedButton.classList.add('form-button--danger');
-        removeConfirmationProceedButton.querySelector('.form-button__text').textContent = 'Delete Subscription';
+        removeConfirmationProceedButton.querySelector('.form-button__text').textContent = 'Delete Recurring Transaction';
     } else {
         // Fallback if data is missing
         removeConfirmationDetails.style.display = 'none';
@@ -1141,14 +1124,14 @@ async function handleRemoveProceedAction() {
 
     try {
         await deleteSubscription(subscriptionName, currentUserHash);
-        console.log("Subscription removal successful via modal.");
+        console.log("Recurring Transaction removal successful via modal.");
         successAudio?.play();
         hideRemoveConfirmationModal();
         await renderSubscriptions(currentUserHash); // Refresh the list
     } catch (error) {
         console.error("Proceed action failed:", error);
         failAudio?.play();
-        alert(`Failed to delete subscription: ${error.message || 'Please try again.'}`);
+        alert(`Failed to delete recurring transaction: ${error.message || 'Please try again.'}`);
         setButtonLoading(removeConfirmationProceedButton, false);
         if(buttonToDisable) setButtonLoading(buttonToDisable, false);
         hideRemoveConfirmationModal();

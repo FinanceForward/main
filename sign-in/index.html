@@ -22,7 +22,7 @@
     <main class="auth-page">
         <div class="auth-container" id="auth-container">
 
-            <div class="auth-form-wrapper" id="signin-wrapper">
+            <div class="auth-form-wrapper auth-form-wrapper--hidden" id="signin-wrapper">
                 <h1 class="auth-title">Welcome Back!</h1>
                 <p class="auth-subtitle">Sign in to your account</p>
                 <form class="auth-form" id="signin-form">
@@ -50,7 +50,7 @@
                 </p>
             </div>
 
-            <div class="auth-form-wrapper auth-form-wrapper--hidden" id="signup-wrapper">
+            <div class="auth-form-wrapper" id="signup-wrapper">
                 <h1 class="auth-title">Create Account</h1>
                  <p class="auth-subtitle">Get started with Finance Forward</p>
                 <form class="auth-form" id="signup-form">
@@ -533,9 +533,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Check if already logged in on load
-    if (getCookie('hash')) {
+    if (getCookie('hash') && auth.currentUser) {
         console.log("User already logged in, redirecting to dashboard...");
         window.location.href = '../dashboard';
+    }
+
+    if (getCookie('hash') && !auth.currentUser) {
+        document.cookie = "hash=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax";
+        console.log("User not logged in, showing sign in form.");
+        showSigninForm();
+    } else {
+        console.log("No hash cookie found, showing sign up form.");
+        showSignupForm();
     }
 });
 

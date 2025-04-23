@@ -17,7 +17,7 @@
            <img class="header__icon header__icon--menu" src="../src/icons/menu.png" alt="Menu">
        </button>
        <div class="header__title">
-           Finance Forward <span class="header__version-badge">GAMMA GEMINI 1.0</span>
+           Finance Forward <span class="header__version-badge">GAMMA GEMMA 2</span>
        </div>
        <div class="header__actions">
            <a href="../add-receipt" class="header__action-link" aria-label="Add Receipt">
@@ -35,7 +35,6 @@
            <li class="sidebar__nav-item"><a href="../report"><img src="../src/icons/receipt_long.png" alt=""> Report</a></li>
            <li class="sidebar__nav-item"><a href="../links"><img src="../src/icons/log.png" alt=""> More Links</a></li>
        </ul>
-       <button class="sidebar__button sidebar__button--signin" id="signin-button">Sign In</button>
        <div class="sidebar__footer">
            <a href="../settings/" class="sidebar__footer-link"><img src="../src/icons/settings.png" alt=""> Account</a>
            <a href="../legal/" class="sidebar__footer-link"><img src="../src/icons/gavel.png" alt=""> Legal</a>
@@ -57,7 +56,11 @@
                         Update your email or password.
                         <br><strong>Security Note:</strong> Changing these requires re-login on other devices.
                     </p>
-                     <div class="form-group">
+                    <div class="form-group">
+                        <label for="setting-old-password" class="form-label">Current Password</label>
+                        <input type="password" id="setting-old-password" name="password" class="form-input" placeholder="Enter your old password" autocomplete="current-password">
+                    </div>
+                    <div class="form-group">
                         <label for="setting-email" class="form-label">New Email</label>
                         <input type="email" id="setting-email" name="email" class="form-input" placeholder="Enter new email" autocomplete="email">
                     </div>
@@ -596,6 +599,7 @@ const signInButton = document.getElementById('signin-button'); // Sidebar button
 const accountDetailsForm = document.getElementById('account-details-form');
 const emailInput = document.getElementById('setting-email');
 const passwordInput = document.getElementById('setting-password');
+const oldPasswordInput = document.getElementById('setting-old-password');
 const accountError = document.getElementById('account-error');
 const updateAccountButton = document.getElementById('update-account-button');
 
@@ -624,7 +628,7 @@ let currentAction = null; // To store 'signout' or 'delete' for the modal
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Settings Page DOM Loaded.");
-    currentUserHash = checkAuthAndSetupUI();
+    currentUserHash = getCookie('hash');
     if (!currentUserHash) return; // Stop if not authenticated
 
     loadUserSettings(currentUserHash);
@@ -632,23 +636,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log("Settings Page Initialized.");
 });
-
-/** Checks authentication, sets up basic UI state */
-function checkAuthAndSetupUI() {
-    const userHash = getCookie('hash');
-    if (!userHash) {
-        console.log("User not authenticated. Redirecting to sign-in.");
-        window.location.href = '../sign-in';
-        return null;
-    }
-    if (signInButton) signInButton.style.display = 'none'; // Hide sidebar sign-in
-    // Refresh cookie expiry
-    const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 7);
-    document.cookie = `hash=${userHash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`;
-    console.log("User authenticated:", userHash);
-    return userHash;
-}
 
 /** Loads current user settings and pre-populates fields */
 async function loadUserSettings(userHash) {
@@ -670,6 +657,18 @@ async function loadUserSettings(userHash) {
     } catch (error) {
         console.error("Error loading user settings:", error);
         displayError(prefsError, "Error loading settings.");
+    }
+
+    try {
+        await auth.currentUser.reload();
+        if (auth.currentUser.emailVerified) {
+            emailInput.value = auth.currentUser.email;
+        } else {
+            accountDetailsForm.innerHTML = `<h1>PLEASE VERIFY YOUR EMAIL FIRST <br> (reload this page once you've verified your email)</h1><button onclick="DB.auth.verifyEmail()" class="form-button">Resend Verification</button>`;
+        }
+    } catch (error) {
+        console.error("Error loading email:", error);
+        displayError(accountError, "Error loading email.");
     }
 }
 
@@ -706,9 +705,17 @@ async function handleUpdateAccount(event, userHash) {
     clearErrors();
     const newEmail = emailInput.value.trim();
     const newPassword = passwordInput.value; // Don't trim password
+    const oldPassword = oldPasswordInput.value; // Get old password for verification
+    console.log("Updating account with new email:", newEmail, "and new password:", newPassword);
 
     if ((!newEmail && !newPassword) || sha256(newEmail+newPassword) == getCookie('hash')) {
+        // This runs only if both fields are empty or if the hash is unchanged (which would mean original email and password)
         displayError(accountError, "Enter a new email or password to update.");
+        return;
+    }
+
+    if (!oldPassword) {
+        displayError(accountError, "Please enter your current password to update your account.");
         return;
     }
 
@@ -717,29 +724,44 @@ async function handleUpdateAccount(event, userHash) {
 
     try {
         // Ensure DB object is available
-        if (typeof DB === 'undefined' || !DB.u ) {
+        if (typeof DB === 'undefined' || !DB.u || !DB.auth) {
+            displayError(accountError, "Database connection not available.");
             throw new Error("Database connection not available.");
         }
 
-        // Fetch current user data to get existing email if only password changes
+        // Check if user exists
         const currentUserData = await DB.u.get(userHash);
         if (!currentUserData) throw new Error("Could not retrieve current user.");
 
-        // Calculate new hash ONLY if email or password actually changed
-        let newHash = await createUserHash(newEmail, newPassword); // Assume hash doesn't change initially
+        // Verify old password
+        const renewState = await DB.auth.renew(oldPassword);
 
-        // Prepare update data - only include changed fields
-        await DB.u.update(userHash, { 'hash': newHash }); // This likely won't work if hash is the ID
+        if (!renewState['completed']) {
+            displayError(accountError, "Couldn't verify old password.");
+            console.error("Old password verification failed:", renewState['error']);
+            return;
+        }
 
-        await DB.auth.updateEmail(newEmail);
-        await DB.auth.updatePassword(newPassword);
+        // Calculate new hash
+        let newHash = await createUserHash(newEmail, newPassword || oldPassword);
 
+        // Update user hash in Firestore Document
+        await DB.u.update(userHash, { 'hash': newHash });
+
+        
+        if (newPassword) await DB.auth.updatePassword(newPassword);
+        
+        let emailUpdate = false;
+        if (newEmail && (newEmail !== auth.currentUser.email)) {
+            await DB.auth.updateEmail(newEmail)
+            emailUpdate = true;
+        }
         const expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + 7);
         document.cookie = `hash=${newHash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`;
         currentUserHash = newHash; // Update global hash state
         console.log("Cookie updated to new hash.");
-        displayError(accountError, "Account details updated! You may need to re-login.", false);
+        displayError(accountError, `Account details updated! You may need to re-login${emailUpdate? ". We sent a verification email to your new email, so please verify it! If you didn't receive the email, simply re-update your email." : ' on other devices.'}`, false);
 
         // Clear inputs after successful update
         emailInput.value = '';
