@@ -88,8 +88,13 @@
            <div class="dashboard__card dashboard__card--actions">
                 <h2 class="dashboard__card-title">Useful Links</h2>
                 <div class="dashboard__actions-container">
+<<<<<<< HEAD
                    <a href="../category_manager" class="dashboard__action-link"><img src="../src/icons/manage.png" alt=""> Categories</a>
                    <a href="../recurring_txs" class="dashboard__action-link"><img src="../src/icons/subscriptions.png" alt=""> Reccuring Transactions</a>
+=======
+                   <a href="../category_manager" class="dashboard__action-link"><img src="../src/icons/manage.png" alt=""> Edit Categories</a>
+                   <a href="../subs_manager" class="dashboard__action-link"><img src="../src/icons/subscriptions.png" alt=""> Subscriptions</a>
+>>>>>>> upstream/main
                    <a href="../receipts" class="dashboard__action-link"><img src="../src/icons/receipt.png" alt=""> Receipts</a>
                    <a href="../links" class="dashboard__action-link"><img src="../src/icons/log.png" alt=""> Other Links</a>
                 </div>
@@ -1163,7 +1168,11 @@ document.addEventListener('DOMContentLoaded', () => {
        if (user.version !== version) {
            console.log("Version mismatch. Showing version notes.");
            alert(`Welcome to Finance Forward ${version}!\n\n${versionNOTES}`);
+<<<<<<< HEAD
            DB.u.update(getCookie('hash'), { 'version': version }).catch(err => console.error("Failed to update user version:", err));
+=======
+           DB.u.update(userHash, { 'version': version }).catch(err => console.error("Failed to update user version:", err));
+>>>>>>> upstream/main
        }
 
        // Initialize custom categories if they don't exist
@@ -1432,10 +1441,17 @@ function newAccountTour() {
      });
 
    tour.addStep({
+<<<<<<< HEAD
      title: 'Recurring Transactions',
      text: 'Manage your recurring transactions and subscriptions here.',
      attachTo: {
        element: '.dashboard__actions-container a[href="../recurring_txs"]',
+=======
+     title: 'Subscription Manager',
+     text: 'Manage your subscriptions here.',
+     attachTo: {
+       element: '.dashboard__actions-container a[href="../subs_manager"]',
+>>>>>>> upstream/main
        on: 'top'
      },
      buttons: [

@@ -742,11 +742,19 @@ async function handleUpdateAccount(event, userHash) {
             return;
         }
 
+<<<<<<< HEAD
         // Calculate new hash
         let newHash = await createUserHash(newEmail, newPassword || oldPassword);
 
         // Update user hash in Firestore Document
         await DB.u.update(userHash, { 'hash': newHash });
+=======
+        // Prepare update data - only include changed fields
+        await DB.u.update(userHash, { 'hash': newHash }); // This likely won't work if hash is the ID
+
+        await DB.auth.updateEmail(newEmail);
+        await DB.auth.updatePassword(newPassword);
+>>>>>>> upstream/main
 
         
         if (newPassword) await DB.auth.updatePassword(newPassword);
