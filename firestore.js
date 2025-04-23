@@ -1,9 +1,6 @@
 // Set version before importing Firebase
 let version = "Gamma Gemma 2.0";
-<<<<<<< HEAD
 let TESTING = true; // Set to true for testing purposes
-=======
->>>>>>> upstream/main
 window.version = version;
 document.addEventListener("DOMContentLoaded", () => {
     try {
@@ -143,11 +140,7 @@ let DB = {
         },
 
         'updateEmail': async (email) => {
-<<<<<<< HEAD
             verifyBeforeUpdateEmail(auth.currentUser, email)
-=======
-            updateEmail(auth.currentUser, email)
->>>>>>> upstream/main
                 .then(() => {
                     // Email updated successfully.
                     console.log("Email address updated successfully! User must verify the new email.");
