@@ -35,7 +35,6 @@
            <li class="sidebar__nav-item"><a href="../report"><img src="../src/icons/receipt_long.png" alt=""> Report</a></li>
            <li class="sidebar__nav-item"><a href="../links"><img src="../src/icons/log.png" alt=""> More Links</a></li>
        </ul>
-       <button class="sidebar__button sidebar__button--signin" id="signin-button">Sign In</button>
        <div class="sidebar__footer">
            <a href="../settings/" class="sidebar__footer-link"><img src="../src/icons/settings.png" alt=""> Account</a>
            <a href="../legal/" class="sidebar__footer-link"><img src="../src/icons/gavel.png" alt=""> Legal</a>
@@ -405,9 +404,7 @@ let currentMonthString = ''; // YYYY-MM format
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("Budgets Page DOM Loaded.");
-    currentUserHash = checkAuthAndSetupUI();
-    if (!currentUserHash) return;
-
+    currentUserHash = getCookie('hash');
     setCurrentMonthDisplay();
     await loadUserPreferencesAndCategories(currentUserHash);
     addEventListeners(currentUserHash);
@@ -415,11 +412,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     console.log("Budgets Page Initialized.");
 });
-
-/** Checks auth, sets up basic UI state */
-function checkAuthAndSetupUI() { /* ... (same as before) ... */
-    const userHash = getCookie('hash'); if (!userHash) { window.location.href = '../sign-in'; return null; } if (signInButton) signInButton.style.display = 'none'; const expiryDate = new Date(); expiryDate.setDate(expiryDate.getDate() + 7); document.cookie = `hash=${userHash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`; return userHash;
-}
 
 /** Sets the display for the current month */
 function setCurrentMonthDisplay() { /* ... (same as before) ... */

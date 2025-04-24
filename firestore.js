@@ -1,5 +1,6 @@
 // Set version before importing Firebase
 let version = "Gamma Gemma 2.0";
+let TESTING = true; // Set to true for testing purposes
 window.version = version;
 document.addEventListener("DOMContentLoaded", () => {
     try {
@@ -13,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, setDoc, getDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateEmail, updatePassword, deleteUser, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, deleteUser, signOut, sendEmailVerification, EmailAuthProvider, reauthenticateWithCredential, verifyBeforeUpdateEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 // Firebase config (replace with your actual credentials)
 const firebaseConfig = {
@@ -30,9 +31,52 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+onAuthStateChanged(auth, (user) => {
+    if (location.href.includes("sign-in")) return;
+    if (user) console.log("User signed in:", user);
+    else {
+      // No user is signed in
+      console.error("No user signed in");
+       location.href = "../sign-in";
+    }
+  });
+
 // DB Functions (Only using Firestore SDK functions)
 let DB = {
     'auth': {
+        'renew': async (password) => {
+            const user = auth.currentUser;
+            if (!user) return {'error': 'not-signed-in', 'message': 'No user is currently signed in.', 'completed': false};
+
+            const credential = EmailAuthProvider.credential(user.email, password);
+
+            try {
+                // Reauthenticate the user with the credential
+                await reauthenticateWithCredential(user, credential);
+                console.log("User reauthenticated successfully!");
+                return {'completed': true};
+            } catch (error) {
+                console.error("Error reauthenticating:", error.code, error.message);
+                return {'error': error.code, 'message': error.message, 'completed': false};
+            }
+        },
+
+        /**
+         * Sends an email verification to the current user.
+         * @returns {Promise<Object>} An object indicating the result of the operation.
+         * @description This function uses Firebase Authentication to send a verification email to the current user.
+         * If the user is not logged in, it will return an error message.
+         */
+        'verifyEmail': async () => {
+            try {
+                await sendEmailVerification(auth.currentUser);
+                return {'completed': true};
+            } catch (error) {
+                console.error("Error sending email verification:", error);
+                return {'error': error.code, 'message': error.message, 'completed': false};
+            }
+        },
+
         /**
          * Signs in a user with email and password.
          * @param {string} email - The user's email address.
@@ -96,10 +140,10 @@ let DB = {
         },
 
         'updateEmail': async (email) => {
-            updateEmail(auth.currentUser, email)
+            verifyBeforeUpdateEmail(auth.currentUser, email)
                 .then(() => {
                     // Email updated successfully.
-                    console.log("Email address updated successfully!");
+                    console.log("Email address updated successfully! User must verify the new email.");
                     return true;
                 }).catch((error) => {
                     // An error happened.
@@ -524,13 +568,28 @@ let DB = {
 
     /**
      * Runs a custom Firestore query.
-     * @param {Query} query - The Firestore query to execute.
+     * @param {String} query - The Firestore query to execute.
      * @returns {Promise<QuerySnapshot>} The query results.
      */
     'runQ': (query) => {
-        return getDocs(query);
+        return eval(query);
     }
 };
+
+if (TESTING) {
+    console.group("Debug Enabled");
+    console.log("Running Version Of FF:", version);
+    console.log("Firebase Version:", "10.7.1");
+    console.log("Firebase Config:");
+    console.dir(firebaseConfig);
+    console.log("Database Functions:");
+    console.dir(DB);
+    setTimeout(() => {
+        console.log("Current User:");
+        console.dir(auth.currentUser);
+        console.groupEnd();
+    }, 1000);
+}
 
 
 // Export the DB functions for use in the global scope

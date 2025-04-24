@@ -36,7 +36,6 @@
            <li class="sidebar__nav-item"><a href="../report"><img src="../src/icons/receipt_long.png" alt=""> Report</a></li>
            <li class="sidebar__nav-item"><a href="../links"><img src="../src/icons/log.png" alt=""> More Links</a></li>
            </ul>
-       <button class="sidebar__button sidebar__button--signin" id="signin-button">Sign In</button>
        <div class="sidebar__footer">
            <a href="../settings/" class="sidebar__footer-link"><img src="../src/icons/settings.png" alt=""> Account</a>
            <a href="../legal/" class="sidebar__footer-link"><img src="../src/icons/gavel.png" alt=""> Legal</a>
@@ -89,8 +88,8 @@
            <div class="dashboard__card dashboard__card--actions">
                 <h2 class="dashboard__card-title">Useful Links</h2>
                 <div class="dashboard__actions-container">
-                   <a href="../category_manager" class="dashboard__action-link"><img src="../src/icons/manage.png" alt=""> Edit Categories</a>
-                   <a href="../subs_manager" class="dashboard__action-link"><img src="../src/icons/subscriptions.png" alt=""> Subscriptions</a>
+                   <a href="../category_manager" class="dashboard__action-link"><img src="../src/icons/manage.png" alt=""> Categories</a>
+                   <a href="../recurring_txs" class="dashboard__action-link"><img src="../src/icons/subscriptions.png" alt=""> Reccuring Transactions</a>
                    <a href="../receipts" class="dashboard__action-link"><img src="../src/icons/receipt.png" alt=""> Receipts</a>
                    <a href="../links" class="dashboard__action-link"><img src="../src/icons/log.png" alt=""> Other Links</a>
                 </div>
@@ -1137,23 +1136,7 @@ document.addEventListener('DOMContentLoaded', () => {
        toggleDashboard(true); // Show dashboard even if data failed
    }, 8000); // Increased timeout slightly
 
-   // 2. Check Authentication
-   const userHash = getCookie('hash');
-   if (!userHash) {
-       console.log("User not authenticated. Redirecting to sign-in.");
-       window.location.href = '../sign-in';
-       return; // Stop execution
-   }
-
-   // User is likely authenticated, hide Sign In button
-   if(signInButton) signInButton.style.display = 'none';
-
-   // Refresh cookie expiry
-   const expiryDate = new Date();
-   expiryDate.setDate(expiryDate.getDate() + 7);
-   document.cookie = `hash=${userHash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`; // Added SameSite
-
-   // 3. Fetch User Data and Compute Totals
+   // 2. Fetch User Data and Compute Totals
    // Ensure DB object is available from firestore.js
    if (typeof DB === 'undefined' || !DB.u || !DB.uCompute || !DB.uDoc) {
        console.error('Firestore DB object not found. Ensure firestore.js is loaded correctly.');
@@ -1164,9 +1147,9 @@ document.addEventListener('DOMContentLoaded', () => {
        return;
    }
 
-   DB.u.get(userHash).then(async (user) => {
+   DB.u.get(getCookie('hash')).then(async (user) => {
        if (!user) {
-           console.error("Failed to fetch user data for hash:", userHash);
+           console.error("Failed to fetch user data.");
            // Handle error - maybe redirect to login or show error message
            toggleLoader(false);
            toggleDashboard(true);
@@ -1180,7 +1163,7 @@ document.addEventListener('DOMContentLoaded', () => {
        if (user.version !== version) {
            console.log("Version mismatch. Showing version notes.");
            alert(`Welcome to Finance Forward ${version}!\n\n${versionNOTES}`);
-           DB.u.update(userHash, { 'version': version }).catch(err => console.error("Failed to update user version:", err));
+           DB.u.update(getCookie('hash'), { 'version': version }).catch(err => console.error("Failed to update user version:", err));
        }
 
        // Initialize custom categories if they don't exist
@@ -1196,9 +1179,9 @@ document.addEventListener('DOMContentLoaded', () => {
        try {
            // Fetch monthly totals and subscriptions
            const [monthlyTotals, subscriptions, budgets] = await Promise.all([
-               DB.uCompute.all(userHash, 'totals', currentMonthStr),
-               DB.uDoc.allDocs(userHash, 'subscriptions'),
-               DB.uDoc.allDocs(userHash, 'budgets'),
+               DB.uCompute.all(getCookie('hash'), 'totals', currentMonthStr),
+               DB.uDoc.allDocs(getCookie('hash'), 'subscriptions'),
+               DB.uDoc.allDocs(getCookie('hash'), 'budgets'),
            ]);
 
            console.log("Monthly Totals Data:", monthlyTotals);
@@ -1247,7 +1230,7 @@ document.addEventListener('DOMContentLoaded', () => {
                "a": "Groceries", "b": "Food Out", "c": "Snacks", "d": "Kitchenware",
                "e": "Bathroomware", "f": "Livingware", "g": "Appliances", "h": "Gardenware",
                "j": "Pets", "k": "Health", "l": "Books", "other": "Other",
-               "Subscriptions": "Subscriptions", // Add default subscription category
+               "Subscriptions": "Recurring Transactions", // Add default subscription category
                ...(user.c_categories.reduce((acc, cat) => ({ ...acc, [cat]: cat }), {})) // Add custom categories
            };
 
@@ -1333,7 +1316,6 @@ document.addEventListener('DOMContentLoaded', () => {
        clearTimeout(loaderTimeout);
        toggleLoader(false);
        // Redirect to login or show a critical error message
-        window.location.href = '../sign-in'; // Or display error on page
    });
 });
 
@@ -1450,10 +1432,10 @@ function newAccountTour() {
      });
 
    tour.addStep({
-     title: 'Subscription Manager',
-     text: 'Manage your subscriptions here.',
+     title: 'Recurring Transactions',
+     text: 'Manage your recurring transactions and subscriptions here.',
      attachTo: {
-       element: '.dashboard__actions-container a[href="../subs_manager"]',
+       element: '.dashboard__actions-container a[href="../recurring_txs"]',
        on: 'top'
      },
      buttons: [

@@ -432,7 +432,7 @@ const CATdict = {
     "a": "Groceries", "b": "Food Out", "c": "Snacks", "d": "Kitchenware",
     "e": "Bathroomware", "f": "Livingware", "g": "Appliances", "h": "Gardenware",
     "j": "Pets", "k": "Health", "l": "Books", "other": "OTHER",
-    "Subscriptions": "Subscriptions" // Add default for subscriptions
+    "Subscriptions": "Recurring Transactions" // Add default for subscriptions
 };
 
 // --- Subscription Calculation Logic (Copied from original) ---
@@ -596,8 +596,7 @@ class Sub {
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Printout Page DOM Loaded.");
-    const userHash = checkAuthAndSetupUI_Printout();
-    if (!userHash) return;
+    const userHash = getCookie('hash');
 
     // Set default month value (optional, could let user select first)
     // setDefaultMonth_Printout();
@@ -605,23 +604,6 @@ document.addEventListener('DOMContentLoaded', () => {
     addEventListeners_Printout(userHash);
     console.log("Printout Page Initialized.");
 });
-
-/** Checks auth, redirects if needed */
-function checkAuthAndSetupUI_Printout() {
-    const userHash = getCookie('hash');
-    if (!userHash) {
-        console.log("User not authenticated. Redirecting to sign-in.");
-        window.location.href = '../sign-in';
-        return null;
-    } else {
-        // No sidebar sign-in button here
-        // Refresh cookie expiry
-        const expiryDate = new Date();
-        expiryDate.setDate(expiryDate.getDate() + 7);
-        document.cookie = `hash=${userHash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`;
-        return userHash;
-    }
-}
 
 /** Sets default month value */
 function setDefaultMonth_Printout() {

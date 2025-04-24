@@ -535,7 +535,7 @@ let userCurrencyAfter = false;
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("View Receipts DOM Loaded.");
-    currentUserHash = checkAuthAndSetupUI();
+    currentUserHash = getCookie('hash');
     if (!currentUserHash) return; // Stop if not authenticated
 
     await loadUserPreferences(currentUserHash); // Fetch currency and categories
@@ -545,21 +545,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     console.log("View Receipts Page Initialized.");
 });
-
-/** Checks auth, sets up basic UI state */
-function checkAuthAndSetupUI() {
-    const userHash = getCookie('hash');
-    if (!userHash) {
-        console.log("User not authenticated. Redirecting to sign-in.");
-        window.location.href = '../sign-in';
-        return null;
-    }
-    if (signInButton) signInButton.style.display = 'none';
-    const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 7);
-    document.cookie = `hash=${userHash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`;
-    return userHash;
-}
 
 /** Loads user currency and custom categories */
 async function loadUserPreferences(userHash) {

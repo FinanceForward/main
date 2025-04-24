@@ -39,7 +39,6 @@
            <li class="sidebar__nav-item"><a href="../report"><img src="../src/icons/receipt_long.png" alt=""> Report</a></li>
            <li class="sidebar__nav-item"><a href="../links"><img src="../src/icons/log.png" alt=""> More Links</a></li>
        </ul>
-       <button class="sidebar__button sidebar__button--signin" id="signin-button">Sign In</button>
        <div class="sidebar__footer">
            <a href="../settings/" class="sidebar__footer-link"><img src="../src/icons/settings.png" alt=""> Account</a>
            <a href="../legal/" class="sidebar__footer-link"><img src="../src/icons/gavel.png" alt=""> Legal</a>
@@ -661,7 +660,6 @@ function setDefaultMonth() {
 // --- DOM Element Selectors ---
 const menuToggle = document.getElementById('menu-toggle');
 const sidebar = document.getElementById('sidebar');
-const signInButton = document.getElementById('signin-button'); // Sidebar sign-in button
 const addReceiptForm = document.getElementById('add-receipt-form');
 const amountInput = document.getElementById('receipt-amount');
 const monthInput = document.getElementById('receipt-month');
@@ -736,8 +734,7 @@ document.addEventListener('keyup', (event) => {
 let userHash = null; // Store user hash for later use
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("Add Receipt DOM Loaded. Initializing...");
-    userHash = checkAuthAndSetupUI();
-    if (!userHash) return; // Stop if not authenticated
+    userHash = getCookie('hash');
     addEventListeners(userHash); // Add all event listeners
     
     await populateCategoryDropdown(categorySelect, userHash, true); // Populate main dropdown
@@ -746,25 +743,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     console.log("Add Receipt Page Initialized.");
 });
-
-/**
- * Checks authentication, updates UI accordingly, refreshes cookie.
- * @returns {string|null} User hash if authenticated, null otherwise.
- */
-function checkAuthAndSetupUI() {
-    const userHashx = getCookie('hash');
-    if (!userHashx) {
-        console.log("User not authenticated. Redirecting to sign-in.");
-        window.location.href = '../sign-in';
-        return null;
-    } else {
-        if (signInButton) signInButton.style.display = 'none';
-        const expiryDate = new Date();
-        expiryDate.setDate(expiryDate.getDate() + 7);
-        document.cookie = `hash=${userHashx}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`;
-        return userHashx;
-    }
-}
 
 /**
  * Adds all necessary event listeners.

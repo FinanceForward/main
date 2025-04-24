@@ -37,7 +37,6 @@
            <li class="sidebar__nav-item"><a href="../report"><img src="../src/icons/receipt_long.png" alt=""> Report</a></li>
            <li class="sidebar__nav-item"><a href="../links"><img src="../src/icons/log.png" alt=""> More Links</a></li>
        </ul>
-       <button class="sidebar__button sidebar__button--signin" id="signin-button">Sign In</button>
        <div class="sidebar__footer">
            <a href="../settings/" class="sidebar__footer-link"><img src="../src/icons/settings.png" alt=""> Account</a>
            <a href="../legal/" class="sidebar__footer-link"><img src="../src/icons/gavel.png" alt=""> Legal</a>
@@ -579,7 +578,6 @@ function getCookie(cname) {
 // --- DOM Element Selectors ---
 const menuToggle = document.getElementById('menu-toggle');
 const sidebar = document.getElementById('sidebar');
-const signInButton = document.getElementById('signin-button'); // Sidebar button
 // Add Form
 const addCategoryForm = document.getElementById('add-category-form');
 const newCategoryInput = document.getElementById('new-category-name');
@@ -611,31 +609,12 @@ let currentActionData = null; // Store { categoryName } for the action
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Category Manager DOM Loaded.");
-    currentUserHash = checkAuthAndSetupUI();
-    if (!currentUserHash) return; // Stop if not authenticated
-
+    currentUserHash = getCookie('hash');
     addEventListeners(currentUserHash);
     renderCustomCategories(currentUserHash); // Initial render
 
     console.log("Category Manager Page Initialized.");
 });
-
-/** Checks authentication, sets up basic UI state */
-function checkAuthAndSetupUI() {
-    const userHash = getCookie('hash');
-    if (!userHash) {
-        console.log("User not authenticated. Redirecting to sign-in.");
-        window.location.href = '../sign-in';
-        return null;
-    }
-    if (signInButton) signInButton.style.display = 'none'; // Hide sidebar sign-in
-    // Refresh cookie expiry
-    const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 7);
-    document.cookie = `hash=${userHash}; path=/; expires=${expiryDate.toUTCString()}; SameSite=Lax`;
-    console.log("User authenticated:", userHash);
-    return userHash;
-}
 
 /** Adds all necessary event listeners */
 function addEventListeners(userHash) {
