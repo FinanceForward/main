@@ -1,5 +1,5 @@
 // Set version before importing Firebase
-let version = "Gamma Gemma 2.0";
+let version = "Delta 2";
 let TESTING = true; // Set to true for testing purposes
 window.version = version;
 document.addEventListener("DOMContentLoaded", () => {
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, setDoc, getDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, deleteUser, signOut, sendEmailVerification, EmailAuthProvider, reauthenticateWithCredential, verifyBeforeUpdateEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, deleteUser, signOut, sendEmailVerification, EmailAuthProvider, reauthenticateWithCredential, verifyBeforeUpdateEmail, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 // Firebase config (replace with your actual credentials)
 const firebaseConfig = {
@@ -32,7 +32,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 onAuthStateChanged(auth, (user) => {
-    if (location.href.includes("sign-in")) return;
+    if (location.href.includes("sign-in") || location.href.includes('reset_password')) return;
     if (user) console.log("User signed in:", user);
     else {
       // No user is signed in
@@ -90,7 +90,7 @@ let DB = {
                 return userCredential.user.uid;
             } catch (error) {
                 console.error("Error creating user:", error);
-                return null;
+                return error;
             }
         },
 
@@ -165,6 +165,23 @@ let DB = {
                     const errorCode = error.code;
                     const errorMessage = error.message;
                     console.error("Error updating password:", errorCode, errorMessage);
+                    return error;
+                });
+        },
+
+        'resetPassword': async (email) => {
+            // Send a password reset email to the user
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    // Password reset email sent successfully.
+                    console.log("Password reset email sent successfully!");
+                    return true;
+                })
+                .catch((error) => {
+                    // An error happened.
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.error("Error sending password reset email:", errorCode, errorMessage);
                     return error;
                 });
         }
