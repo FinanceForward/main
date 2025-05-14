@@ -32,7 +32,9 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 onAuthStateChanged(auth, (user) => {
-    if (location.href.includes("sign-in") || location.href.includes('reset_password') || location.href.endsWith('s')) return;
+    try { if (userIsOnLandingPage) return; }
+    catch { console.log("user is not on landing page") }
+    if (location.href.includes("sign-in") || location.href.includes('reset_password')) return;
     if (user) console.log("User signed in:", user);
     else {
       // No user is signed in
