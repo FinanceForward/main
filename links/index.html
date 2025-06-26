@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=chevron_backwardsavings" />
-    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.png">
     <style>
         body {
             font-family: 'Manrope', sans-serif;
@@ -21,7 +21,7 @@
         }
 
         h1 {
-            color: #FF9B07; /* A more vibrant yellow/gold */
+            color: #2482ba;
             text-align: center;
             margin-top: 20px;
             margin-bottom: 30px;
@@ -45,7 +45,7 @@
             width: 90%; /* Slightly reduced width with margin for better spacing on smaller screens */
             padding: 12px;
             border-radius: 6px;
-            border: 1px solid #FF4500; /* Consistent accent color */
+            border: 1px solid #2482ba; /* Consistent accent color */
             margin-bottom: 30px;
             font-size: 18px;
             box-sizing: border-box;
@@ -71,7 +71,7 @@
             padding: 12px 15px;
             border-radius: 6px;
             cursor: pointer;
-            background-color: #FF9B07; /* Vibrant button color */
+            background-color: #29a4ed; /* Vibrant button color */
             transition: background-color 0.3s ease, color 0.3s ease;
             font-size: 16px; /* Slightly smaller for better fit in the grid */
             text-decoration: none;
@@ -82,7 +82,7 @@
         }
 
         #links-div a:hover {
-            background-color: #FF4500; /* Slightly darker shade on hover */
+            background-color: #42b72a; /* Slightly darker shade on hover */
             color: #121212;
         }
 
@@ -98,7 +98,7 @@
         }
 
         .rare-use:hover {
-            background-color: #263238 !important;
+            background-color: #42b72a !important;
         }
     </style>
     <title>Links - Finance Forward</title>
@@ -109,6 +109,7 @@
     <input type="text" id="search" placeholder="Search...">
     <div id="links-div">
         <a href="../dashboard/">Dashboard <img src="../src/icons/dashboard.png"></a>
+        <a href="../navigator/" style="font-weight: 900; text-decoration: underline 2px;">Navigator (AI assistant) <img src="../src/icons/robot.png"></a>
         <a href="../dashboard/">Dashboard <img src="../src/icons/dashboard.png"></a>
         <a href="../add-receipt/">Add Receipt <img src="../src/icons/add.png"></a>
         <a href="../report/">View Report <img src="../src/icons/receipt_long.png"></a>
@@ -119,7 +120,6 @@
         <a class="rare-use" href="../settings/">Settings <img src="../src/icons/settings.png"></a>
         <a class="rare-use" href="../">Info <img src="../src/icons/info.png"></a>
         <a class="rare-use" href="../legal/">Legal <img src="../src/icons/gavel.png"></a>
-        <a class="rare-use" href="../version_control/">Use Another Version <img src="../src/icons/log.png"></a>
     </div>
     <script>
         let searchbar = document.getElementById('search');

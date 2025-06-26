@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password - Finance Forward</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.png">
     <link rel="stylesheet" href="./reset_password_gamma.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=mail%20lock%20login"/>
     <script defer src="../firestore.js" type="module"></script>
@@ -13,7 +13,7 @@
 <body>
     <header class="minimal-header">
         <a href="../" class="minimal-header__brand" aria-label="Finance Forward Home">
-             <img class="minimal-header__logo" src="../src/fflogo.jpg" alt="Finance Forward Logo">
+             <img class="minimal-header__logo" src="../src/fflogo.png" alt="Finance Forward Logo">
              <span class="minimal-header__title">Finance Forward <span class="minimal-header__version-badge">Delta 2</span></span>
              </a>
     </header>
@@ -216,7 +216,7 @@ async function handlePasswordResetRequest(event) {
 
         // Display success message regardless of whether email exists
         // (This is standard practice to avoid confirming email existence)
-        displayMessage("Check your email for a password reset link. If the email you entered was not found, you will not receive the email.", false); // false = isInfo
+        displayMessage("Check your email for a password reset link. If the email you entered was not found, you will not receive the email. Check your spam folder!", false); // false = isInfo
 
         // Optionally disable the button after success to prevent spamming
         // resetButton.disabled = true;
@@ -279,3 +279,4 @@ function setButtonLoading(isLoading) {
     }
 }
 </script>
+<link rel="stylesheet" href="../src/globalstyles.css">

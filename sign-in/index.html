@@ -6,7 +6,7 @@
     <title>Sign In / Sign Up - Finance Forward</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=visibility,visibility_off"/>
-    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.png">
     <link rel="stylesheet" href="./signin_gamma.css">
 
     <script defer src="../firestore.js" type="module"></script>
@@ -14,7 +14,7 @@
 <body>
     <header class="minimal-header">
         <a href="../" class="minimal-header__brand" aria-label="Finance Forward Home">
-             <img class="minimal-header__logo" src="../src/fflogo.jpg" alt="Finance Forward Logo">
+             <img class="minimal-header__logo" src="../src/fflogo.png" alt="Finance Forward Logo">
              <span class="minimal-header__title">Finance Forward <span class="minimal-header__version-badge">GAMMA GEMINI 1.0</span></span>
         </a>
     </header>
@@ -286,7 +286,7 @@ input, select, button { font-family: inherit; font-size: 1rem; }
     line-height: var(--input-height); /* Vertically center text */
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--border-radius-md); /* Slightly larger radius */
-    color: var(--color-text);
+    color: var(--color-text-other);
     background-color: var(--color-input-bg);
     font-size: 1.1rem; /* Bigger font */
     transition: border-color var(--transition-speed) var(--transition-ease), box-shadow var(--transition-speed) var(--transition-ease);
@@ -721,3 +721,4 @@ async function handleSignupSubmit(event) {
     }
 }
 </script>
+<link rel="stylesheet" href="../src/globalstyles.css">

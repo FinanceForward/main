@@ -6,7 +6,7 @@
     <title>Add Receipt - Finance Forward</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=adddashboardinforeceipt_longsettingsmenugavelloginlogoutaccount_circlebar_chartlistphoto_cameraclose"/>
-    <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+    <link rel="icon" type="image/x-icon" href="../src/fflogo.png">
     <link rel="stylesheet" href="./add-receipt_gamma.css">
 
     <script defer src="../firestore.js" type="module"></script>
@@ -21,13 +21,13 @@
            <img class="header__icon header__icon--menu" src="../src/icons/menu.png" alt="Menu">
        </button>
        <div class="header__title">
-           Finance Forward <span class="header__version-badge">GAMMA GEMMA</span>
+           Finance Forward <span class="header__version-badge">EPSILON 1</span>
        </div>
        <div class="header__actions">
            <a href="../add-receipt" class="header__action-link" aria-label="Add Receipt">
                <img src="../src/icons/add.png" alt="Add Receipt" class="header__icon">
            </a>
-           <img class="header__icon header__icon--logo" src="../src/fflogo.jpg" alt="Finance Forward Logo">
+           <img class="header__icon header__icon--logo" src="../src/fflogo.png" alt="Finance Forward Logo">
        </div>
     </header>
 
@@ -93,6 +93,9 @@
                     <button type="submit" id="submit-receipt-button" class="form-button">
                         Submit Receipt
                     </button>
+                    <button type="button" onclick="location.href='../navigator/?voicemode=1'" class="form-button" style="margin-top: 10px; background-color: #ff5500;">
+                        Use A.I. Instead!
+                    </button>
                 </div>
             </form>
         </div>
@@ -118,14 +121,14 @@
                     </select>
                 </div>
             </div>
+            <div class="popup__actions">
+                <button type="button" id="scan-popup-submit-button" class="form-button" style="background-color: var(--color-primary-accent-hover);">
+                    Submit Scanned Receipt
+                </button>
+            </div>
             <div class="popup__actions popup__actions--close">
                 <button type="button" id="scan-popup-close-button" class="form-button">
                     No, this is not correct
-                </button>
-            </div>
-            <div class="popup__actions">
-                <button type="button" id="scan-popup-submit-button" class="form-button">
-                    Submit Scanned Receipt
                 </button>
             </div>
         </div>
@@ -160,14 +163,15 @@
 :root {
    /* Color Palette */
    --color-background: #000000;
-   --color-text: #FFFFFF;
-   --color-header-bg: #838383;
-   --color-sidebar-bg: #2F2C27;
+   --color-text: #ffffff;
+   --color-text-other: #000000;
+   --color-header-bg: #2482ba;
+   --color-sidebar-bg: #29a4ed;
    --color-card-bg: #2F2C27;    /* Using card bg for form container */
-   --color-dashboard-bg: #1E1E1E;
-   --color-input-bg: #3E3A34;
-   --color-primary-accent: #FF9B07;
-   --color-primary-accent-hover: #e68a00;
+   --color-dashboard-bg: #ffffff;
+   --color-input-bg: #fff;
+   --color-primary-accent: #29a4ed;
+   --color-primary-accent-hover: #42b72a;
    --color-border-subtle: #4a4a4a;
    --color-error: #f44336; /* Added for potential future validation */
    --color-disabled: #5a5a5a; /* Added for disabled button */
@@ -220,7 +224,7 @@ input, select, button { font-family: inherit; font-size: 1rem; }
 
 /* --- Header (Consistent) --- */
 .header {
-   background-color: var(--color-header-bg); color: var(--color-text);
+   background-color: var(--color-header-bg); color: var(--color-text-other);
    display: flex; justify-content: space-between; align-items: center;
    padding: 0 var(--space-md); height: var(--header-height);
    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
@@ -229,7 +233,7 @@ input, select, button { font-family: inherit; font-size: 1rem; }
 .header__menu-toggle { display: none; background: none; border: none; padding: var(--space-sm); margin-right: var(--space-sm); }
 .header__title { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: var(--space-sm); }
 .header__version-badge {
-   background-color: var(--color-sidebar-bg); color: var(--color-primary-accent);
+   background-color: var(--color-sidebar-bg); color: var(--color-text);
    padding: var(--space-xs) var(--space-sm); font-size: 0.8rem;
    border-radius: var(--border-radius-sm); font-weight: 700; text-transform: uppercase;
 }
@@ -248,11 +252,11 @@ input, select, button { font-family: inherit; font-size: 1rem; }
    overflow-y: auto; z-index: 900; transition: transform var(--transition-speed) var(--transition-ease);
    display: flex; flex-direction: column;
 }
-.sidebar__title { font-size: 1.5rem; margin-bottom: var(--space-xl); font-weight: 700; color: var(--color-text); }
+.sidebar__title { font-size: 1.5rem; margin-bottom: var(--space-xl); font-weight: 700; color: var(--color-text-other); }
 .sidebar__nav-list { flex-grow: 1; }
 .sidebar__nav-item { margin-bottom: var(--space-sm); }
 .sidebar__nav-item a, .sidebar__footer-link {
-   color: var(--color-text); padding: var(--space-sm) var(--space-md);
+   color: var(--color-text-other); padding: var(--space-sm) var(--space-md);
    display: flex; align-items: center; gap: var(--space-md);
    font-size: 1.125rem; border-radius: var(--border-radius-md);
    transition: color var(--transition-speed) var(--transition-ease), background-color var(--transition-speed) var(--transition-ease);
@@ -261,11 +265,11 @@ input, select, button { font-family: inherit; font-size: 1rem; }
    width: 20px; height: 20px; opacity: 0.8; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
 }
 .sidebar__nav-item a:hover, .sidebar__footer-link:hover {
-   color: var(--color-primary-accent); background-color: rgba(255, 255, 255, 0.05);
+   color: var(--color-text); background-color: rgba(255, 255, 255, 0.05);
 }
 .sidebar__nav-item a:hover img, .sidebar__footer-link:hover img, .sidebar__footer-link:hover span { opacity: 1; }
 .sidebar__button {
-   background-color: var(--color-primary-accent); color: var(--color-text); border: none;
+   background-color: var(--color-primary-accent); color: var(--color-text-other); border: none;
    padding: var(--space-sm) var(--space-md); width: 100%; margin-top: var(--space-lg);
    text-align: center; font-weight: 700; font-size: 1rem;
 }
@@ -292,7 +296,7 @@ input, select, button { font-family: inherit; font-size: 1rem; }
 .form-page__container {
     background-color: var(--color-card-bg); /* Use card background */
     padding: var(--space-xl);
-    border-radius: var(--border-radius-md);
+    border-radius: var(--border-radius-lg);
     width: 100%;
     max-width: 500px; /* Limit form width */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -343,7 +347,7 @@ input, select, button { font-family: inherit; font-size: 1rem; }
     padding: var(--space-md); /* 16px padding */
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--border-radius-sm); /* Smaller radius for inputs */
-    color: var(--color-text);
+    color: var(--color-text-other);
     background-color: var(--color-input-bg);
     font-size: 1rem;
     transition: border-color var(--transition-speed) var(--transition-ease), box-shadow var(--transition-speed) var(--transition-ease);
@@ -515,28 +519,28 @@ input, select, button { font-family: inherit; font-size: 1rem; }
 .popup .form-select { margin-top: var(--space-xs); }
 
 .popup__actions {
-    text-align: right; /* Align button right */
+    text-align: center; /* Align button right */
 }
 .popup__actions .form-button {
-    width: auto; /* Don't force full width */
+    /* width: auto; Don't force full width */
     padding: var(--space-sm) var(--space-lg);
     font-size: 1rem;
 }
 
 .popup__actions--close {
-    text-align: left; /* Align button left */
-    margin-bottom: 10px; /* Space between close and submit button */
+    text-align: center; /* Align button left */
+    margin-top: 10px; /* Space between close and submit button */
 }
 
 .popup__actions--close .form-button {
-    width: auto; /* Don't force full width */
+    /* width: auto; Don't force full width */
     padding: var(--space-sm) var(--space-lg);
     background-color: var(--color-error);
     font-size: 1rem;
 }
 
 .popup__actions--close .form-button:hover {
-    background-color: var(--color-header-bg);
+    background-color: var(--color-error);
 }
 
 /* --- NEW: Shortcuts Overlay Styles (Copied from dashboard) --- */

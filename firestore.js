@@ -1,5 +1,5 @@
 // Set version before importing Firebase
-let version = "Delta 2";
+let version = "Omicron (5)";
 let TESTING = true; // Set to true for testing purposes
 window.version = version;
 document.addEventListener("DOMContentLoaded", () => {
@@ -8,8 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch {
         document.querySelector(".minimal-header__version-badge").innerText = version;
     }
-    document.querySelector(".header__title").style.cursor = "pointer";
-    document.querySelector(".header__title").addEventListener('click', () => {location.href = '../dashboard'});
+    try {
+        document.querySelector(".header__title").style.cursor = "pointer";
+        document.querySelector(".header__title").addEventListener('click', () => {location.href = '../dashboard/'});
+    } catch {
+        console.log("Can't find title")
+    }
 });
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";

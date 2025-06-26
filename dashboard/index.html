@@ -7,8 +7,7 @@
    <meta name="keywords" content="Finance Forward, Finance, Forward, US, Sign In, FF, Fin, For, Finances">
    <title>Dashboard - Finance Forward</title>
    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
-   <link rel="stylesheet" href="./dashboard_gamma.css">
-   <link rel="icon" type="image/x-icon" href="../src/fflogo.jpg">
+   <link rel="icon" type="image/x-icon" href="../src/fflogo.png">
    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=edit"/>
    <script defer src="../firestore.js" type="module"></script>
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css"/>
@@ -26,7 +25,7 @@
            <a href="../add-receipt" class="header__action-link" aria-label="Add Receipt">
                <img src="../src/icons/add.png" alt="Add Receipt" class="header__icon">
            </a>
-           <img class="header__icon header__icon--logo" src="../src/fflogo.jpg" alt="Finance Forward Logo">
+           <img class="header__icon header__icon--logo" src="../src/fflogo.png" alt="Finance Forward Logo">
        </div>
    </header>
 
@@ -56,6 +55,7 @@
                <p class="dashboard__card-value" aria-live="polite">
                    <span id="total-value">0.00</span><br>
                    <a href="../add-receipt" class="dashboard__action-link"><img src="../src/icons/add.png" alt=""> Add A Receipt</a>
+                   <a href="../navigator" class="dashboard__action-link"><img src="../src/icons/robot.png" alt=""> FINANCE NAVIGATOR</a>
                </p>
            </div>
 
@@ -65,21 +65,21 @@
                    <svg width="100%" height="100%" viewBox="0 0 42 42" class="donut">
                        <circle class="donut-hole" cx="21" cy="21" r="15.91549430918954" fill="#2F2C27"></circle>
                        <circle class="donut-ring" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#d2d3d4" stroke-width="3"></circle>
-                       <circle id="donut-segment-1" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#FF9B07" stroke-width="3" stroke-dasharray="0 100"></circle>
-                       <circle id="donut-segment-2" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#f44336" stroke-width="3" stroke-dasharray="0 100"></circle>
-                       <circle id="donut-segment-3" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#ff6600" stroke-width="3" stroke-dasharray="0 100"></circle>
+                       <circle id="donut-segment-1" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#004065" stroke-width="5" stroke-dasharray="0 100"></circle>
+                       <circle id="donut-segment-2" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#1f76a9" stroke-width="5" stroke-dasharray="0 100"></circle>
+                       <circle id="donut-segment-3" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#00a2ff" stroke-width="5" stroke-dasharray="0 100"></circle>
                    </svg>
                    <div class="donut-legend">
                        <div class="donut-legend-item">
-                           <span class="donut-legend-color" style="background-color: #FF9B07;"></span>
+                           <span class="donut-legend-color" style="background-color: #004065;"></span>
                            <span class="donut-legend-text" id="top-cat-legend-1">N/A</span>
                        </div>
                        <div class="donut-legend-item">
-                           <span class="donut-legend-color" style="background-color: #f44336;"></span>
+                           <span class="donut-legend-color" style="background-color: #1f76a9;"></span>
                            <span class="donut-legend-text" id="top-cat-legend-2">N/A</span>
                        </div>
                        <div class="donut-legend-item">
-                           <span class="donut-legend-color" style="background-color: #ff6600;"></span>
+                           <span class="donut-legend-color" style="background-color: #00a2ff;"></span>
                            <span class="donut-legend-text" id="top-cat-legend-3">N/A</span>
                        </div>
                        <a href="../report" class="dashboard__action-link"><img src="../src/icons/receipt_long.png" alt="">View Detailed Report</a>
@@ -88,11 +88,9 @@
            </div>
 
            <div class="dashboard__card dashboard__card--actions">
-                <h2 class="dashboard__card-title">Useful Links</h2>
+                <h2 class="dashboard__card-title">New! Finance Navigator, a personal A.I. for your finances!</h2>
                 <div class="dashboard__actions-container">
-                   <a href="../category_manager" class="dashboard__action-link"><img src="../src/icons/manage.png" alt=""> Categories</a>
-                   <a href="../recurring_txs" class="dashboard__action-link"><img src="../src/icons/subscriptions.png" alt=""> Reccuring Transactions</a>
-                   <a href="../receipts" class="dashboard__action-link"><img src="../src/icons/receipt.png" alt=""> Receipts</a>
+                   <a href="../navigator" class="dashboard__action-link"><img src="../src/icons/robot.png" alt=""> FINANCE NAVIGATOR</a>
                    <a href="../links" class="dashboard__action-link"><img src="../src/icons/log.png" alt=""> Other Links</a>
                 </div>
            </div>
@@ -101,13 +99,6 @@
                <h2 class="dashboard__card-title">Budget Status</h2>
                <p class="dashboard__card-value" aria-live="polite">
                   <span id="budget-status-text"><span class="dashboard__card-text">You've spent</span> <span id="budget-total">0.00</span> <span class="dashboard__card-text">of your budget of</span> <span id="budget-max">0.00</span></span> <br>
-                  <div>
-                     <div class="budget-bar-container">
-                        <div class="budget-bar">
-                          <span class="budget-bar-text"></span>
-                        </div>
-                      </div>
-                  </div>
                   <div>
                      <div id="sub-budgets__container">
 
@@ -132,45 +123,39 @@
            </div>
        </div>
    </main>
-
-   <script src="./dashboard_gamma.js" defer></script>
 </body>
 </html>
 <style>
 /* dashboard_gamma.css */
 
-/* --- Base Styles & Variables --- */
+/* --- Base Styles & Variables (Consistent with Dashboard/Landing) --- */
 :root {
-   /* Color Palette (From Original) */
+   /* Color Palette */
    --color-background: #000000;
-   --color-text: #FFFFFF;
-   --color-header-bg: #838383; /* Slightly lighter gray */
-   --color-sidebar-bg: #2F2C27; /* Dark brown-gray */
-   --color-card-bg: #2F2C27;    /* Same as sidebar */
-   --color-dashboard-bg: #1E1E1E; /* Very dark gray */
-   --color-input-bg: #3E3A34;   /* Medium brown-gray */
-   --color-primary-accent: #FF9B07; /* Orange */
-   --color-primary-accent-hover: #e68a00; /* Darker Orange */
-   --color-danger: #f44336; /* Red */
-   --color-green-ok: #4CAF50; /* Green for under-budget */
-   --color-warning: #ff6600; /* Amber for budget warning */
-   --color-border-subtle: #4a4a4a; /* Added for subtle borders if needed */
+   --color-text: #ffffff;
+   --color-text-other: #000000;
+   --color-header-bg: #2482ba;
+   --color-sidebar-bg: #29a4ed;
+   --color-card-bg: #2F2C27;    /* Using card bg for form container */
+   --color-dashboard-bg: #ffffff;
+   --color-input-bg: #fff;
+   --color-primary-accent: #29a4ed;
+   --color-primary-accent-hover: #42b72a;
+   --color-border-subtle: #4a4a4a;
+   --color-error: #f44336; /* Added for potential future validation */
+   --color-disabled: #5a5a5a; /* Added for disabled button */
+   --color-overlay-bg: rgba(0, 0, 0, 0.75); /* Overlay background */
 
    /* Font */
    --font-family-base: 'Manrope', sans-serif;
 
    /* Spacing */
-   --space-xs: 0.25rem; /* 4px */
-   --space-sm: 0.5rem;  /* 8px */
-   --space-md: 1rem;    /* 16px */
-   --space-lg: 1.5rem;  /* 24px */
-   --space-xl: 2rem;    /* 32px */
-   --space-xxl: 3rem;   /* 48px */
+   --space-xs: 0.25rem; --space-sm: 0.5rem; --space-md: 1rem;
+   --space-lg: 1.5rem; --space-xl: 2rem; --space-xxl: 3rem;
 
    /* Sizes */
    --header-height: 60px;
    --sidebar-width: 250px;
-   --sidebar-width-collapsed: 0px; /* Adjust if you want a collapsed icon state */
 
    /* Transitions */
    --transition-speed: 0.3s;
@@ -179,7 +164,7 @@
    /* Borders */
    --border-radius-sm: 4px;
    --border-radius-md: 8px;
-   --border-radius-lg: 20px; /* For buttons like original */
+   --border-radius-lg: 20px;
 }
 
 /* Reset */
@@ -233,7 +218,7 @@ button {
 /* --- Header --- */
 .header {
    background-color: var(--color-header-bg);
-   color: var(--color-text);
+   color: var(--color-text-other);
    display: flex;
    justify-content: space-between;
    align-items: center;
@@ -265,7 +250,7 @@ button {
 
 .header__version-badge {
    background-color: var(--color-sidebar-bg); /* Match sidebar */
-   color: var(--color-primary-accent);
+   color: var(--color-text);
    padding: var(--space-xs) var(--space-sm);
    font-size: 0.8rem; /* 12.8px */
    border-radius: var(--border-radius-sm);
@@ -296,7 +281,6 @@ button {
 .header__icon--logo {
    width: 40px; /* Original size */
    height: 40px; /* Original size */
-   /* border-radius: 50%; Make logo circular */
 }
 
 .header__icon--menu {
@@ -325,7 +309,7 @@ button {
    font-size: 1.5rem; /* 24px */
    margin-bottom: var(--space-xl);
    font-weight: 700;
-   color: var(--color-text);
+   color: var(--color-text-other);
 }
 
 .sidebar__nav-list {
@@ -338,7 +322,7 @@ button {
 
 .sidebar__nav-item a,
 .sidebar__footer-link {
-   color: var(--color-text);
+   color: var(--color-text-other);
    padding: var(--space-sm) var(--space-md); /* More padding */
    display: flex; /* Align icon and text */
    align-items: center;
@@ -362,7 +346,7 @@ button {
 
 .sidebar__nav-item a:hover,
 .sidebar__footer-link:hover {
-   color: var(--color-primary-accent);
+   color: var(--color-text);
    background-color: rgba(255, 255, 255, 0.05); /* Subtle hover */
 }
 .sidebar__nav-item a:hover img,
@@ -602,36 +586,6 @@ button {
    align-items: center;
    justify-content: center;
 }
-
-/* Budget Bar Styles */
-.budget-bar-container {
-  width: 100%;
-  background-color: #f0f0f0;
-  border-radius: 10px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.budget-bar {
-  height: 20px;
-  background: linear-gradient(to right, var(--color-green-ok), var(--color-primary-accent), var(--color-warning), var(--color-danger));
-  background-size: 100% 100%;        /* Default full gradient size */
-  background-position: left center;  /* Position it to start from the left */
-  border-radius: 10px;
-  width: 0%;                         /* Initially set to 0% width */
-  transition: width 0.3s ease-in-out, background-size 0.3s ease-in-out;
-  position: relative;
-}
-
-.budget-bar-text {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 12px;
-}
-/* End Budget Bar Styles */
 
 /* Sub-Budget Styles */
 #sub-budgets__container {
@@ -933,16 +887,7 @@ function toggleDashboard(show) {
 * @param {number} percentage - The percentage of the budget used.
 */
 function setBudgetProgress(progress) {
-   const progressBar = document.querySelector('.budget-bar');
-
-   // Ensure progress is between 0 and 100
-   progress = Math.min(Math.max(progress, 0), 100);
-
-   // Set the width of the progress bar
-   progressBar.style.width = progress + '%';
-
-   // Update the background-size to match the progress
-   progressBar.style.backgroundSize = `${Math.round(1/progress *10000)}% 100%`;  // Width of the gradient is now equal to progress
+   // Removed: All code related to budget-bar
 }
 
 /**
@@ -1058,7 +1003,7 @@ class Sub {
 menuToggle?.addEventListener('click', () => {
    sidebar?.classList.toggle('sidebar--active');
    // Optional: Add overlay to main content when sidebar is open on mobile
-   // mainContent?.classList.toggle('main-content--overlay-active');
+   mainContent?.classList.toggle('main-content--overlay-active');
 });
 
 // Close sidebar if clicking outside of it (on mobile)
@@ -1073,7 +1018,6 @@ document.addEventListener('click', (event) => {
 });
 
 
-// Shortcut Keys
 document.addEventListener('keydown', (event) => {
    // Show shortcuts overlay on Shift press (if not already typing in an input)
    if (event.key === 'Shift' && !event.repeat) {
@@ -1163,8 +1107,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
        // Check version and show notes (using global 'version' variable)
        if (user.version !== version) {
-           console.log("Version mismatch. Showing version notes.");
-           alert(`Welcome to Finance Forward ${version}!\n\n${versionNOTES}`);
+           console.log("Version mismatch. Updating.");
            DB.u.update(getCookie('hash'), { 'version': version }).catch(err => console.error("Failed to update user version:", err));
        }
 
@@ -1222,7 +1165,6 @@ document.addEventListener('DOMContentLoaded', () => {
                      budgetValueElement.style.color = 'var(--color-green-ok)';
                }
                budgetMaxElement.innerHTML = currency(budgetMax);
-               setBudgetProgress((grandTotal / budgetMax) * 100); // Set budget bar
            }
 
            const subBudgetsContainer = document.getElementById('sub-budgets__container');
@@ -1540,3 +1482,4 @@ function newAccountTour() {
    tour.start();
 }
 </script>
+<link rel="stylesheet" href="../src/globalstyles.css">
