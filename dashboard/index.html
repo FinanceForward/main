@@ -55,58 +55,13 @@
                <p class="dashboard__card-value" aria-live="polite">
                    <span id="total-value">0.00</span><br>
                    <a href="../add-receipt" class="dashboard__action-link"><img src="../src/icons/add.png" alt=""> Add A Receipt</a>
-                   <a href="../navigator" class="dashboard__action-link"><img src="../src/icons/robot.png" alt=""> FINANCE NAVIGATOR</a>
+                   <a href="../navigator" class="dashboard__action-link"><img src="../src/icons/robot.png" alt=""> A.I. Assistant</a>
+                   <a href="../report" class="dashboard__action-link"><img src="../src/icons/receipt_long.png" alt=""> Monthly Report</a>
+               </p><br><hr><br>
+               <h2 class="dashboard__card-title">Insights</h2>
+               <p class="dashboard__card-value" id="auto-insights" aria-live="polite">
                </p>
            </div>
-
-           <div class="dashboard__card dashboard__card--categories">
-               <h2 class="dashboard__card-title">Top 3 Categories</h2>
-               <div class="donut-chart">
-                   <svg width="100%" height="100%" viewBox="0 0 42 42" class="donut">
-                       <circle class="donut-hole" cx="21" cy="21" r="15.91549430918954" fill="#2F2C27"></circle>
-                       <circle class="donut-ring" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#d2d3d4" stroke-width="3"></circle>
-                       <circle id="donut-segment-1" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#004065" stroke-width="5" stroke-dasharray="0 100"></circle>
-                       <circle id="donut-segment-2" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#1f76a9" stroke-width="5" stroke-dasharray="0 100"></circle>
-                       <circle id="donut-segment-3" class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#00a2ff" stroke-width="5" stroke-dasharray="0 100"></circle>
-                   </svg>
-                   <div class="donut-legend">
-                       <div class="donut-legend-item">
-                           <span class="donut-legend-color" style="background-color: #004065;"></span>
-                           <span class="donut-legend-text" id="top-cat-legend-1">N/A</span>
-                       </div>
-                       <div class="donut-legend-item">
-                           <span class="donut-legend-color" style="background-color: #1f76a9;"></span>
-                           <span class="donut-legend-text" id="top-cat-legend-2">N/A</span>
-                       </div>
-                       <div class="donut-legend-item">
-                           <span class="donut-legend-color" style="background-color: #00a2ff;"></span>
-                           <span class="donut-legend-text" id="top-cat-legend-3">N/A</span>
-                       </div>
-                       <a href="../report" class="dashboard__action-link"><img src="../src/icons/receipt_long.png" alt="">View Detailed Report</a>
-                   </div>
-               </div>
-           </div>
-
-           <div class="dashboard__card dashboard__card--actions">
-                <h2 class="dashboard__card-title">New! Finance Navigator, a personal A.I. for your finances!</h2>
-                <div class="dashboard__actions-container">
-                   <a href="../navigator" class="dashboard__action-link"><img src="../src/icons/robot.png" alt=""> FINANCE NAVIGATOR</a>
-                   <a href="../links" class="dashboard__action-link"><img src="../src/icons/log.png" alt=""> Other Links</a>
-                </div>
-           </div>
-
-           <div class="dashboard__card dashboard__card--total dashboard__card--budget">
-               <h2 class="dashboard__card-title">Budget Status</h2>
-               <p class="dashboard__card-value" aria-live="polite">
-                  <span id="budget-status-text"><span class="dashboard__card-text">You've spent</span> <span id="budget-total">0.00</span> <span class="dashboard__card-text">of your budget of</span> <span id="budget-max">0.00</span></span> <br>
-                  <div>
-                     <div id="sub-budgets__container">
-
-                     </div>
-                  </div>
-                  <a href="../budget/" class="dashboard__action-link"><span class="material-symbols-outlined">edit</span> Edit Budget</a>
-               </p>
-            </div>
        </section>
 
        <div class="shortcuts-overlay shortcuts-overlay--hidden" id="shortcuts-overlay">
@@ -447,10 +402,8 @@ button {
 /* --- Dashboard Section --- */
 .dashboard {
    display: grid;
-   /* --- NEW GRID LAYOUT FOR DESKTOP --- */
-   grid-template-columns: 1fr 1fr; /* Two equal columns */
-   grid-template-rows: auto auto; /* Define two rows, height based on content */
-   /* --- END NEW GRID LAYOUT --- */
+   grid-template-columns: 1fr 1fr;
+   grid-template-rows: auto auto;
    gap: var(--space-xl);
    transition: opacity var(--transition-speed) var(--transition-ease), visibility var(--transition-speed) var(--transition-ease);
    opacity: 1;
@@ -460,7 +413,7 @@ button {
 .dashboard--hidden {
    opacity: 0;
    visibility: hidden;
-   position: absolute; /* Take out of flow when hidden */
+   position: absolute;
 }
 
 .dashboard__card {
@@ -470,80 +423,40 @@ button {
    color: var(--color-text);
    display: flex;
    flex-direction: column;
-   justify-content: center; /* Center content vertically */
+   justify-content: center;
    text-align: center;
-   min-height: 200px; /* Minimum card height */
+   min-height: 200px;
    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
 
 .dashboard__card-title {
-   font-size: 1.125rem; /* 18px */
+   font-size: 1.125rem;
    font-weight: 700;
    margin-bottom: var(--space-md);
-   color: var(--color-text); /* Slightly less prominent title */
+   color: var(--color-text);
 }
 
-
 .dashboard__card-value {
-   font-size: 2.5rem; /* 40px - Make total prominent */
+   font-size: 2.5rem;
    font-weight: 700;
-   color: var(--color-primary-accent); /* Highlight value */
+   color: var(--color-primary-accent);
    line-height: 1.2;
 }
 
 .dashboard__card-text {
-   color: var(--color-text) !important; /* Ensure text color is consistent */
+   color: var(--color-text) !important;
 }
 
 /* Specific card adjustments */
 .dashboard__card--total {
-   /* --- NEW: Make total span 2 columns on desktop --- */
    grid-column: 1 / 3;
-   /* --- END NEW --- */
 }
 .dashboard__card--total .dashboard__card-value {
-   font-size: 3rem; /* 48px - Even more prominent */
+   font-size: 3rem;
 }
 
 .currency-symbol {
   color: var(--color-text);
-}
-
-/* Categories card will automatically be row 2, col 1 */
-.dashboard__card--categories .donut-chart {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   justify-content: center;
-   gap: var(--space-md);
-}
-
-.dashboard__card--categories .donut {
-   max-width: 200px;
-   max-height: 200px;
-}
-
-.dashboard__card--categories .donut-legend {
-   display: flex;
-   flex-direction: column;
-   gap: var(--space-sm);
-}
-
-.dashboard__card--categories .donut-legend-item {
-   display: flex;
-   align-items: center;
-   gap: var(--space-sm);
-}
-
-.dashboard__card--categories .donut-legend-color {
-   width: 20px;
-   height: 20px;
-   border-radius: 50%;
-}
-
-.dashboard__card--categories .donut-legend-text {
-   font-size: 1rem;
-   color: var(--color-text);
 }
 
 /* Actions Card (will automatically be row 2, col 2) */
@@ -585,53 +498,6 @@ button {
    display: inline-flex; /* Align beta icon better */
    align-items: center;
    justify-content: center;
-}
-
-/* Sub-Budget Styles */
-#sub-budgets__container {
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
-
-.sub-budget-bar__container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-.sub-budget-bar__label {
-    color: var(--color-text-muted);
-    font-size: calc(1rem + 3px);
-    white-space: nowrap;
-}
-
-.sub-budget-bar__label-large {
-    color: var(--color-text);
-    font-size: calc(1rem + 3px);
-    font-weight: 900;
-    white-space: nowrap;
-}
-
-.sub-budget-bar {
-    flex: 1;
-    height: 20px;
-    background-color: #ffffff;
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-.sub-budget-bar__fill {
-    height: 100%;
-    background-color: var(--color-primary-accent);
-    transition: width 0.3s ease;
-}
-/* End Sub-Budget Styles */
-
-.dashboard__action-link:hover,
-.dashboard__card-action:hover {
-   background-color: var(--color-primary-accent-hover);
-   color: var(--color-text); /* Ensure text remains white on hover */
 }
 
 /* --- Shortcuts Overlay --- */
@@ -761,19 +627,12 @@ button {
        font-size: 1rem; /* Adjust font size */
    }
 
-   .dashboard__actions-container {
-       /* Keep actions stacked vertically on mobile */
-   }
-    .dashboard__action-link,
-    .dashboard__card-action {
+   .dashboard__action-link,
+   .dashboard__card-action {
        font-size: 0.9rem;
        padding: var(--space-sm) var(--space-md);
        min-width: 120px;
     }
-
-   .sub-budget-bar__container {
-      display: block;
-   }
 }
 </style>
 
@@ -795,25 +654,6 @@ const signInButton = document.getElementById('signin-button');
 
 // Dashboard Value Elements
 const totalValueElement = document.getElementById('total-value');
-const budgetValueElement = document.getElementById('budget-total');
-const budgetMaxElement = document.getElementById('budget-max');
-const budgetContainer = document.querySelector('.dashboard__card--budget');
-const totalCurrencyPreElement = document.getElementById('total-currency-pre');
-const totalCurrencyPostElement = document.getElementById('total-currency-post');
-
-const topCategoryLegendElements = [
-   document.getElementById('top-cat-legend-1'),
-   document.getElementById('top-cat-legend-2'),
-   document.getElementById('top-cat-legend-3'),
-];
-const donutSegmentElements = [
-   document.getElementById('donut-segment-1'),
-   document.getElementById('donut-segment-2'),
-   document.getElementById('donut-segment-3'),
-];
-
-
-// --- Utility Functions ---
 
 /**
 * Gets a cookie value by name.
@@ -888,27 +728,6 @@ function toggleDashboard(show) {
 */
 function setBudgetProgress(progress) {
    // Removed: All code related to budget-bar
-}
-
-/**
-* Updates the donut chart segments based on category data.
-* @param {Array} sortedCategories - Array of sorted category data.
-* @param {number} grandTotal - The grand total of all categories.
-*/
-function updateDonutChart(sortedCategories, grandTotal) {
-   let cumulativePercentage = 0;
-
-   sortedCategories.slice(0, 3).forEach((category, index) => {
-       const [catCode, catAmount] = category;
-       const percentage = (catAmount / grandTotal) * 100;
-       const startPercentage = cumulativePercentage;
-       const endPercentage = cumulativePercentage + percentage;
-
-       donutSegmentElements[index].setAttribute('stroke-dasharray', `${percentage} ${100 - percentage}`);
-       donutSegmentElements[index].setAttribute('stroke-dashoffset', `${100 - startPercentage}`);
-       topCategoryLegendElements[index].innerHTML = `${catCode} (${currency(catAmount)})`; // Updates text content
-       cumulativePercentage += percentage;
-   });
 }
 
 // --- Subscription Calculation Logic (Copied from original, consider refactoring if complex) ---
@@ -1123,15 +942,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
        try {
            // Fetch monthly totals and subscriptions
-           const [monthlyTotals, subscriptions, budgets] = await Promise.all([
+           const [monthlyTotals, subscriptions] = await Promise.all([
                DB.uCompute.all(getCookie('hash'), 'totals', currentMonthStr),
                DB.uDoc.allDocs(getCookie('hash'), 'subscriptions'),
-               DB.uDoc.allDocs(getCookie('hash'), 'budgets'),
            ]);
 
            console.log("Monthly Totals Data:", monthlyTotals);
            console.log("Subscriptions Data:", subscriptions);
-           console.log("Budgets Data:", budgets);
 
            // Combine monthly totals with calculated subscription costs for the current month
            const combinedTotals = { ...monthlyTotals }; // Start with receipt totals
@@ -1147,90 +964,6 @@ document.addEventListener('DOMContentLoaded', () => {
            // Calculate Grand Total
            const grandTotal = Object.values(combinedTotals).reduce((sum, value) => sum + (typeof value === 'number' ? value : 0), 0);
            totalValueElement.innerHTML = currency(grandTotal);
-           // Calculate Budget
-
-           budgetValueElement.innerHTML = currency(grandTotal);
-           if (budgets.filter(budget => budget['category'] == 'all').length == 0) {
-               budgetValueElement.innerHTML = currency(0);
-               document.getElementById('budget-status-text').innerHTML = '<span class="dashboard__card-text">No Overall Budget Set</span>';
-           } else {
-               const budgetWarn = budgets.filter(budget => budget['category'] == 'all')[0]["warning"] || 0; // Default to 0 if no budget set
-               const budgetMax = budgets.filter(budget => budget['category'] == 'all')[0]["limit"] || 0; // Default to 0 if no budget set
-               const budgetStatus = grandTotal > budgetMax ? 'OVERSPENT' : (grandTotal > budgetWarn ? 'WARNING' : 'OK');
-               if (budgetStatus === 'OVERSPENT') {
-                     budgetValueElement.style.color = 'var(--color-danger)';
-               } else if (budgetStatus === 'WARNING') {
-                     budgetValueElement.style.color = 'var(--color-warning)'
-               } else {
-                     budgetValueElement.style.color = 'var(--color-green-ok)';
-               }
-               budgetMaxElement.innerHTML = currency(budgetMax);
-           }
-
-           const subBudgetsContainer = document.getElementById('sub-budgets__container');
-
-           // Map category codes to names (including custom)
-           const categoryNameMap = {
-               "a": "Groceries", "b": "Food Out", "c": "Snacks", "d": "Kitchenware",
-               "e": "Bathroomware", "f": "Livingware", "g": "Appliances", "h": "Gardenware",
-               "j": "Pets", "k": "Health", "l": "Books", "other": "Other",
-               "Subscriptions": "Recurring Transactions", // Add default subscription category
-               ...(user.c_categories.reduce((acc, cat) => ({ ...acc, [cat]: cat }), {})) // Add custom categories
-           };
-
-           function createBudgetBar(budget, currentSpending) {
-               const categoryName = categoryNameMap[budget.category] || budget.category;
-               const limit = Number(budget.limit) || 0;
-               const spending = Number(currentSpending) || 0;
-               const progressPercent = limit > 0 ? Math.min((spending / limit) * 100, 100) : 0;
-
-               return `
-                  <div class="sub-budget-bar__container">
-                        <div class="sub-budget-bar__label"><span class="sub-budget-bar__label-large">${categoryName}</span> | ${currency(spending)} of ${currency(limit)}</div>
-                        <div class="sub-budget-bar">
-                           <div class="sub-budget-bar__fill" style="width: ${progressPercent}%;${progressPercent == 100 ? ' background-color: var(--color-danger)' : ''}"></div>
-                        </div>
-                  </div>
-               `;
-            }
-
-           if (budgets.filter(budget => budget['category'] != 'all').length == 0) {
-            subBudgetsContainer.innerHTML = '<span class="dashboard__card-text">No Category Budgets Set</span>';
-           } else {
-               const budgetStatusText = budgets.filter(budget => budget['category'] != 'all').map(budget => {
-                   const budgetWarn = budget["warning"] || 0; // Default to 0 if no budget set
-                   const budgetMax = budget["limit"] || 0; // Default to 0 if no budget set
-                   const categoryName = user.c_categories.find(cat => cat === budget.category) || budget.category; // Use custom name if exists
-                   return createBudgetBar(budget, combinedTotals[budget.category] || 0);
-               }).join('<br>');
-               subBudgetsContainer.innerHTML = budgetStatusText;
-           }
-
-
-
-           // Determine Top 3 Categories
-           let sortedCategories = Object.entries(combinedTotals)
-               .filter(([key, value]) => typeof value === 'number' && value > 0) // Ensure value is a positive number
-               .sort(([, a], [, b]) => b - a); // Sort descending by amount
-
-           console.log("Sorted Categories:", sortedCategories);
-
-           // Update Top 3 Display
-           for (let i = 0; i < 3; i++) {
-               if (sortedCategories[i]) {
-                   const [catCode, catAmount] = sortedCategories[i];
-                   const catName = categoryNameMap[catCode] || catCode; // Use mapped name or code
-                   topCategoryLegendElements[i].innerHTML = catName;
-               } else {
-                   // Handle cases with fewer than 3 categories
-                   topCategoryLegendElements[i].innerHTML = "N/A";
-               }
-           }
-
-           // Update Donut Chart
-           sortedCategories = sortedCategories.map(x => [categoryNameMap[x[0]] || x[0], x[1]]);
-           console.log("Updated Sorted Categories:", sortedCategories);
-           updateDonutChart(sortedCategories, grandTotal);
 
            // 4. Hide Loader, Show Dashboard
            clearTimeout(loaderTimeout); // Clear the backup timeout
@@ -1251,8 +984,6 @@ document.addEventListener('DOMContentLoaded', () => {
            toggleLoader(false);
            toggleDashboard(true); // Show dashboard potentially with error message display
             totalValueElement.innerHTML = 'Error';
-            budgetValueElement.innerHTML = 'Error';
-            topCategoryLegendElements.forEach(el => el.innerHTML = 'Error');
        }
 
    }).catch(error => {
@@ -1374,32 +1105,6 @@ function newAccountTour() {
        ],
        id: 'view-report'
      });
-
-   tour.addStep({
-     title: 'Recurring Transactions',
-     text: 'Manage your recurring transactions and subscriptions here.',
-     attachTo: {
-       element: '.dashboard__actions-container a[href="../recurring_txs"]',
-       on: 'top'
-     },
-     buttons: [
-       {
-         action() {
-           return this.back();
-         },
-         classes: 'shepherd-button-secondary',
-         text: 'Back'
-       },
-       {
-         action() {
-           return this.next();
-         },
-         text: 'Next',
-         classes: 'shepherd-button-primary' // Add primary class
-       }
-     ],
-     id: 'subs-manager'
-   });
 
    tour.addStep({
      title: 'Top Categories',
