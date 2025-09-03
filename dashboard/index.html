@@ -62,6 +62,23 @@
                <p class="dashboard__card-value" id="auto-insights" aria-live="polite">
                </p>
            </div>
+           <div class="dashboard__card dashboard__card--total">
+            <hr>
+            <br>
+               <h2 class="dashboard__card-title">Quick Navigation</h2>
+               <a href="../dashboard/">Dashboard <img src="../src/icons/dashboard.png"></a>
+        <a href="../navigator/" style="font-weight: 900; text-decoration: underline 2px;">Navigator (AI assistant) <img src="../src/icons/robot.png"></a>
+        <a href="../dashboard/">Dashboard <img src="../src/icons/dashboard.png"></a>
+        <a href="../add-receipt/">Add Receipt <img src="../src/icons/add.png"></a>
+        <a href="../report/">View Report <img src="../src/icons/receipt_long.png"></a>
+        <a href="../receipts/">View Receipts <img src="../src/icons/receipt.png"></a>
+        <a href="../category_manager/">Category Manager <img src="../src/icons/manage.png"></a>
+        <a href="../recurring_txs/">Recurring Transactions <img src="../src/icons/subscriptions.png"></a>
+        <a href="../budget/">Budget <span class="material-symbols-outlined" style="color: white;">savings</span></a>
+        <a class="rare-use" href="../settings/">Settings <img src="../src/icons/settings.png"></a>
+        <a class="rare-use" href="../">Info <img src="../src/icons/info.png"></a>
+        <a class="rare-use" href="../legal/">Legal <img src="../src/icons/gavel.png"></a>
+           </div>
        </section>
 
        <div class="shortcuts-overlay shortcuts-overlay--hidden" id="shortcuts-overlay">
@@ -351,7 +368,7 @@ button {
    margin-top: var(--header-height);
    margin-left: var(--sidebar-width); /* Default margin for sidebar */
    padding: var(--space-xl);
-   background-color: var(--color-dashboard-bg);
+   background-color: var(--color-card-bg);
    min-height: calc(100vh - var(--header-height));
    transition: margin-left var(--transition-speed) var(--transition-ease);
    position: relative; /* For loader positioning */
@@ -426,7 +443,6 @@ button {
    justify-content: center;
    text-align: center;
    min-height: 200px;
-   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
 
 .dashboard__card-title {
