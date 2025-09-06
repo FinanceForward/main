@@ -1,5 +1,5 @@
 // Set version before importing Firebase
-let version = "Omicron (5)";
+let version = "Snapshot Eta.0x0s1";
 let TESTING = true; // Set to true for testing purposes
 window.version = version;
 document.addEventListener("DOMContentLoaded", () => {
